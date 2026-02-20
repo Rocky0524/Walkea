@@ -1,0 +1,158 @@
+/* Layout general para que el footer se quede siempre abajo */
+.welcome-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #E9F6FE; 
+  font-family: Arial, sans-serif;
+}
+
+/* --- HEADER --- */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background-color:  #CBE7FC;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  height: 40px;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #2b70b6;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.link-login {
+  color: #555;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.link-login:hover {
+  color: #2b70b6;
+}
+
+.btn-register {
+  background-color: #2b70b6;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.btn-register:hover {
+  background-color: #1a528a;
+}
+
+/* --- CONTENIDO PRINCIPAL (HERO) --- */
+.hero-section {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 40px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero-section h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.hero-section p {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.btn-main-action {
+  background-color: #2b70b6;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-main-action:hover {
+  background-color: #1a528a;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20px; 
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap; 
+}
+
+
+.btn-secondary-action {
+  background-color: transparent;
+  color: #2b70b6;
+  border: 2px solid #2b70b6;
+  padding: 13px 30px; 
+  font-size: 1.2rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-secondary-action:hover {
+  background-color: #e6f0fa; 
+}
+
+/* --- FOOTER --- */
+.main-footer {
+  background-color: #2b70b6;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.main-footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.footer-links a {
+  color: #cde0f5;
+  text-decoration: none;
+  margin: 0 10px;
+  font-size: 0.85rem;
+}
+
+.footer-links a:hover {
+  color: white;
+  text-decoration: underline;
+}
