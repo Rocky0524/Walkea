@@ -133,3 +133,22 @@
 .btn-social:hover {
   background-color: #d4e4f7;
 }
+
+/* 7. Estilo Validadores */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap:5px;
+}
+
+.error-text{
+color:#e74c3c;
+font-size: 0.8rem;
+margin-left: 15px;
+margin-top: -5px;
+}
+
+.input-field.ng-invalid.ng-touched{
+border-color: #e74c3c;
+background-color: #fdf2f2;
+}
