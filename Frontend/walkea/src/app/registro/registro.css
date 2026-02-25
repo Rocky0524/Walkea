@@ -133,3 +133,25 @@
 .btn-social:hover {
   background-color: #d4e4f7;
 }
+
+/* 7. Estilo Validadores */
+/* Agrupamos input y mensaje para que queden ordenados */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* El mensajito de texto rojo */
+.error-text {
+  color: #e74c3c; /* Rojo alerta */
+  font-size: 0.8rem;
+  margin-left: 15px;
+  margin-top: -5px;
+}
+
+/* Borde rojo para el input cuando tiene un error y ha sido tocado */
+.input-field.ng-invalid.ng-touched {
+  border-color: #e74c3c;
+  background-color: #fdf2f2; /* Un fondo súper clarito rojizo */
+}
