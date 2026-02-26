@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './login/login'; 
-import { Registro } from './registro/registro'; 
+import { RegistroComponent } from './registro/registro';
 import { BienvenidaComponent } from './bienvenida/bienvenida'; 
 
 export const routes: Routes = [
@@ -12,7 +12,7 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
 
   // 3. Ruta para cargar la pantalla de registro
-  { path: 'registro', component: Registro },
+ { path: 'registro', component: RegistroComponent },
 
   // 4. Ruta para cargar la pantalla de bienvenida
   { path: 'bienvenida', component: BienvenidaComponent },

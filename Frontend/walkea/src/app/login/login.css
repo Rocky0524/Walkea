@@ -152,3 +152,12 @@ margin-top: -5px;
 border-color: #e74c3c;
 background-color: #fdf2f2;
 }
+
+/* Corregir la hitbox del enlace "Registrarse" */
+.auth-form .forgot-link {
+  display: inline-block;
+  width: fit-content;    
+  background-color: transparent; 
+  color: #2b70b6;
+  
+}
