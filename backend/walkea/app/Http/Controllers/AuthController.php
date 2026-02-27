@@ -4,56 +4,44 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-    /**
-     * Registrar un nuevo usuario.
-     */
+    // Registrar nuevo usuario
     public function register(Request $request)
     {
-        // Validar datos
         $request->validate([
             'nombre' => 'required|string|max:255',
             'email' => 'required|email|unique:usuarios,email',
             'password' => 'required|string|min:6',
         ]);
 
-        // Crear usuario (la contraseña se hashea automáticamente por el cast del modelo)
         $usuario = Usuario::create([
             'nombre' => $request->nombre,
             'email' => $request->email,
             'password' => $request->password,
         ]);
 
+        $token = auth()->login($usuario);
+
         return response()->json([
             'mensaje' => 'Usuario registrado correctamente',
-            'usuario' => [
-                'id_usuario' => $usuario->id_usuario,
-                'nombre' => $usuario->nombre,
-                'email' => $usuario->email,
-                'reputacion' => $usuario->reputacion,
-            ]
+            'usuario' => $usuario,
+            'token' => $token,
         ], 201);
     }
 
-    /**
-     * Iniciar sesión (verificar contraseña).
-     */
+    // Login - devuelve token JWT
     public function login(Request $request)
     {
-        // Validar datos
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        // Buscar usuario por email
-        $usuario = Usuario::where('email', $request->email)->first();
+        $credentials = $request->only('email', 'password');
 
-        // Verificar que existe y que la contraseña es correcta
-        if (!$usuario || !Hash::check($request->password, $usuario->password)) {
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json([
                 'mensaje' => 'Email o contraseña incorrectos'
             ], 401);
@@ -61,12 +49,30 @@ class AuthController extends Controller
 
         return response()->json([
             'mensaje' => 'Login correcto',
-            'usuario' => [
-                'id_usuario' => $usuario->id_usuario,
-                'nombre' => $usuario->nombre,
-                'email' => $usuario->email,
-                'reputacion' => $usuario->reputacion,
-            ]
-        ], 200);
+            'usuario' => auth()->user(),
+            'token' => $token,
+        ]);
+    }
+
+    // Cerrar sesion
+    public function logout()
+    {
+        auth()->logout();
+        return response()->json(['mensaje' => 'Sesión cerrada']);
+    }
+
+    // Datos del usuario logueado
+    public function me()
+    {
+        return response()->json(auth()->user());
+    }
+
+    // Refrescar token
+    public function refresh()
+    {
+        return response()->json([
+            'token' => auth()->refresh(),
+        ]);
     }
 }
+
