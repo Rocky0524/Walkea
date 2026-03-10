@@ -27,5 +27,8 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/tipo-marcador/{id}', [TipoMarcadorController::class, 'destroy']);
 
     Route::post('/marcador', [MarcadorController::class, 'store']);
+    Route::put('/marcador/{id}', [MarcadorController::class, 'update']);
+    Route::delete('/marcador/{id}', [MarcadorController::class, 'destroy']);
+
     Route::post('/marcador/{id}/votar', [VotoController::class, 'votar']);
 });
