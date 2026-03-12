@@ -11,12 +11,24 @@ class VotoController extends Controller
     // POST /api/marcador/{id}/votar
     public function votar(Request $request, $id)
     {
+        // Aceptamos tanto 'tipo' (string) como 'voto' (boolean) para facilitar las pruebas
         $request->validate([
-            'tipo' => 'required|in:positivo,negativo',
+            'tipo' => 'nullable|string|in:positivo,negativo',
+            'voto' => 'nullable|boolean',
         ]);
 
         $marcador = Marcador::findOrFail($id);
         $usuario = auth()->user();
+
+        // Determinar el tipo de voto (mapeamos boolean a string si viene)
+        $tipoVoto = $request->tipo;
+        if ($request->has('voto')) {
+            $tipoVoto = $request->voto ? 'positivo' : 'negativo';
+        }
+
+        if (!$tipoVoto) {
+            return response()->json(['mensaje' => 'Debes enviar "tipo" (positivo/negativo) o "voto" (true/false)'], 422);
+        }
 
         // Bloquear voto duplicado
         $yaVoto = Voto::where('id_usuario', $usuario->id_usuario)
@@ -31,7 +43,7 @@ class VotoController extends Controller
 
         // Crear el voto
         $voto = Voto::create([
-            'tipo' => $request->tipo,
+            'tipo' => $tipoVoto,
             'id_usuario' => $usuario->id_usuario,
             'id_marcador' => $id,
         ]);
@@ -40,7 +52,7 @@ class VotoController extends Controller
         $peso = $this->pesoVoto($usuario);
 
         // Aplicar voto a la vida del marcador
-        if ($request->tipo === 'positivo') {
+        if ($tipoVoto === 'positivo') {
             $marcador->vida = min(10, $marcador->vida + $peso);
         } else {
             $marcador->vida = max(0, $marcador->vida - $peso);
