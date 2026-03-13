@@ -1,0 +1,35 @@
+<div class="auth-container">
+  <div class="auth-header">
+    <img src="/logo-walkea.png" alt="Logo Walkea" class="logo">
+    <h1>Iniciar sesión</h1>
+  </div>
+
+  <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+    <div class="input-group">
+      <input type="email" formControlName="email" placeholder="Correo electrónico" class="input-field">
+      @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched){
+        <span class="error-text">Introduce un email valido</span>
+      }
+
+    </div>
+ <div class="input-group">
+  <input type="password" formControlName="password" placeholder="Contraseña" class="input-field">
+  @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched){
+    <span class="error-text">Pon una contraseña valida (min 6 letras)</span>
+  }
+ </div>
+    
+     <a routerLink="/registro" class="forgot-link">Registrarse</a>
+    
+    <div class="submit-container">
+      <button type="submit" class="btn-submit">→</button>
+    </div>
+  </form>
+
+  <div class="social-login">
+    <button class="btn-social">f</button>
+    <button class="btn-social">🍏</button>
+    <button class="btn-social">G</button>
+  </div>
+</div>
