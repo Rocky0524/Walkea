@@ -26,6 +26,13 @@ export class MapaComponent implements OnInit {
       minZoom: 3,
       attribution: '&copy; OpenStreetMap'
     }).addTo(this.map);
+
+    //para borrar
+    const marcadorPrueba = L.marker([41.6177, 0.6267]).addTo(this.map);
+    marcadorPrueba.bindPopup(`
+      <b>¡Primer reporte! 🚨</b><br>
+      Farola fundida en la subida a la Seu Vella.
+    `).openPopup();
   }
 
   private obtenerUbicacionReal(): void {
