@@ -1,9 +1,68 @@
-.map-container {
-  width: 100%;
-  height: 600px; 
-  border-radius: 10px;
+.mapa-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   overflow: hidden;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+}
+
+/* barra de filtros */
+.filtros-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: #1a1a2e;
+  color: #fff;
+  z-index: 1000;
+}
+
+.btn-volver {
+  color: #8899aa;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.btn-volver:hover {
+  color: #fff;
+}
+
+.filtros-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.chip-filtro {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 2px solid;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.chip-filtro:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.chip-inactivo {
+  opacity: 0.4;
+}
+
+.chip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* mapa ocupa todo lo que queda */
+.map-container {
+  flex: 1;
 }
 
 #map {

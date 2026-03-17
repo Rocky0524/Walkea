@@ -1,3 +1,25 @@
-<div class="map-container">
-  <div id="map"></div>
+<div class="mapa-layout">
+
+  <!-- barra de filtros arriba -->
+  <div class="filtros-bar">
+    <a routerLink="/dashboard" class="btn-volver">← Dashboard</a>
+
+    <div class="filtros-chips">
+      <button
+        *ngFor="let tipo of tiposMarcador; let i = index"
+        class="chip-filtro"
+        [class.chip-inactivo]="!filtrosActivos[tipo.id_tipo_marcador]"
+        [style.border-color]="getColor(i)"
+        (click)="toggleFiltro(tipo.id_tipo_marcador)">
+        <span class="chip-dot" [style.background-color]="getColor(i)"></span>
+        {{ tipo.nombre }}
+      </button>
+    </div>
+  </div>
+
+  <!-- mapa -->
+  <div class="map-container">
+    <div id="map"></div>
+  </div>
+
 </div>
