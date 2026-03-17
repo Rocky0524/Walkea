@@ -10,31 +10,30 @@ class MarcadorSeeder extends Seeder
 {
     public function run(): void
     {
-        // Obtener el primer tipo de marcador y el usuario creado
         $tipo = DB::table('tipo_marcador')->first();
         $usuario = DB::table('usuarios')->first();
 
         if ($tipo && $usuario) {
             DB::table('marcador')->insert([
                 [
-                    'titulo' => 'Bache peligroso',
                     'descripcion' => 'Hay un bache enorme en mitad de la calle.',
-                    'latitud' => 40.416775,
-                    'longitud' => -3.703790,
+                    'latitud' => 41.6177,
+                    'longitud' => 0.6267,
                     'vida' => 5,
+                    'estado' => 'activo',
                     'id_usuario' => $usuario->id_usuario,
-                    'id_tipo' => $tipo->id_tipo,
+                    'id_tipo_marcador' => $tipo->id_tipo_marcador,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ],
                 [
-                    'titulo' => 'Farola rota',
                     'descripcion' => 'La farola no enciende por las noches.',
-                    'latitud' => 40.417775,
-                    'longitud' => -3.704790,
-                    'vida' => 5,
+                    'latitud' => 41.6150,
+                    'longitud' => 0.6220,
+                    'vida' => 8,
+                    'estado' => 'activo',
                     'id_usuario' => $usuario->id_usuario,
-                    'id_tipo' => $tipo->id_tipo,
+                    'id_tipo_marcador' => $tipo->id_tipo_marcador,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]
