@@ -1,0 +1,105 @@
+.dashboard-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* sidebar */
+.sidebar {
+  width: 260px;
+  background: #1a1a2e;
+  color: #fff;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.subtitulo {
+  margin: 4px 0 0;
+  color: #8899aa;
+  font-size: 0.85rem;
+}
+
+.tipos-lista h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8899aa;
+  margin-bottom: 10px;
+}
+
+.tipo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+
+.tipo-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tipo-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.stats {
+  margin-top: auto;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+
+.numero {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4fc3f7;
+}
+
+.label {
+  font-size: 0.8rem;
+  color: #8899aa;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nav-link {
+  color: #aaa;
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+/* mapa */
+.mapa-zona {
+  flex: 1;
+}
+
+#mapa-dashboard {
+  width: 100%;
+  height: 100%;
+}

@@ -1,0 +1,39 @@
+<div class="dashboard-layout">
+
+  <!-- panel lateral -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>Walkea</h2>
+      <p class="subtitulo">Dashboard</p>
+    </div>
+
+    <!-- tipos de marcador -->
+    <div class="tipos-lista">
+      <h3>Tipos de reporte</h3>
+      <div class="tipo-item" *ngFor="let tipo of tiposMarcador; let i = index">
+        <span class="tipo-dot" [style.background-color]="getColor(i)"></span>
+        <span>{{ tipo.nombre }}</span>
+      </div>
+    </div>
+
+    <!-- contador -->
+    <div class="stats">
+      <div class="stat-card">
+        <span class="numero">{{ marcadores.length }}</span>
+        <span class="label">Reportes cercanos</span>
+      </div>
+    </div>
+
+    <!-- links -->
+    <nav class="sidebar-nav">
+      <a routerLink="/mapa" class="nav-link">Ver mapa completo</a>
+      <a routerLink="/bienvenida" class="nav-link">Inicio</a>
+    </nav>
+  </aside>
+
+  <!-- mapa -->
+  <main class="mapa-zona">
+    <div id="mapa-dashboard"></div>
+  </main>
+
+</div>
