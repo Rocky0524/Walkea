@@ -13,16 +13,25 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td>Ejemplo: Bache en C. Mayor</td>
-        <td>41.61, 0.62</td>
-        <td><span class="badge activo">Activo</span></td>
-        <td>5/10</td>
-        <td>
-          <button class="btn-edit">Ver</button>
-          <button class="btn-delete">Eliminar</button>
-        </td>
-      </tr>
+      @for (reporte of misReportes; track reporte.descripcion) {
+        <tr>
+          <td>{{ reporte.descripcion }}</td>
+          <td>{{ reporte.latitud.toFixed(3) }}, {{ reporte.longitud.toFixed(3) }}</td>
+          <td>
+            <span class="badge" [ngClass]="reporte.estado">
+              {{ reporte.estado | titlecase }}
+            </span>
+          </td>
+          <td>{{ reporte.vida }}/10</td>
+          <td>
+            <button class="btn-delete" (click)="eliminarReporte(reporte)">Eliminar</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5" style="text-align: center;">No has enviado ningún reporte todavía.</td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>
