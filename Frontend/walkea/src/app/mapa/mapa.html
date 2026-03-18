@@ -1,25 +1,31 @@
-<div class="mapa-layout">
-
-  <!-- barra de filtros arriba -->
-  <div class="filtros-bar">
-    <a routerLink="/dashboard" class="btn-volver">← Dashboard</a>
-
-    <div class="filtros-chips">
-      <button
-        *ngFor="let tipo of tiposMarcador; let i = index"
-        class="chip-filtro"
-        [class.chip-inactivo]="!filtrosActivos[tipo.id_tipo_marcador]"
-        [style.border-color]="getColor(i)"
-        (click)="toggleFiltro(tipo.id_tipo_marcador)">
-        <span class="chip-dot" [style.background-color]="getColor(i)"></span>
-        {{ tipo.nombre }}
+<div class="map-container">
+  
+  <div class="map-overlay-ui">
+    <button routerLink="/dashboard" class="btn-volver">
+      Volver al Dashboard
+    </button>
+    
+    <!-- Filtros de Tipos de Marcador -->
+    <div class="filtros-panel">
+      <div class="filtros-titulo">Filtrar mapa:</div>
+      <button 
+        class="chip-filtro" 
+        [class.activo]="filtroActivo === null"
+        (click)="filtrarPorTipo(null)">
+        Todos
       </button>
+      
+      @for (tipo of tiposMarcador; track tipo.id_tipo_marcador; let i = $index) {
+        <button 
+          class="chip-filtro" 
+          [class.activo]="filtroActivo === tipo.id_tipo_marcador"
+          (click)="filtrarPorTipo(tipo.id_tipo_marcador)">
+          <span class="dot" [style.background-color]="getColor(i)"></span>
+          {{ tipo.nombre }}
+        </button>
+      }
     </div>
   </div>
 
-  <!-- mapa -->
-  <div class="map-container">
-    <div id="map"></div>
-  </div>
-
+  <div id="map"></div>
 </div>

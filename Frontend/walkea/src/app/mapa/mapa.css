@@ -1,71 +1,108 @@
-.mapa-layout {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* barra de filtros */
-.filtros-bar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 10px 20px;
-  background: #1a1a2e;
-  color: #fff;
-  z-index: 1000;
-}
-
-.btn-volver {
-  color: #8899aa;
-  text-decoration: none;
-  font-size: 0.9rem;
-}
-
-.btn-volver:hover {
-  color: #fff;
-}
-
-.filtros-chips {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.chip-filtro {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 20px;
-  border: 2px solid;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-  font-size: 0.85rem;
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
-}
-
-.chip-filtro:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.chip-inactivo {
-  opacity: 0.4;
-}
-
-.chip-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-/* mapa ocupa todo lo que queda */
+/* Posicionamiento en pantalla completa (o casi, según layout general) */
 .map-container {
-  flex: 1;
+  width: 100vw;
+  height: 100vh;
+  position: relative; /* Para que la UI flotante se coloque respecto a esto */
+  overflow: hidden;
 }
 
 #map {
   width: 100%;
   height: 100%;
+  z-index: 1; /* Por debajo de la UI flotante */
+}
+
+/* Interfaz flotante por encima del mapa */
+.map-overlay-ui {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 1000; /* Leaflet usa valores altos (400-500) para sus controles */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  pointer-events: none; /* Clics atraviesan al mapa donde no hay botones */
+}
+
+.map-overlay-ui > * {
+  pointer-events: auto; /* Devolvemos el clicabilidad a los botones */
+}
+
+/* Botón de volver */
+.btn-volver {
+  align-self: flex-start;
+  padding: 10px 18px;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
+  color: #333;
+}
+
+.btn-volver:hover {
+  background-color: #f1f1f1;
+  transform: translateY(-2px);
+}
+
+/* Panel difuminado que contiene los chips */
+.filtros-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 12px 18px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  backdrop-filter: blur(5px); /* Efecto cristal iOS */
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+.filtros-titulo {
+  font-size: 14px;
+  font-weight: bold;
+  color: #666;
+  margin-right: 5px;
+}
+
+/* Chips de cada filtro */
+.chip-filtro {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #555;
+}
+
+.chip-filtro:hover {
+  background-color: #f8f9fa;
+  border-color: #bbb;
+}
+
+/* Estilo para chip pulsado/activo */
+.chip-filtro.activo {
+  background-color: #2c3e50;
+  color: white;
+  border-color: #2c3e50;
+}
+
+/* Circulito de color */
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
 }

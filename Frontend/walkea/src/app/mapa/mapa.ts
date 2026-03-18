@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
@@ -8,21 +7,20 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-mapa',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [RouterLink],
   templateUrl: './mapa.html',
   styleUrl: './mapa.css'
 })
 export class MapaComponent implements OnInit {
   private map: any;
+  private marcadoresLayer: L.LayerGroup = L.layerGroup(); // Capa para limpiar pines fácil
 
   marcadores: any[] = [];
   tiposMarcador: any[] = [];
-
-  // agrupamos los circulos por tipo para poder mostrar/ocultar
-  capaPorTipo: { [id: number]: any[] } = {};
-  filtrosActivos: { [id: number]: boolean } = {};
-
   colores: string[] = ['#e74c3c', '#f39c12', '#3498db', '#2ecc71', '#9b59b6'];
+
+  // null = mostrar todos. Si tiene número, es el id_tipo_marcador
+  filtroActivo: number | null = null; 
 
   constructor(
     private marcadorService: MarcadorService,
@@ -31,6 +29,8 @@ export class MapaComponent implements OnInit {
 
   ngOnInit(): void {
     this.initMap();
+    this.cargarTipos();
+    this.cargarMarcadores();
     this.obtenerUbicacionReal();
     this.cargarTipos();
     this.cargarMarcadores();
@@ -44,6 +44,72 @@ export class MapaComponent implements OnInit {
       minZoom: 3,
       attribution: '&copy; OpenStreetMap'
     }).addTo(this.map);
+
+    // Añadimos la capa base donde irán todos los pines, así limpiaremos fácil al filtrar
+    this.marcadoresLayer.addTo(this.map);
+  }
+
+  private cargarTipos(): void {
+    this.tipoMarcadorService.obtenerTodos().subscribe({
+      next: (data) => this.tiposMarcador = data,
+      error: (err) => console.error('Error cargando tipos de marcador:', err)
+    });
+  }
+
+  private cargarMarcadores(): void {
+    this.marcadorService.obtenerTodos().subscribe({
+      next: (data) => {
+        this.marcadores = data;
+        this.pintarMarcadores();
+      },
+      error: (err) => console.error('Error cargando marcadores:', err)
+    });
+  }
+
+  private pintarMarcadores(): void {
+    // 1. Limpiamos pines viejos
+    this.marcadoresLayer.clearLayers();
+
+    // 2. Filtramos la data original
+    const marcadoresAMostrar = this.filtroActivo 
+      ? this.marcadores.filter(m => m.id_tipo_marcador === this.filtroActivo)
+      : this.marcadores;
+
+    // 3. Pintamos los pines que tocan
+    marcadoresAMostrar.forEach((m) => {
+      const idx = this.tiposMarcador.findIndex(t => t.id_tipo_marcador === m.id_tipo_marcador);
+      const color = this.colores[idx] || '#999';
+
+      const circulo = L.circleMarker([m.latitud, m.longitud], {
+        radius: 10,
+        fillColor: color,
+        color: '#fff',
+        weight: 2,
+        fillOpacity: 0.9
+      });
+
+      const tipoNombre = m.tipo_marcador?.nombre || 'Sin tipo';
+      circulo.bindPopup(`
+        <b>${tipoNombre}</b><br>
+        ${m.descripcion}<br>
+        <small>Estado: ${m.estado}</small>
+      `);
+
+      this.marcadoresLayer.addLayer(circulo);
+    });
+  }
+
+  filtrarPorTipo(idTipo: number | null): void {
+    if (this.filtroActivo === idTipo) {
+      this.filtroActivo = null; // Si pulsas en el mismo activo, se desmarca y muestra todos
+    } else {
+      this.filtroActivo = idTipo;
+    }
+    this.pintarMarcadores();
+  }
+
+  getColor(i: number): string {
+    return this.colores[i] || '#999';
   }
 
   private obtenerUbicacionReal(): void {
@@ -52,11 +118,9 @@ export class MapaComponent implements OnInit {
         (position) => {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
-          this.map.setView([lat, lon], 16);
 
           L.marker([lat, lon]).addTo(this.map)
-            .bindPopup('<b>Estás aquí</b>')
-            .openPopup();
+            .bindPopup('<b>¡Estás aquí, Kenneth!</b>');
         },
         (error) => {
           console.error('Error obteniendo la ubicación', error);
