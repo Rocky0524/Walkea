@@ -4,13 +4,14 @@ import { RegistroComponent } from './registro/registro';
 import { BienvenidaComponent } from './bienvenida/bienvenida'; 
 import { DashboardComponent } from './dashboard/dashboard';
 import { MapaComponent } from './mapa/mapa';
+import { MisReportes } from './components/mis-reportes/mis-reportes'; 
 
 export const routes: Routes = [
-
   { path: '', redirectTo: '/bienvenida', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
   { path: 'bienvenida', component: BienvenidaComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'mapa', component: MapaComponent },
+  { path: 'mis-reportes', component: MisReportes },
 ];

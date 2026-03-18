@@ -1,1 +1,37 @@
-<p>mis-reportes works!</p>
+<div class="container">
+  <h2>Mis Reportes Enviados</h2>
+  <p>Aquí puedes ver el estado de los baches y averías que has notificado.</p>
+
+  <table class="report-table">
+    <thead>
+      <tr>
+        <th>Descripción</th>
+        <th>Coordenadas (Lat, Lng)</th>
+        <th>Estado</th>
+        <th>Vida</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (reporte of misReportes; track reporte.descripcion) {
+        <tr>
+          <td>{{ reporte.descripcion }}</td>
+          <td>{{ reporte.latitud.toFixed(3) }}, {{ reporte.longitud.toFixed(3) }}</td>
+          <td>
+            <span class="badge" [ngClass]="reporte.estado">
+              {{ reporte.estado | titlecase }}
+            </span>
+          </td>
+          <td>{{ reporte.vida }}/10</td>
+          <td>
+            <button class="btn-delete" (click)="eliminarReporte(reporte)">Eliminar</button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5" style="text-align: center;">No has enviado ningún reporte todavía.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

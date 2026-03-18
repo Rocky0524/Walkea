@@ -1,0 +1,12 @@
+.container { padding: 20px; font-family: sans-serif; }
+.report-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+.report-table th, .report-table td { 
+  border: 1px solid #ddd; padding: 12px; text-align: left; 
+}
+.report-table th { background-color: #f4f4f4; }
+.badge { 
+  padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold;
+}
+.activo { background-color: #d4edda; color: #155724; }
+.btn-edit { background: #007bff; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+.btn-delete { background: #dc3545; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; margin-left: 5px; }
