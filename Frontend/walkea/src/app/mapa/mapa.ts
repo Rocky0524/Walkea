@@ -1,20 +1,36 @@
 import { Component, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { MarcadorService } from '../services/marcador.service';
+import { TipoMarcadorService } from '../services/tipo-marcador.service';
 import * as L from 'leaflet';
 
 @Component({
   selector: 'app-mapa',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './mapa.html',
   styleUrl: './mapa.css'
 })
 export class MapaComponent implements OnInit {
   private map: any;
+  private marcadoresLayer: L.LayerGroup = L.layerGroup(); // Capa para limpiar pines fácil
 
-  constructor() {}
+  marcadores: any[] = [];
+  tiposMarcador: any[] = [];
+  colores: string[] = ['#e74c3c', '#f39c12', '#3498db', '#2ecc71', '#9b59b6'];
+
+  // null = mostrar todos. Si tiene número, es el id_tipo_marcador
+  filtroActivo: number | null = null; 
+
+  constructor(
+    private marcadorService: MarcadorService,
+    private tipoMarcadorService: TipoMarcadorService
+  ) {}
 
   ngOnInit(): void {
     this.initMap();
+    this.cargarTipos();
+    this.cargarMarcadores();
     this.obtenerUbicacionReal();
   }
 
@@ -27,12 +43,71 @@ export class MapaComponent implements OnInit {
       attribution: '&copy; OpenStreetMap'
     }).addTo(this.map);
 
-    //para borrar
-    const marcadorPrueba = L.marker([41.6177, 0.6267]).addTo(this.map);
-    marcadorPrueba.bindPopup(`
-      <b>¡Primer reporte! 🚨</b><br>
-      Farola fundida en la subida a la Seu Vella.
-    `).openPopup();
+    // Añadimos la capa base donde irán todos los pines, así limpiaremos fácil al filtrar
+    this.marcadoresLayer.addTo(this.map);
+  }
+
+  private cargarTipos(): void {
+    this.tipoMarcadorService.obtenerTodos().subscribe({
+      next: (data) => this.tiposMarcador = data,
+      error: (err) => console.error('Error cargando tipos de marcador:', err)
+    });
+  }
+
+  private cargarMarcadores(): void {
+    this.marcadorService.obtenerTodos().subscribe({
+      next: (data) => {
+        this.marcadores = data;
+        this.pintarMarcadores();
+      },
+      error: (err) => console.error('Error cargando marcadores:', err)
+    });
+  }
+
+  private pintarMarcadores(): void {
+    // 1. Limpiamos pines viejos
+    this.marcadoresLayer.clearLayers();
+
+    // 2. Filtramos la data original
+    const marcadoresAMostrar = this.filtroActivo 
+      ? this.marcadores.filter(m => m.id_tipo_marcador === this.filtroActivo)
+      : this.marcadores;
+
+    // 3. Pintamos los pines que tocan
+    marcadoresAMostrar.forEach((m) => {
+      const idx = this.tiposMarcador.findIndex(t => t.id_tipo_marcador === m.id_tipo_marcador);
+      const color = this.colores[idx] || '#999';
+
+      const circulo = L.circleMarker([m.latitud, m.longitud], {
+        radius: 10,
+        fillColor: color,
+        color: '#fff',
+        weight: 2,
+        fillOpacity: 0.9
+      });
+
+      const tipoNombre = m.tipo_marcador?.nombre || 'Sin tipo';
+      circulo.bindPopup(`
+        <b>${tipoNombre}</b><br>
+        ${m.descripcion}<br>
+        <small>Estado: ${m.estado}</small>
+      `);
+
+      this.marcadoresLayer.addLayer(circulo);
+    });
+  }
+
+  filtrarPorTipo(idTipo: number | null): void {
+    if (this.filtroActivo === idTipo) {
+      this.filtroActivo = null; // Si pulsas en el mismo activo, se desmarca y muestra todos
+    } else {
+      this.filtroActivo = idTipo;
+    }
+    this.pintarMarcadores();
+  }
+
+  getColor(i: number): string {
+    return this.colores[i] || '#999';
   }
 
   private obtenerUbicacionReal(): void {
@@ -42,18 +117,13 @@ export class MapaComponent implements OnInit {
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
 
-          this.map.setView([lat, lon], 16);
-
           L.marker([lat, lon]).addTo(this.map)
-            .bindPopup('<b>¡Estás aquí, Kenneth!</b>')
-            .openPopup();
+            .bindPopup('<b>¡Estás aquí, Kenneth!</b>');
         },
         (error) => {
           console.error('Error obteniendo la ubicación o permiso denegado', error);
         }
       );
-    } else {
-      console.log('Tu navegador no soporta geolocalización');
     }
   }
 }
