@@ -4,7 +4,7 @@ import { MapaComponent } from '../mapa/mapa';
 @Component({
   selector: 'app-bienvenida',
   standalone: true,
-  imports: [RouterLink, MapaComponent], 
+  imports: [RouterLink], 
   templateUrl: './bienvenida.html',
   styleUrl: './bienvenida.css'
 })
