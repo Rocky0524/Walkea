@@ -7,16 +7,18 @@
   <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
     <div class="input-group">
-      <input type="email" formControlName="email" placeholder="Correo electrónico" class="input-field">
+      <input type="email" formControlName="email" placeholder="Correo electrónico" class="input-field"
+             aria-label="Correo electrónico" aria-describedby="login-email-error">
       @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched){
-        <span class="error-text">Introduce un email valido</span>
+        <span id="login-email-error" class="error-text" aria-live="polite">Introduce un email valido</span>
       }
 
     </div>
  <div class="input-group">
-  <input type="password" formControlName="password" placeholder="Contraseña" class="input-field">
+  <input type="password" formControlName="password" placeholder="Contraseña" class="input-field"
+         aria-label="Contraseña" aria-describedby="login-pwd-error">
   @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched){
-    <span class="error-text">Pon una contraseña valida (min 6 letras)</span>
+    <span id="login-pwd-error" class="error-text" aria-live="polite">Pon una contraseña valida (min 6 letras)</span>
   }
  </div>
     
@@ -28,8 +30,8 @@
   </form>
 
   <div class="social-login">
-    <button class="btn-social">f</button>
-    <button class="btn-social">🍏</button>
-    <button class="btn-social">G</button>
+    <button class="btn-social" aria-label="Iniciar sesión con Facebook">f</button>
+    <button class="btn-social" aria-label="Iniciar sesión con Apple">🍏</button>
+    <button class="btn-social" aria-label="Iniciar sesión con Google">G</button>
   </div>
 </div>
