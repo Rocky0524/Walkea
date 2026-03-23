@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router'; 
+import { RouterLink, Router } from '@angular/router'; 
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { AuthService } from '../auth';
 
 @Component({
   selector: 'app-registro',
@@ -18,11 +19,38 @@ export class RegistroComponent {
     confirmPassword: new FormControl("", [Validators.required]) 
   });
 
+  constructor(private authService: AuthService, private router: Router) {}
+
   onSubmit(){
+    console.log('Botón clickeado, validando formulario...');
     if (this.registreForm.valid){
-      console.log('Todo correcto. Listo para enviar a laravel:', this.registreForm.value);
+      const formValue = this.registreForm.value;
+      if (formValue.password !== formValue.confirmPassword) {
+        alert('Las contraseñas no coinciden');
+        return;
+      }
+      
+      const payload = {
+        nombre: formValue.name,
+        email: formValue.email,
+        password: formValue.password
+      };
+      
+      console.log('Todo correcto. Listo para enviar a laravel:', payload);
+      this.authService.registro(payload).subscribe({
+        next: (respuesta) => {
+          console.log('¡Registro correcto!', respuesta);
+          localStorage.setItem('token', respuesta.token);
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err) => {
+          console.error('Error en registro:', err);
+          alert('Error al registrar el usuario en el backend (revisa la consola para más detalles).');
+        }
+      });
     } else {
-      console.log('Hay errores');
+      console.log('El formulario tiene errores de validación', this.registreForm.errors);
+      alert('Por favor, rellena todos los campos correctamente. (Revisa si el email es válido y la contraseña tiene 6 o más caracteres).');
       this.registreForm.markAllAsTouched();
     }
   }

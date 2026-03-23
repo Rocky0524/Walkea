@@ -7,30 +7,34 @@
   <form class="auth-form" [formGroup]="registreForm" (ngSubmit)="onSubmit()">
     
     <div class="input-group">
-      <input type="text" formControlName="name" placeholder="Nombre" class="input-field">
+      <input type="text" formControlName="name" placeholder="Nombre" class="input-field"
+             aria-label="Nombre" aria-describedby="reg-name-error">
       @if (registreForm.get('name')?.invalid && registreForm.get('name')?.touched) {
-        <span class="error-text">Introduce un nombre</span>
+        <span id="reg-name-error" class="error-text" aria-live="polite">Introduce un nombre</span>
       }
     </div>
 
     <div class="input-group">
-      <input type="email" formControlName="email" placeholder="Correo electrónico" class="input-field">
+      <input type="email" formControlName="email" placeholder="Correo electrónico" class="input-field"
+             aria-label="Correo electrónico" aria-describedby="reg-email-error">
       @if (registreForm.get('email')?.invalid && registreForm.get('email')?.touched) {
-        <span class="error-text">Introduce un email válido</span>
+        <span id="reg-email-error" class="error-text" aria-live="polite">Introduce un email válido</span>
       }
     </div>
 
     <div class="input-group">
-      <input type="password" formControlName="password" placeholder="Contraseña" class="input-field">
+      <input type="password" formControlName="password" placeholder="Contraseña" class="input-field"
+             aria-label="Contraseña" aria-describedby="reg-pwd-error">
       @if (registreForm.get('password')?.invalid && registreForm.get('password')?.touched) {
-        <span class="error-text">Pon una contraseña válida (mín 6 letras)</span>
+        <span id="reg-pwd-error" class="error-text" aria-live="polite">Pon una contraseña válida (mín 6 letras)</span>
       }
     </div>
 
     <div class="input-group">
-      <input type="password" formControlName="confirmPassword" placeholder="Repetir contraseña" class="input-field">
+      <input type="password" formControlName="confirmPassword" placeholder="Repetir contraseña" class="input-field"
+             aria-label="Repetir contraseña" aria-describedby="reg-pwd2-error">
       @if (registreForm.get('confirmPassword')?.invalid && registreForm.get('confirmPassword')?.touched) {
-        <span class="error-text">Debes repetir la contraseña</span>
+        <span id="reg-pwd2-error" class="error-text" aria-live="polite">Debes repetir la contraseña</span>
       }
     </div>
 
@@ -44,8 +48,8 @@
   </form>
 
   <div class="social-login">
-    <button class="btn-social">f</button>
-    <button class="btn-social">🍏</button>
-    <button class="btn-social">G</button>
+    <button class="btn-social" aria-label="Iniciar sesión con Facebook">f</button>
+    <button class="btn-social" aria-label="Iniciar sesión con Apple">🍏</button>
+    <button class="btn-social" aria-label="Iniciar sesión con Google">G</button>
   </div>
 </div>
