@@ -14,7 +14,7 @@ class UsuarioSeeder extends Seeder
         DB::table('usuarios')->insert([
             'nombre' => 'Profe User',
             'email' => 'admin@walkea.com',
-            'password' => Hash::make('123'),
+            'password' => Hash::make('123456'),
             'reputacion' => 100,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

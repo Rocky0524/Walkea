@@ -1,0 +1,26 @@
+<div class="layout-wrapper">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-circle">
+        <img src="logo-walkea.png" alt="Walkea Logo" class="logo-img">
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-btn" routerLink="/app/dashboard" routerLinkActive="active">Inicio (Dashboard)</button>
+      <button class="nav-btn" routerLink="/app/mapa" routerLinkActive="active">Mapa Completo</button>
+      <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active">Mis Reportes</button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar">👤</div>
+      <span class="user-role">Rango</span>
+    </div>
+  </aside>
+
+  <!-- CONTENIDO HIJO -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

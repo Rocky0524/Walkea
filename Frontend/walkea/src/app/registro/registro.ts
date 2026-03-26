@@ -41,7 +41,7 @@ export class RegistroComponent {
         next: (respuesta) => {
           console.log('¡Registro correcto!', respuesta);
           localStorage.setItem('token', respuesta.token);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/app/dashboard']);
         },
         error: (err) => {
           console.error('Error en registro:', err);

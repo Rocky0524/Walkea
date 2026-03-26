@@ -23,11 +23,10 @@
     </div>
   </aside>
 
-  <!-- MAIN CONTENT -->
-  <main class="main-content">
-    <header class="header-banner">
-      ¡Hola Walker! Hay {{ marcadores.length }} incidencias nuevas en tu ciudad.
-    </header>
+  <div class="content-body">
+    <!-- LEFT COL: REPORTES -->
+    <div class="reportes-section">
+      <h3>Ultimos reportes</h3>
 
     <div class="content-body">
       <!-- LEFT COL: REPORTES -->
@@ -52,17 +51,9 @@
             </div>
           }
         </div>
-
-        <button class="btn-more-reports">Ver mas reportes</button>
       </div>
 
-      <!-- RIGHT COL: MAP -->
-      <div class="map-section">
-        <h3>Ver mapa</h3>
-        <div class="mini-map-container">
-          <div id="mapa-dashboard"></div>
-        </div>
-      </div>
+      <button class="btn-more-reports" routerLink="/app/mis-reportes">Ver mas reportes</button>
     </div>
 
     <!-- FAB BUTTON -->
