@@ -1,37 +1,68 @@
-<div class="container">
-  <h2>Mis Reportes Enviados</h2>
-  <p>Aquí puedes ver el estado de los baches y averías que has notificado.</p>
+<div class="dashboard-wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-circle">
+        <img src="logo-walkea.png" alt="Walkea Logo" class="logo-img">
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <button class="nav-btn" routerLink="/dashboard" routerLinkActive="active">Inicio(Dashboard)</button>
+      <button class="nav-btn" routerLink="/mapa" routerLinkActive="active">Mapa Completo</button>
+      <button class="nav-btn" routerLink="/mis-reportes" routerLinkActive="active">Mis Reportes</button>
+      <button class="nav-btn" routerLink="/perfil" routerLinkActive="active">Perfil</button>
+      <button class="nav-btn">Ajustes</button>
+    </nav>
+    
+    <div class="sidebar-footer">
+      <div class="user-avatar">👤</div>
+      <span class="user-role">Walker Pro</span>
+    </div>
+  </aside>
 
-  <table class="report-table">
-    <thead>
-      <tr>
-        <th>Descripción</th>
-        <th>Coordenadas (Lat, Lng)</th>
-        <th>Estado</th>
-        <th>Vida</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (reporte of misReportes; track reporte.descripcion) {
-        <tr>
-          <td>{{ reporte.descripcion }}</td>
-          <td>{{ reporte.latitud.toFixed(3) }}, {{ reporte.longitud.toFixed(3) }}</td>
-          <td>
-            <span class="badge" [ngClass]="reporte.estado">
-              {{ reporte.estado | titlecase }}
-            </span>
-          </td>
-          <td>{{ reporte.vida }}/10</td>
-          <td>
-            <button class="btn-delete" (click)="eliminarReporte(reporte)">Eliminar</button>
-          </td>
-        </tr>
-      } @empty {
-        <tr>
-          <td colspan="5" style="text-align: center;">No has enviado ningún reporte todavía.</td>
-        </tr>
-      }
-    </tbody>
-  </table>
+  <main class="main-content">
+    <header class="header-banner">
+      Gestión de tus incidencias reportadas.
+    </header>
+
+    <div class="content-body-list">
+      <div class="table-container">
+        <h2>Mis Reportes Enviados</h2>
+        <p>Revisa el estado y la vida de los avisos que has creado en el mapa.</p>
+
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Descripción</th>
+              <th>Ubicación (Lat, Lng)</th>
+              <th>Estado</th>
+              <th>Vida</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reporte of misReportes; track reporte.descripcion) {
+              <tr>
+                <td>{{ reporte.descripcion }}</td>
+                <td>{{ reporte.latitud.toFixed(3) }}, {{ reporte.longitud.toFixed(3) }}</td>
+                <td>
+                  <span class="badge" [ngClass]="reporte.estado">
+                    {{ reporte.estado | titlecase }}
+                  </span>
+                </td>
+                <td class="vida-cell">{{ reporte.vida }}/10 ❤️</td>
+                <td>
+                  <button class="btn-delete" (click)="eliminarReporte(reporte)">Eliminar</button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem;">No has enviado ningún reporte todavía.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
 </div>

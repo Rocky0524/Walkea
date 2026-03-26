@@ -4,11 +4,12 @@ import { RouterLink } from '@angular/router';
 import { MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
 import * as L from 'leaflet';
+import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, NuevoReporteComponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -16,6 +17,7 @@ export class DashboardComponent implements OnInit {
 
   private mapa: any;
   private marcadoresEnMapa: any[] = [];
+  mostrarNuevoReporte: boolean = false;
 
   marcadores: any[] = [];
   tiposMarcador: any[] = [];
@@ -124,5 +126,33 @@ export class DashboardComponent implements OnInit {
 
   getColor(i: number): string {
     return this.colores[i] || '#999';
+  }
+
+  abrirModalReporte() {
+    this.mostrarNuevoReporte = true;
+  }
+
+  cerrarModalReporte() {
+    this.mostrarNuevoReporte = false;
+  }
+
+  guardarReporte(datos: any) {
+    this.marcadorService.crear(datos).subscribe({
+      next: (res) => {
+        alert('¡Reporte guardado de verdad en la base de datos!');
+        this.cerrarModalReporte();
+        
+        // Limpiamos los marcadores del mapa para no duplicarlos
+        this.marcadoresEnMapa.forEach(m => this.mapa.removeLayer(m));
+        this.marcadoresEnMapa = [];
+        
+        // Recargamos los datos (cercanos o todos)
+        this.pedirUbicacion(); 
+      },
+      error: (err) => {
+        console.error('Error guardando reporte:', err);
+        alert('Error al guardar en la BD. Asegúrate de tener token JWT y backend encendido.');
+      }
+    });
   }
 }

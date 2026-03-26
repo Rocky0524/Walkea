@@ -1,39 +1,70 @@
-<main class="dashboard-content">
-  <header class="header-banner">
-    ¡Hola Walker! Hay {{ marcadores.length }} incidencias nuevas en tu ciudad.
-  </header>
+<div class="dashboard-wrapper">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-circle">
+        <img src="logo-walkea.png" alt="Walkea Logo" class="logo-img">
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+  <button class="nav-btn" routerLink="/dashboard" routerLinkActive="active">Inicio(Dashboard)</button>
+  <button class="nav-btn" routerLink="/mapa" routerLinkActive="active">Mapa Completo</button>
+  
+  <button class="nav-btn" routerLink="/mis-reportes" routerLinkActive="active">Mis Reportes</button>
+  
+  <button class="nav-btn" routerLink="/perfil" routerLinkActive="active">Perfil</button>
+  <button class="nav-btn">Ajustes</button>
+</nav>
+    
+    <div class="sidebar-footer">
+      <div class="user-avatar">👤</div>
+      <span class="user-role">Rango</span>
+    </div>
+  </aside>
 
   <div class="content-body">
     <!-- LEFT COL: REPORTES -->
     <div class="reportes-section">
       <h3>Ultimos reportes</h3>
 
-      <div class="reportes-list">
-        <p *ngIf="marcadores.length === 0" style="color: #666;">No hay reportes recientes para mostrar.</p>
-        <!-- We slice to show only the latest 3 -->
-        <div class="report-card" *ngFor="let m of marcadores | slice:0:3; let i = index">
-          <!-- Icon/Color based on type -->
-          <div class="report-icon" [style.background-color]="getColor(i)">
-          </div>
-          <div class="report-info">
-            <span class="report-title">{{ m.descripcion || 'Reporte' }}</span>
-            <span class="report-score">5/10❤️</span>
-          </div>
+    <div class="content-body">
+      <!-- LEFT COL: REPORTES -->
+      <div class="reportes-section">
+        <h3>Ultimos reportes</h3>
+        
+        <div class="reportes-list">
+          @if (marcadores.length === 0) {
+            <p style="color: #666;">No hay reportes recientes para mostrar.</p>
+          }
+          
+          <!-- Mostramos solo los 3 primeros -->
+          @for (m of marcadores | slice:0:3; track $index) {
+            <div class="report-card">
+              <!-- Icon/Color based on type -->
+              <div class="report-icon" [style.background-color]="getColor($index)">
+              </div>
+              <div class="report-info">
+                <span class="report-title">{{ m.descripcion || 'Reporte' }}</span>
+                <span class="report-score">5/10❤️</span>
+              </div>
+            </div>
+          }
         </div>
       </div>
 
       <button class="btn-more-reports" routerLink="/app/mis-reportes">Ver mas reportes</button>
     </div>
 
-    <!-- RIGHT COL: MAP -->
-    <div class="map-section">
-      <h3>Ver mapa</h3>
-      <div class="mini-map-container">
-        <div id="mapa-dashboard"></div>
-      </div>
-    </div>
-  </div>
+    <!-- FAB BUTTON -->
+    <button class="fab-add" title="Añadir reporte" aria-label="Añadir reporte" (click)="abrirModalReporte()"></button>
 
-  <!-- FAB BUTTON -->
-  <button class="fab-add" title="Añadir reporte" aria-label="Añadir reporte"></button>
-</main>
+    <!-- MODAL NUEVO REPORTE -->
+    @if (mostrarNuevoReporte) {
+      <app-nuevo-reporte 
+        (cerrar)="cerrarModalReporte()" 
+        (enviar)="guardarReporte($event)">
+      </app-nuevo-reporte>
+    }
+  </main>
+</div>

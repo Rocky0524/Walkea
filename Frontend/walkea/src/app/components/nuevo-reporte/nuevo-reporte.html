@@ -1,0 +1,53 @@
+<div class="modal-backdrop">
+  <div class="modal-content">
+    
+    <div class="modal-header">
+      <h3>Nuevo reporte</h3>
+      <button class="btn-close" (click)="cancelar()">X</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Sección 1 -->
+      <div class="seccion">
+        <label>1. ¿Que has visto?</label>
+        <div class="grid-tipos">
+          @for (tipo of tipos; track tipo.id) {
+            <button 
+              class="btn-tipo" 
+              [class.activo]="tipoSeleccionado === tipo.id"
+              (click)="seleccionarTipo(tipo.id)">
+              <span class="emoji">{{tipo.icono}}</span>
+              <span class="nombre">{{tipo.nombre}}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Sección 2 & 3 row -->
+      <div class="seccion-row">
+        <div class="seccion mitad">
+          <label>2. Añade detalles (Opcional)</label>
+          <textarea 
+            [(ngModel)]="descripcion" 
+            placeholder="Describe la incidencia..."></textarea>
+        </div>
+
+        <div class="seccion mitad">
+          <label>3. Confirma la ubicacion.</label>
+          <div class="mini-mapa-mock">
+            <!-- Mock visual de un mapa para simplificar por ahora como pediste -->
+            <img src="https://www.mapquestapi.com/staticmap/v5/map?key=G_YOUR_KEY&center=41.6167,0.6222&zoom=14&type=map&size=200,200@2x" alt="Mapa" onerror="this.src='https://via.placeholder.com/200?text=Mapa+Aquí'">
+            <div class="pin">📍</div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-enviar" (click)="enviarReporte()">Enviar reporte</button>
+      <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
+    </div>
+
+  </div>
+</div>
