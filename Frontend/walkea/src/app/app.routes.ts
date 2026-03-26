@@ -5,6 +5,8 @@ import { BienvenidaComponent } from './bienvenida/bienvenida';
 import { DashboardComponent } from './dashboard/dashboard';
 import { MapaComponent } from './mapa/mapa';
 import { MisReportes } from './components/mis-reportes/mis-reportes'; 
+import { Perfil } from './components/perfil/perfil';
+import { Ajustes } from './components/ajustes/ajustes';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/bienvenida', pathMatch: 'full' },
@@ -14,4 +16,6 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'mapa', component: MapaComponent },
   { path: 'mis-reportes', component: MisReportes },
+  { path: 'perfil', component: Perfil },
+{ path: 'ajustes', component: Ajustes },
 ];
