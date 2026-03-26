@@ -35,17 +35,22 @@
         <h3>Ultimos reportes</h3>
         
         <div class="reportes-list">
-          <p *ngIf="marcadores.length === 0" style="color: #666;">No hay reportes recientes para mostrar.</p>
-          <!-- We slice to show only the latest 3 -->
-          <div class="report-card" *ngFor="let m of marcadores | slice:0:3; let i = index">
-            <!-- Icon/Color based on type -->
-            <div class="report-icon" [style.background-color]="getColor(i)">
+          @if (marcadores.length === 0) {
+            <p style="color: #666;">No hay reportes recientes para mostrar.</p>
+          }
+          
+          <!-- Mostramos solo los 3 primeros -->
+          @for (m of marcadores | slice:0:3; track $index) {
+            <div class="report-card">
+              <!-- Icon/Color based on type -->
+              <div class="report-icon" [style.background-color]="getColor($index)">
+              </div>
+              <div class="report-info">
+                <span class="report-title">{{ m.descripcion || 'Reporte' }}</span>
+                <span class="report-score">5/10❤️</span>
+              </div>
             </div>
-            <div class="report-info">
-              <span class="report-title">{{ m.descripcion || 'Reporte' }}</span>
-              <span class="report-score">5/10❤️</span>
-            </div>
-          </div>
+          }
         </div>
 
         <button class="btn-more-reports">Ver mas reportes</button>
@@ -61,6 +66,14 @@
     </div>
 
     <!-- FAB BUTTON -->
-    <button class="fab-add" title="Añadir reporte" aria-label="Añadir reporte"></button>
+    <button class="fab-add" title="Añadir reporte" aria-label="Añadir reporte" (click)="abrirModalReporte()"></button>
+
+    <!-- MODAL NUEVO REPORTE -->
+    @if (mostrarNuevoReporte) {
+      <app-nuevo-reporte 
+        (cerrar)="cerrarModalReporte()" 
+        (enviar)="guardarReporte($event)">
+      </app-nuevo-reporte>
+    }
   </main>
 </div>
