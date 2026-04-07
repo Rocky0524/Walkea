@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
@@ -9,7 +9,7 @@ import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, NuevoReporteComponent],
+  imports: [CommonModule, RouterLink, NuevoReporteComponent, SlicePipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

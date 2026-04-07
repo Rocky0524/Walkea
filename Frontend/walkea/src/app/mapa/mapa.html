@@ -1,53 +1,12 @@
-<div class="dashboard-wrapper">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-circle">
-        <img src="logo-walkea.png" alt="Walkea Logo" class="logo-img">
-      </div>
-    </div>
-    
-   <nav class="sidebar-nav">
-  <button class="nav-btn" routerLink="/dashboard" routerLinkActive="active">
-    Inicio (Dashboard)
-  </button>
+<div class="mapa-content">
+  <header class="header-banner">
+    MAPA COMPLETO
+  </header>
 
-  <button class="nav-btn" routerLink="/mapa" routerLinkActive="active">
-    Mapa Completo
-  </button>
+  <div class="full-map-container">
+    <div id="map"></div>
+  </div>
 
-  <button class="nav-btn" routerLink="/mis-reportes" routerLinkActive="active">
-    Mis Reportes
-  </button>
-
-  <button class="nav-btn" routerLink="/perfil" routerLinkActive="active">
-    Perfil
-  </button>
-
-  <button class="nav-btn" routerLink="/ajustes" routerLinkActive="active">
-    Ajustes
-  </button>
-</nav>
-    
-    <div class="sidebar-footer">
-      <div class="user-avatar">👤</div>
-      <span class="user-role">Rango</span>
-    </div>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <main class="main-content">
-    <header class="header-banner">
-      MAPA COMPLETO
-    </header>
-
-    <div class="full-map-container">
-      <div id="map"></div>
-      
-      <!-- Overlay for filters removed per user request -->
-    </div>
-
-    <!-- FAB BUTTON -->
-    <button class="fab-add" title="Añadir reporte"></button>
-  </main>
+  <!-- FAB BUTTON -->
+  <button class="fab-add" title="Añadir reporte"></button>
 </div>
