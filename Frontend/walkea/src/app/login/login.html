@@ -5,25 +5,34 @@
   </div>
 
   <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="input-group">
+      <input
+        type="text"
+        formControlName="email"
+        placeholder="Correo o usuario"
+        class="input-field"
+        aria-label="Correo o usuario"
+        aria-describedby="login-user-error">
+      @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+        <span id="login-user-error" class="error-text" aria-live="polite">Introduce tu correo o tu usuario</span>
+      }
+    </div>
 
     <div class="input-group">
-      <input type="email" formControlName="email" placeholder="Correo electrónico" class="input-field"
-             aria-label="Correo electrónico" aria-describedby="login-email-error">
-      @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched){
-        <span id="login-email-error" class="error-text" aria-live="polite">Introduce un email valido</span>
+      <input
+        type="password"
+        formControlName="password"
+        placeholder="Contraseña"
+        class="input-field"
+        aria-label="Contraseña"
+        aria-describedby="login-pwd-error">
+      @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+        <span id="login-pwd-error" class="error-text" aria-live="polite">Pon una contraseña válida de al menos 6 caracteres</span>
       }
-
     </div>
- <div class="input-group">
-  <input type="password" formControlName="password" placeholder="Contraseña" class="input-field"
-         aria-label="Contraseña" aria-describedby="login-pwd-error">
-  @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched){
-    <span id="login-pwd-error" class="error-text" aria-live="polite">Pon una contraseña valida (min 6 letras)</span>
-  }
- </div>
-    
-     <a routerLink="/registro" class="forgot-link">Registrarse</a>
-    
+
+    <a routerLink="/registro" class="forgot-link">Registrarse</a>
+
     <div class="submit-container">
       <button type="submit" class="btn-submit">→</button>
     </div>
@@ -31,7 +40,7 @@
 
   <div class="social-login">
     <button class="btn-social" aria-label="Iniciar sesión con Facebook">f</button>
-    <button class="btn-social" aria-label="Iniciar sesión con Apple">🍏</button>
+    <button class="btn-social" aria-label="Iniciar sesión con Apple">A</button>
     <button class="btn-social" aria-label="Iniciar sesión con Google">G</button>
   </div>
 </div>

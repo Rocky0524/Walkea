@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -35,15 +36,26 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|string',
             'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('email', 'password');
+        $identificador = trim((string) $request->input('email'));
+
+        $usuario = Str::contains($identificador, '@')
+            ? Usuario::where('email', $identificador)->first()
+            : Usuario::where('nombre', $identificador)
+                ->orWhere('email', 'like', $identificador . '@%')
+                ->first();
+
+        $credentials = [
+            'email' => $usuario?->email ?? $identificador,
+            'password' => $request->input('password'),
+        ];
 
         if (!$token = auth()->attempt($credentials)) {
             return response()->json([
-                'mensaje' => 'Email o contraseña incorrectos'
+                'mensaje' => 'Email, usuario o contraseña incorrectos',
             ], 401);
         }
 
@@ -58,6 +70,7 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
+
         return response()->json(['mensaje' => 'Sesión cerrada']);
     }
 
@@ -75,4 +88,3 @@ class AuthController extends Controller
         ]);
     }
 }
-
