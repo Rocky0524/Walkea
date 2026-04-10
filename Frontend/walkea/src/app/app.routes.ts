@@ -6,6 +6,9 @@ import { LayoutComponent } from './layout/layout';
 import { DashboardComponent } from './dashboard/dashboard';
 import { MapaComponent } from './mapa/mapa';
 import { MisReportes } from './components/mis-reportes/mis-reportes';
+// 1. Añadimos los imports de los nuevos componentes
+import { Perfil} from './components/perfil/perfil'; // Ajusta la ruta si es distinta
+import { Ajustes } from './components/ajustes/ajustes';
 
 export const routes: Routes = [
   // Rutas publicas (sin sidebar)
@@ -23,6 +26,9 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'mapa', component: MapaComponent },
       { path: 'mis-reportes', component: MisReportes },
+      // 2. Las añadimos como hijas del layout
+      { path: 'perfil', component: Perfil },
+      { path: 'ajustes', component: Ajustes }
     ]
   }
 ];

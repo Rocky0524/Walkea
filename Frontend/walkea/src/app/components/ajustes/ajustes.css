@@ -1,0 +1,70 @@
+.content-body {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.settings-container {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 30px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.settings-container h3 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: #1a1a1a;
+  font-size: 1.3rem;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 0;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.setting-info strong { color: #333; }
+.setting-info span { color: #888; font-size: 0.9rem; }
+
+.toggle-switch {
+  width: 45px;
+  height: 25px;
+  cursor: pointer;
+  accent-color: #2c75c9;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background-color: #edf2f7;
+  margin: 2rem 0;
+}
+
+.btn-logout {
+  width: 100%;
+  background-color: #ffeaea;
+  color: #e74c3c;
+  border: 1px solid #ffcccc;
+  padding: 1rem;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background-color: #e74c3c;
+  color: white;
+}
