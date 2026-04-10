@@ -12,6 +12,7 @@ class Marcador extends Model
     // Tabla asociada
     protected $table = 'marcador';
     protected $primaryKey = 'id_marcador';
+    protected $appends = ['hp_vida'];
 
     // Campos rellenables por el usuario
     protected $fillable = [
@@ -44,5 +45,10 @@ class Marcador extends Model
     public function votos()
     {
         return $this->hasMany(Voto::class, 'id_marcador', 'id_marcador');
+    }
+
+    public function getHpVidaAttribute(): int
+    {
+        return (int) $this->vida;
     }
 }

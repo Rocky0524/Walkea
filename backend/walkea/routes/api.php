@@ -2,9 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\TipoMarcadorController;
 use App\Http\Controllers\MarcadorController;
-use App\Http\Controllers\VotoController;
+use App\Http\Controllers\VotacionController;
 
 // Rutas publicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -21,6 +22,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::get('/perfil', [PerfilController::class, 'resumen']);
+    Route::put('/ajustes', [PerfilController::class, 'actualizarAjustes']);
 
     Route::post('/tipo-marcador', [TipoMarcadorController::class, 'store']);
     Route::put('/tipo-marcador/{id}', [TipoMarcadorController::class, 'update']);
@@ -30,5 +33,5 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/marcador/{id}', [MarcadorController::class, 'update']);
     Route::delete('/marcador/{id}', [MarcadorController::class, 'destroy']);
 
-    Route::post('/marcador/{id}/votar', [VotoController::class, 'votar']);
+    Route::post('/marcador/{id}/votar', [VotacionController::class, 'votar']);
 });
