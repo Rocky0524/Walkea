@@ -5,7 +5,8 @@ import { BienvenidaComponent } from './bienvenida/bienvenida';
 import { LayoutComponent } from './layout/layout';
 import { DashboardComponent } from './dashboard/dashboard';
 import { MapaComponent } from './mapa/mapa';
-import { MisReportes } from './components/mis-reportes/mis-reportes';
+import { PerfilComponent } from './perfil/perfil';
+import { ReportesVotosComponent } from './reportes-votos/reportes-votos';
 
 export const routes: Routes = [
   // Rutas publicas (sin sidebar)
@@ -22,7 +23,8 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'mapa', component: MapaComponent },
-      { path: 'mis-reportes', component: MisReportes },
+      { path: 'mis-reportes', component: ReportesVotosComponent },
+      { path: 'perfil', component: PerfilComponent },
     ]
   }
 ];

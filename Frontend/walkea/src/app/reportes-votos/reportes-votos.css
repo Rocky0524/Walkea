@@ -1,0 +1,128 @@
+.reportes-page {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-banner {
+  background-color: #cde5f7;
+  color: #1a1a1a;
+  padding: 1.5rem 2rem;
+  font-size: 1.2rem;
+}
+
+.content-body-list {
+  padding: 2rem 3rem;
+}
+
+.table-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+}
+
+.report-table th {
+  background-color: #f8fbff;
+  color: #555;
+  font-weight: 600;
+  padding: 15px;
+  text-align: left;
+  border-bottom: 2px solid #edf2f7;
+}
+
+.report-table td {
+  padding: 15px;
+  border-bottom: 1px solid #edf2f7;
+  color: #444;
+}
+
+.badge {
+  padding: 5px 12px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.badge.activo {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge.agotado {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.vida-cell {
+  font-weight: 600;
+  color: #e74c3c;
+}
+
+.vote-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-vote {
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.btn-vote:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.btn-positive {
+  background: #2ecc71;
+}
+
+.btn-negative {
+  background: #ff4d4d;
+}
+
+.feedback {
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  margin: 1rem 0;
+}
+
+.feedback.success {
+  background: #e8f8ee;
+  color: #177245;
+}
+
+.feedback.error {
+  background: #fdecec;
+  color: #9f2e2e;
+}
+
+.empty-cell {
+  text-align: center;
+  padding: 2rem;
+}
+
+@media (max-width: 960px) {
+  .content-body-list {
+    padding: 1rem;
+  }
+
+  .table-container {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+}

@@ -1,0 +1,62 @@
+<div class="reportes-page">
+  <header class="header-banner">
+    Reportes del mapa y votos reales
+  </header>
+
+  <div class="content-body-list">
+    <div class="table-container">
+      <h2>Reportes disponibles</h2>
+      <p>Estos datos salen del backend actual y los votos se envian a la API real.</p>
+
+      @if (mensaje) {
+        <div class="feedback success">{{ mensaje }}</div>
+      }
+
+      @if (error) {
+        <div class="feedback error">{{ error }}</div>
+      }
+
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Descripcion</th>
+            <th>Ubicacion</th>
+            <th>Estado</th>
+            <th>Vida</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (cargando) {
+            <tr>
+              <td colspan="5" class="empty-cell">Cargando reportes...</td>
+            </tr>
+          } @else {
+            @for (reporte of reportes; track reporte.id_marcador) {
+              <tr>
+                <td>{{ reporte.descripcion }}</td>
+                <td>{{ reporte.latitud.toFixed(3) }}, {{ reporte.longitud.toFixed(3) }}</td>
+                <td>
+                  <span class="badge" [ngClass]="reporte.estado">
+                    {{ reporte.estado | titlecase }}
+                  </span>
+                </td>
+                <td class="vida-cell">{{ reporte.hp_vida ?? reporte.vida }}/10 HP</td>
+                <td>
+                  <div class="vote-actions">
+                    <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'positivo')">+</button>
+                    <button class="btn-vote btn-negative" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'negativo')">-</button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-cell">No hay reportes disponibles.</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
