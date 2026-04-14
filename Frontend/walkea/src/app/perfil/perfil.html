@@ -1,0 +1,91 @@
+<div class="perfil-page">
+  <div class="header-banner">
+    <strong>Tu perfil</strong> Consulta tu actividad y actualiza tus ajustes.
+  </div>
+
+  @if (cargando) {
+    <div class="estado-box">Cargando perfil...</div>
+  } @else if (perfil) {
+    <div class="perfil-grid">
+      <section class="panel">
+        <h2>Resumen</h2>
+        <div class="usuario-card">
+          <div class="avatar-circle">{{ perfil.usuario.nombre.charAt(0) }}</div>
+          <div>
+            <strong>{{ perfil.usuario.nombre }}</strong>
+            <p>{{ perfil.usuario.email }}</p>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span>Reportes</span>
+            <strong>{{ perfil.estadisticas.total_reportes }}</strong>
+          </div>
+          <div class="stat-card">
+            <span>Votos</span>
+            <strong>{{ perfil.estadisticas.total_votos }}</strong>
+          </div>
+          <div class="stat-card">
+            <span>Nivel</span>
+            <strong>{{ perfil.estadisticas.nivel }}</strong>
+          </div>
+          <div class="stat-card">
+            <span>Peso de voto</span>
+            <strong>{{ perfil.estadisticas.peso_voto }}</strong>
+          </div>
+        </div>
+
+        <div class="reputacion-box">
+          <span>Reputación</span>
+          <strong>{{ perfil.usuario.reputacion }}</strong>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Ajustes</h2>
+
+        @if (mensaje) {
+          <div class="feedback success">{{ mensaje }}</div>
+        }
+
+        @if (error) {
+          <div class="feedback error">{{ error }}</div>
+        }
+
+        <form class="ajustes-form" [formGroup]="ajustesForm" (ngSubmit)="guardarAjustes()">
+          <label>
+            Nombre
+            <input type="text" formControlName="nombre" />
+          </label>
+
+          <label>
+            Email
+            <input type="email" formControlName="email" />
+          </label>
+
+          <label>
+            Contraseña actual
+            <input type="password" formControlName="current_password" />
+          </label>
+
+          <label>
+            Nueva contraseña
+            <input type="password" formControlName="password" />
+          </label>
+
+          <label>
+            Confirmar nueva contraseña
+            <input type="password" formControlName="password_confirmation" />
+          </label>
+
+          <button type="submit" class="btn-guardar" [disabled]="guardando">
+            {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </form>
+      </section>
+    </div>
+  } @else {
+    <div class="estado-box error-box">{{ error || 'No se pudo cargar el perfil.' }}</div>
+  }
+</div>
