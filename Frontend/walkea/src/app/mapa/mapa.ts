@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { AfterViewInit, Component } from '@angular/core';
 import { MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
 import * as L from 'leaflet';
@@ -7,11 +6,11 @@ import * as L from 'leaflet';
 @Component({
   selector: 'app-mapa',
   standalone: true,
-  imports: [RouterLink],
+  imports: [],
   templateUrl: './mapa.html',
   styleUrl: './mapa.css'
 })
-export class MapaComponent implements OnInit {
+export class MapaComponent implements AfterViewInit {
   private map: any;
   private marcadoresLayer: L.LayerGroup = L.layerGroup(); // Capa para limpiar pines fácil
 
@@ -27,13 +26,11 @@ export class MapaComponent implements OnInit {
     private tipoMarcadorService: TipoMarcadorService
   ) {}
 
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
     this.initMap();
+    setTimeout(() => this.map.invalidateSize(), 0);
     this.cargarTipos();
-    this.cargarMarcadores();
     this.obtenerUbicacionReal();
-    this.cargarTipos();
-    this.cargarMarcadores();
   }
 
   private initMap(): void {
@@ -51,7 +48,10 @@ export class MapaComponent implements OnInit {
 
   private cargarTipos(): void {
     this.tipoMarcadorService.obtenerTodos().subscribe({
-      next: (data) => this.tiposMarcador = data,
+      next: (data) => {
+        this.tiposMarcador = data;
+        this.cargarMarcadores();
+      },
       error: (err) => console.error('Error cargando tipos de marcador:', err)
     });
   }
