@@ -11,6 +11,12 @@
     <div id="map"></div>
   </div>
 
-  <!-- FAB BUTTON -->
-  <button class="fab-add" title="Añadir reporte"></button>
+  <button class="fab-add" title="Anadir reporte" aria-label="Anadir reporte" (click)="abrirModalReporte()"></button>
+
+  @if (mostrarNuevoReporte) {
+    <app-nuevo-reporte
+      (cerrar)="cerrarModalReporte()"
+      (enviar)="guardarReporte($event)">
+    </app-nuevo-reporte>
+  }
 </div>

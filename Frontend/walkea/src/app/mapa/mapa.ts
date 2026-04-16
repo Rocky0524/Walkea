@@ -1,25 +1,27 @@
 import { AfterViewInit, Component } from '@angular/core';
+import * as L from 'leaflet';
+import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte';
 import { MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
-import * as L from 'leaflet';
 
 @Component({
   selector: 'app-mapa',
   standalone: true,
-  imports: [],
+  imports: [NuevoReporteComponent],
   templateUrl: './mapa.html',
   styleUrl: './mapa.css'
 })
 export class MapaComponent implements AfterViewInit {
   private map: any;
-  private marcadoresLayer: L.LayerGroup = L.layerGroup(); // Capa para limpiar pines fácil
+  private marcadoresLayer: L.LayerGroup = L.layerGroup();
 
+  mostrarNuevoReporte: boolean = false;
   marcadores: any[] = [];
   tiposMarcador: any[] = [];
   colores: string[] = ['#e74c3c', '#f39c12', '#3498db', '#2ecc71', '#9b59b6'];
 
-  // null = mostrar todos. Si tiene número, es el id_tipo_marcador
-  filtroActivo: number | null = null; 
+  // null = mostrar todos. Si tiene numero, es el id_tipo_marcador
+  filtroActivo: number | null = null;
 
   constructor(
     private marcadorService: MarcadorService,
@@ -42,7 +44,6 @@ export class MapaComponent implements AfterViewInit {
       attribution: '&copy; OpenStreetMap'
     }).addTo(this.map);
 
-    // Añadimos la capa base donde irán todos los pines, así limpiaremos fácil al filtrar
     this.marcadoresLayer.addTo(this.map);
   }
 
@@ -67,17 +68,14 @@ export class MapaComponent implements AfterViewInit {
   }
 
   private pintarMarcadores(): void {
-    // 1. Limpiamos pines viejos
     this.marcadoresLayer.clearLayers();
 
-    // 2. Filtramos la data original
-    const marcadoresAMostrar = this.filtroActivo 
-      ? this.marcadores.filter(m => m.id_tipo_marcador === this.filtroActivo)
+    const marcadoresAMostrar = this.filtroActivo
+      ? this.marcadores.filter((m) => m.id_tipo_marcador === this.filtroActivo)
       : this.marcadores;
 
-    // 3. Pintamos los pines que tocan
     marcadoresAMostrar.forEach((m) => {
-      const idx = this.tiposMarcador.findIndex(t => t.id_tipo_marcador === m.id_tipo_marcador);
+      const idx = this.tiposMarcador.findIndex((t) => t.id_tipo_marcador === m.id_tipo_marcador);
       const color = this.colores[idx] || '#999';
 
       const circulo = L.circleMarker([m.latitud, m.longitud], {
@@ -101,7 +99,7 @@ export class MapaComponent implements AfterViewInit {
 
   filtrarPorTipo(idTipo: number | null): void {
     if (this.filtroActivo === idTipo) {
-      this.filtroActivo = null; // Si pulsas en el mismo activo, se desmarca y muestra todos
+      this.filtroActivo = null;
     } else {
       this.filtroActivo = idTipo;
     }
@@ -113,21 +111,41 @@ export class MapaComponent implements AfterViewInit {
   }
 
   private obtenerUbicacionReal(): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-
-          L.marker([lat, lon]).addTo(this.map)
-            .bindPopup('<b>¡Estás aquí, Kenneth!</b>');
-        },
-        (error) => {
-          console.error('Error obteniendo la ubicación', error);
-        }
-      );
+    if (!navigator.geolocation) {
+      return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        L.marker([lat, lon]).addTo(this.map).bindPopup('<b>Estas aqui</b>');
+      },
+      (error) => {
+        console.error('Error obteniendo la ubicacion', error);
+      }
+    );
   }
 
+  abrirModalReporte(): void {
+    this.mostrarNuevoReporte = true;
+  }
 
+  cerrarModalReporte(): void {
+    this.mostrarNuevoReporte = false;
+  }
+
+  guardarReporte(datos: any): void {
+    this.marcadorService.crear(datos).subscribe({
+      next: () => {
+        alert('Reporte guardado correctamente');
+        this.cerrarModalReporte();
+        this.cargarMarcadores();
+      },
+      error: (err) => {
+        console.error('Error guardando reporte:', err);
+        alert('Error al guardar en la BD. Asegurate de tener token JWT y backend encendido.');
+      }
+    });
+  }
 }
