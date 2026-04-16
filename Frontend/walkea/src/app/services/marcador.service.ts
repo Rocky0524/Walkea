@@ -51,4 +51,8 @@ export class MarcadorService {
   votar(idMarcador: number, tipo: 'positivo' | 'negativo'): Observable<RespuestaVoto> {
     return this.http.post<RespuestaVoto>(`${this.apiUrl}/marcador/${idMarcador}/votar`, { tipo });
   }
+
+  eliminar(idMarcador: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/marcador/${idMarcador}`);
+  }
 }
