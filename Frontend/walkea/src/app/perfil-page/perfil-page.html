@@ -1,0 +1,59 @@
+<section class="perfil-page">
+  <header class="header-banner">
+    <div>
+      <p class="header-kicker">Tu cuenta</p>
+      <h1>Perfil</h1>
+      <p class="header-subtitle">Aqui puedes ver tus datos y tus estadisticas reales.</p>
+    </div>
+    <a class="btn-link" routerLink="/app/ajustes">Ir a ajustes</a>
+  </header>
+
+  @if (cargando) {
+    <div class="state-card">Cargando perfil...</div>
+  } @else if (perfil) {
+    <div class="perfil-grid">
+      <article class="profile-card">
+        <div class="user-big-avatar">{{ getInicial() }}</div>
+
+        <div class="user-details">
+          <h2>{{ perfil.usuario.nombre }}</h2>
+          <p class="user-rank">Nivel: <strong>{{ perfil.estadisticas.nivel }}</strong></p>
+          <p class="user-email">{{ perfil.usuario.email }}</p>
+        </div>
+
+        <div class="reputacion-box">
+          <span>Reputacion</span>
+          <strong>{{ perfil.usuario.reputacion }}</strong>
+        </div>
+      </article>
+
+      <article class="stats-card">
+        <h3>Estadisticas</h3>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span>Reportes creados</span>
+            <strong>{{ perfil.estadisticas.total_reportes }}</strong>
+          </div>
+          <div class="stat-item">
+            <span>Votos realizados</span>
+            <strong>{{ perfil.estadisticas.total_votos }}</strong>
+          </div>
+          <div class="stat-item">
+            <span>Peso de voto</span>
+            <strong>{{ perfil.estadisticas.peso_voto }}</strong>
+          </div>
+          <div class="stat-item">
+            <span>Estado actual</span>
+            <strong>{{ perfil.estadisticas.nivel }}</strong>
+          </div>
+        </div>
+      </article>
+    </div>
+  } @else {
+    <div class="state-card error-card">
+      <p>{{ error }}</p>
+      <button class="btn-link retry-btn" type="button" (click)="cargarPerfil()">Reintentar</button>
+    </div>
+  }
+</section>

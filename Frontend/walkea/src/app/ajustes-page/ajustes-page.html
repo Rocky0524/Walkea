@@ -1,0 +1,90 @@
+<section class="ajustes-page">
+  <header class="header-banner">
+    <div>
+      <p class="header-kicker">Tu cuenta</p>
+      <h1>Ajustes</h1>
+      <p class="header-subtitle">Cambia tu nombre, email, contrasena y algunas preferencias basicas.</p>
+    </div>
+  </header>
+
+  @if (cargando) {
+    <div class="state-card">Cargando ajustes...</div>
+  } @else {
+    <div class="ajustes-grid">
+      <article class="panel-card">
+        <h2>Datos de la cuenta</h2>
+
+        @if (mensaje) {
+          <div class="feedback success">{{ mensaje }}</div>
+        }
+
+        @if (error) {
+          <div class="feedback error">{{ error }}</div>
+        }
+
+        <form class="ajustes-form" [formGroup]="ajustesForm" (ngSubmit)="guardar()">
+          <label>
+            Nombre
+            <input type="text" formControlName="nombre" />
+          </label>
+
+          <label>
+            Email
+            <input type="email" formControlName="email" />
+          </label>
+
+          <label>
+            Contrasena actual
+            <input type="password" formControlName="current_password" />
+          </label>
+
+          <label>
+            Nueva contrasena
+            <input type="password" formControlName="password" />
+          </label>
+
+          <label>
+            Confirmar nueva contrasena
+            <input type="password" formControlName="password_confirmation" />
+          </label>
+
+          <button class="btn-save" type="submit" [disabled]="guardando">
+            {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </form>
+      </article>
+
+      <article class="panel-card">
+        <h2>Preferencias</h2>
+
+        <div class="preferencia-item">
+          <div>
+            <strong>Notificaciones</strong>
+            <p>Avisos cuando haya movimiento en tus reportes.</p>
+          </div>
+          <input type="checkbox" [(ngModel)]="preferencias.notificaciones" [ngModelOptions]="{ standalone: true }" />
+        </div>
+
+        <div class="preferencia-item">
+          <div>
+            <strong>Geolocalizacion</strong>
+            <p>Permite mejorar la experiencia del mapa en tu navegador.</p>
+          </div>
+          <input type="checkbox" [(ngModel)]="preferencias.geolocalizacion" [ngModelOptions]="{ standalone: true }" />
+        </div>
+
+        <div class="preferencia-item">
+          <div>
+            <strong>Modo oscuro</strong>
+            <p>Guardado local para futuras pantallas del proyecto.</p>
+          </div>
+          <input type="checkbox" [(ngModel)]="preferencias.modoOscuro" [ngModelOptions]="{ standalone: true }" />
+        </div>
+
+        <button class="btn-secondary" type="button" (click)="guardarPreferencias()">
+          Guardar preferencias
+        </button>
+      </article>
+    </div>
+  }
+</section>

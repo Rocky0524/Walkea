@@ -3,19 +3,23 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+export interface UsuarioPerfil {
+  id_usuario: number;
+  nombre: string;
+  email: string;
+  reputacion: number;
+}
+
+export interface EstadisticasPerfil {
+  total_reportes: number;
+  total_votos: number;
+  nivel: string;
+  peso_voto: number;
+}
+
 export interface PerfilResponse {
-  usuario: {
-    id_usuario: number;
-    nombre: string;
-    email: string;
-    reputacion: number;
-  };
-  estadisticas: {
-    total_reportes: number;
-    total_votos: number;
-    nivel: string;
-    peso_voto: number;
-  };
+  usuario: UsuarioPerfil;
+  estadisticas: EstadisticasPerfil;
 }
 
 export interface AjustesPayload {
@@ -26,11 +30,18 @@ export interface AjustesPayload {
   password_confirmation?: string;
 }
 
+export interface PreferenciasAjustes {
+  notificaciones: boolean;
+  geolocalizacion: boolean;
+  modoOscuro: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class PerfilService {
   private apiUrl = environment.apiUrl;
+  private preferenciasKey = 'walkea_preferencias';
 
   constructor(private http: HttpClient) {}
 
@@ -38,7 +49,33 @@ export class PerfilService {
     return this.http.get<PerfilResponse>(`${this.apiUrl}/perfil`);
   }
 
-  actualizarAjustes(payload: AjustesPayload): Observable<{ mensaje: string }> {
-    return this.http.put<{ mensaje: string }>(`${this.apiUrl}/ajustes`, payload);
+  actualizarAjustes(payload: AjustesPayload): Observable<{ mensaje: string; usuario: UsuarioPerfil }> {
+    return this.http.put<{ mensaje: string; usuario: UsuarioPerfil }>(`${this.apiUrl}/ajustes`, payload);
+  }
+
+  obtenerPreferencias(): PreferenciasAjustes {
+    const guardadas = localStorage.getItem(this.preferenciasKey);
+
+    if (!guardadas) {
+      return {
+        notificaciones: true,
+        geolocalizacion: true,
+        modoOscuro: false
+      };
+    }
+
+    try {
+      return JSON.parse(guardadas) as PreferenciasAjustes;
+    } catch {
+      return {
+        notificaciones: true,
+        geolocalizacion: true,
+        modoOscuro: false
+      };
+    }
+  }
+
+  guardarPreferencias(preferencias: PreferenciasAjustes): void {
+    localStorage.setItem(this.preferenciasKey, JSON.stringify(preferencias));
   }
 }

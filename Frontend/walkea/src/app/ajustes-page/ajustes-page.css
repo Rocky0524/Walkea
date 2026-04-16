@@ -1,0 +1,147 @@
+.ajustes-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.header-banner {
+  padding: 1.5rem;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #d7eafb 0%, #c8dff4 100%);
+}
+
+.header-kicker {
+  margin: 0 0 0.35rem;
+  color: #2c75c9;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.header-banner h1 {
+  margin: 0;
+  color: #17314f;
+  font-size: 2rem;
+}
+
+.header-subtitle {
+  margin: 0.4rem 0 0;
+  color: #4e6479;
+}
+
+.ajustes-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 1.5rem;
+}
+
+.panel-card,
+.state-card {
+  background-color: white;
+  border-radius: 24px;
+  padding: 1.8rem;
+  box-shadow: 0 10px 30px rgba(29, 49, 80, 0.08);
+}
+
+.panel-card h2 {
+  margin-top: 0;
+  color: #1d2f44;
+}
+
+.ajustes-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.ajustes-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: #35506c;
+  font-weight: 600;
+}
+
+.ajustes-form input {
+  border: 1px solid #d8e3ef;
+  border-radius: 14px;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+}
+
+.feedback {
+  margin-bottom: 1rem;
+  padding: 0.95rem 1rem;
+  border-radius: 14px;
+}
+
+.feedback.success {
+  background-color: #e8f7ed;
+  color: #1b6b34;
+}
+
+.feedback.error {
+  background-color: #fdeaea;
+  color: #a13131;
+}
+
+.preferencia-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem 0;
+  border-bottom: 1px solid #eef3f8;
+}
+
+.preferencia-item strong {
+  display: block;
+  color: #22364e;
+}
+
+.preferencia-item p {
+  margin: 0.3rem 0 0;
+  color: #64788d;
+}
+
+.preferencia-item input {
+  width: 22px;
+  height: 22px;
+  margin-top: 0.2rem;
+}
+
+.btn-save,
+.btn-secondary {
+  border: none;
+  border-radius: 999px;
+  padding: 0.95rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-save {
+  background-color: #2c75c9;
+  color: white;
+}
+
+.btn-secondary {
+  margin-top: 1.4rem;
+  background-color: #edf5fd;
+  color: #255e9d;
+}
+
+@media (max-width: 900px) {
+  .ajustes-page {
+    padding: 1rem;
+  }
+
+  .ajustes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .preferencia-item {
+    align-items: center;
+  }
+}

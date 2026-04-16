@@ -6,8 +6,8 @@ import { LayoutComponent } from './layout/layout';
 import { DashboardComponent } from './dashboard/dashboard';
 import { MapaComponent } from './mapa/mapa';
 import { MisReportes } from './components/mis-reportes/mis-reportes';
-import { Perfil } from './components/perfil/perfil'; 
-import { Ajustes } from './components/ajustes/ajustes';
+import { PerfilPageComponent } from './perfil-page/perfil-page';
+import { AjustesPageComponent } from './ajustes-page/ajustes-page';
 
 export const routes: Routes = [
   // Rutas publicas (sin sidebar)
@@ -25,8 +25,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'mapa', component: MapaComponent },
       { path: 'mis-reportes', component: MisReportes },
-      { path: 'perfil', component: Perfil},
-      { path: 'ajustes', component: Ajustes },
+      { path: 'perfil', component: PerfilPageComponent },
+      { path: 'ajustes', component: AjustesPageComponent },
     ]
   }
 ];
