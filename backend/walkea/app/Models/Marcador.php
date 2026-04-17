@@ -19,6 +19,7 @@ class Marcador extends Model
         'latitud',
         'longitud',
         'estado',
+        'titulo',
         'descripcion',
         'vida',
         'id_usuario',

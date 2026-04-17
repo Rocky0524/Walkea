@@ -20,4 +20,8 @@ export class AuthService {
   login(credenciales: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credenciales);
   }
+
+  me(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/me`);
+  }
 }

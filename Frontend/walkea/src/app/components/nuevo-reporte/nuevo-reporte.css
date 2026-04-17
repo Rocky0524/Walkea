@@ -103,6 +103,15 @@ textarea {
   font-family: inherit;
 }
 
+input[type="text"] {
+  width: 100%;
+  border-radius: 15px;
+  border: none;
+  background-color: #dbeffc;
+  padding: 12px 10px;
+  font-family: inherit;
+}
+
 .mini-map-container {
   width: 100%;
   height: 120px;

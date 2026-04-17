@@ -1,6 +1,6 @@
 <div class="mis-reportes-content">
   <header class="header-banner">
-    Gestión de tus incidencias reportadas.
+    Gestion de tus incidencias reportadas.
   </header>
 
   <div class="content-body-list">
@@ -8,35 +8,43 @@
       <h2>Mis Reportes Enviados</h2>
       <p>Revisa el estado y la vida de los avisos que has creado en el mapa.</p>
 
+      @if (cargando) {
+        <p style="text-align: center; padding: 1rem;">Cargando reportes reales...</p>
+      }
+
+      @if (error) {
+        <p style="text-align: center; padding: 1rem; color: #c0392b;">{{ error }}</p>
+      }
+
       <table class="report-table">
         <thead>
           <tr>
-            <th>Descripción</th>
-            <th>Ubicación (Lat, Lng)</th>
+            <th>Titulo</th>
+            <th>Descripcion</th>
+            <th>Ubicacion (Lat, Lng)</th>
             <th>Estado</th>
             <th>Vida</th>
-            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          @for (reporte of misReportes; track reporte.descripcion) {
+          @for (reporte of misReportes; track reporte.id_marcador || $index) {
             <tr>
-              <td>{{ reporte.descripcion }}</td>
-              <td>{{ reporte.latitud.toFixed(3) }}, {{ reporte.longitud.toFixed(3) }}</td>
+              <td>{{ reporte.titulo || 'Sin titulo' }}</td>
+              <td>{{ reporte.descripcion || 'Sin descripcion' }}</td>
+              <td>{{ textoUbicacion(reporte) }}</td>
               <td>
-                <span class="badge" [ngClass]="reporte.estado">
-                  {{ reporte.estado | titlecase }}
+                <span class="badge" [ngClass]="reporte.estado || 'activo'">
+                  {{ (reporte.estado || 'activo') | titlecase }}
                 </span>
               </td>
-              <td class="vida-cell">{{ reporte.vida }}/10 ❤️</td>
-              <td>
-                <button class="btn-delete" (click)="eliminarReporte(reporte)">Eliminar</button>
-              </td>
+              <td class="vida-cell">{{ reporte.hp_vida ?? reporte.vida ?? 0 }}/10 HP</td>
             </tr>
           } @empty {
-            <tr>
-              <td colspan="5" style="text-align: center; padding: 2rem;">No has enviado ningún reporte todavía.</td>
-            </tr>
+            @if (!cargando) {
+              <tr>
+                <td colspan="5" style="text-align: center; padding: 2rem;">No has enviado ningun reporte todavia.</td>
+              </tr>
+            }
           }
         </tbody>
       </table>

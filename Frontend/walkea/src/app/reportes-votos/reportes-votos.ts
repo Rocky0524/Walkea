@@ -27,8 +27,10 @@ export class ReportesVotosComponent implements OnInit {
     this.error = '';
 
     this.marcadorService.obtenerTodos().subscribe({
-      next: (data) => {
-        this.reportes = data.map(m => ({ ...m, hp_vida: m.hp_vida ?? m.vida }));
+      next: (dataRaw) => {
+        this.reportes = this.marcadorService
+          .normalizarLista(dataRaw)
+          .sort((a, b) => b.id_marcador - a.id_marcador);
         this.cargando = false;
       },
       error: () => {
@@ -58,5 +60,15 @@ export class ReportesVotosComponent implements OnInit {
         this.votoEnCursoId = null;
       }
     });
+  }
+
+  textoUbicacion(reporte: Marcador): string {
+    const lat = Number(reporte.latitud);
+    const lng = Number(reporte.longitud);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) {
+      return 'No disponible';
+    }
+
+    return `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
   }
 }

@@ -1,36 +1,34 @@
 <div class="dashboard-content">
-  <!-- HEADER -->
   <div class="header-banner">
-    <strong>¡Bienvenido!</strong> Consulta los reportes cercanos o crea uno nuevo.
+    <strong>Bienvenido.</strong> Consulta los reportes cercanos o crea uno nuevo.
   </div>
 
   <div class="content-body">
-    <!-- LEFT COL: REPORTES -->
     <div class="reportes-section">
-      <h3>Últimos reportes</h3>
+      <h3>Ultimos reportes</h3>
 
       <div class="reportes-list">
         @if (marcadores.length === 0) {
           <p style="color: #666;">No hay reportes recientes para mostrar.</p>
         }
 
-        <!-- Mostramos solo los 3 primeros -->
-        @for (m of marcadores | slice:0:3; track $index) {
+        @for (m of marcadores | slice:0:3; track m.id_marcador || $index) {
           <div class="report-card">
-            <div class="report-icon" [style.background-color]="getColor($index)">
+            <div class="report-icon">
+              {{ iconoPorTipo(m.id_tipo_marcador) }}
             </div>
             <div class="report-info">
-              <span class="report-title">{{ m.descripcion || 'Reporte' }}</span>
-              <span class="report-score">5/10❤️</span>
+              <span class="report-title">{{ m.titulo || 'Reporte' }}</span>
+              <span class="report-subtitle">{{ m.descripcion || 'Sin descripcion' }}</span>
+              <span class="report-score">{{ m.hp_vida ?? m.vida }}/10 HP</span>
             </div>
           </div>
         }
       </div>
 
-      <button class="btn-more-reports" routerLink="/app/mis-reportes">Ver más reportes</button>
+      <button class="btn-more-reports" routerLink="/app/mapa">Ver mas reportes</button>
     </div>
 
-    <!-- RIGHT COL: MINI MAPA -->
     <div class="map-section">
       <h3>Tu zona</h3>
       <div class="mini-map-container">
@@ -39,13 +37,11 @@
     </div>
   </div>
 
-  <!-- FAB BUTTON -->
-  <button class="fab-add" title="Añadir reporte" aria-label="Añadir reporte" (click)="abrirModalReporte()"></button>
+  <button class="fab-add" title="Anadir reporte" aria-label="Anadir reporte" (click)="abrirModalReporte()"></button>
 
-  <!-- MODAL NUEVO REPORTE -->
   @if (mostrarNuevoReporte) {
-    <app-nuevo-reporte 
-      (cerrar)="cerrarModalReporte()" 
+    <app-nuevo-reporte
+      (cerrar)="cerrarModalReporte()"
       (enviar)="guardarReporte($event)">
     </app-nuevo-reporte>
   }

@@ -1,51 +1,55 @@
 <div class="modal-backdrop">
   <div class="modal-content">
-    
     <div class="modal-header">
       <h3>Nuevo reporte</h3>
       <button class="btn-close" (click)="cancelar()">X</button>
     </div>
 
     <div class="modal-body">
-      <!-- Sección 1 -->
       <div class="seccion">
-        <label>1. ¿Que has visto?</label>
+        <label>1. Que has visto?</label>
         <div class="grid-tipos">
           @for (tipo of tipos; track tipo.id) {
-            <button 
-              class="btn-tipo" 
+            <button
+              class="btn-tipo"
               [class.activo]="tipoSeleccionado === tipo.id"
               (click)="seleccionarTipo(tipo.id)">
-              <span class="emoji">{{tipo.icono}}</span>
-              <span class="nombre">{{tipo.nombre}}</span>
+              <span class="emoji">{{ tipo.icono }}</span>
+              <span class="nombre">{{ tipo.nombre }}</span>
             </button>
           }
         </div>
       </div>
 
-      <!-- Sección 2 & 3 row -->
       <div class="seccion-row">
         <div class="seccion mitad">
-          <label>2. Añade detalles (Opcional)</label>
-          <textarea 
-            [(ngModel)]="descripcion" 
-            placeholder="Describe la incidencia..."></textarea>
+          <label>2. Titulo del marcador</label>
+          <input
+            type="text"
+            [(ngModel)]="titulo"
+            maxlength="120"
+            placeholder="Ej: Farola rota frente al instituto" />
         </div>
 
         <div class="seccion mitad">
-          <label>3. Confirma la ubicacion.</label>
-          <div class="mini-map-container">
-            <div id="mapa-nuevo-reporte"></div>
-          </div>
+          <label>3. Anade detalles (opcional)</label>
+          <textarea
+            [(ngModel)]="descripcion"
+            placeholder="Describe la incidencia..."></textarea>
         </div>
       </div>
-      
+
+      <div class="seccion">
+        <label>4. Confirma la ubicacion</label>
+        <div class="mini-map-container">
+          <div id="mapa-nuevo-reporte"></div>
+        </div>
+      </div>
     </div>
 
     <div class="modal-footer">
       <button class="btn-enviar" (click)="enviarReporte()">Enviar reporte</button>
       <button class="btn-cancelar" (click)="cancelar()">Cancelar</button>
     </div>
-
   </div>
 </div>
