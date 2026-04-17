@@ -19,8 +19,6 @@ export class MapaComponent implements AfterViewInit {
   mostrarNuevoReporte: boolean = false;
   marcadores: Marcador[] = [];
   tiposMarcador: any[] = [];
-  colores: string[] = ['#e74c3c', '#f39c12', '#3498db', '#2ecc71', '#9b59b6'];
-
   filtroActivo: number | null = null;
 
   constructor(
@@ -59,8 +57,8 @@ export class MapaComponent implements AfterViewInit {
 
   private cargarMarcadores(): void {
     this.marcadorService.obtenerTodos().subscribe({
-      next: (data) => {
-        this.marcadores = data.map((m) => ({ ...m, hp_vida: m.hp_vida ?? m.vida }));
+      next: (dataRaw) => {
+        this.marcadores = this.marcadorService.normalizarLista(dataRaw);
         this.pintarMarcadores();
       },
       error: (err) => console.error('Error cargando marcadores:', err)
@@ -75,30 +73,39 @@ export class MapaComponent implements AfterViewInit {
       : this.marcadores;
 
     marcadoresAMostrar.forEach((m) => {
-      const idx = this.tiposMarcador.findIndex((t) => t.id_tipo_marcador === m.id_tipo_marcador);
-      const color = this.colores[idx] || '#999';
-
-      const circulo = L.circleMarker([m.latitud, m.longitud], {
-        radius: 10,
-        fillColor: color,
-        color: '#fff',
-        weight: 2,
-        fillOpacity: 0.9
+      const iconoEmoji = this.iconoPorTipo(m.id_tipo_marcador);
+      const marker = L.marker([m.latitud, m.longitud], {
+        icon: L.divIcon({
+          className: 'emoji-marker-wrapper',
+          html: `<div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:50%;background:rgba(255,255,255,0.92);box-shadow:0 6px 14px rgba(25,42,68,0.2);">${iconoEmoji}</div>`,
+          iconSize: [34, 34],
+          iconAnchor: [17, 17]
+        })
       });
 
-      circulo.bindPopup(this.crearContenidoPopup(m));
-      this.marcadoresLayer.addLayer(circulo);
+      marker.bindPopup(this.crearContenidoPopup(m));
+      this.marcadoresLayer.addLayer(marker);
     });
   }
 
+  private iconoPorTipo(idTipo: number): string {
+    switch (idTipo) {
+      case 1: return '👊';
+      case 2: return '🛠️';
+      case 3: return '🕒';
+      case 4: return '‼️';
+      default: return '📍';
+    }
+  }
+
   private crearContenidoPopup(marcador: Marcador): HTMLElement {
-    const tipoNombre = marcador.tipo_marcador?.nombre || 'Sin tipo';
+    const titulo = marcador.titulo || marcador.tipo_marcador?.nombre || 'Marcador';
     const hp = marcador.hp_vida ?? marcador.vida;
     const agotado = hp === 0;
     const contenedor = document.createElement('div');
     contenedor.className = 'popup-voto';
     contenedor.innerHTML = `
-      <strong>${tipoNombre}</strong><br>
+      <strong>${titulo}</strong><br>
       <span>${marcador.descripcion}</span><br>
       <small>Estado: ${marcador.estado} | HP: ${hp}/10</small>
       <div class="popup-actions">
@@ -153,10 +160,6 @@ export class MapaComponent implements AfterViewInit {
   filtrarPorTipo(idTipo: number | null): void {
     this.filtroActivo = this.filtroActivo === idTipo ? null : idTipo;
     this.pintarMarcadores();
-  }
-
-  getColor(i: number): string {
-    return this.colores[i] || '#999';
   }
 
   private obtenerUbicacionReal(): void {

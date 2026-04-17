@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { MarcadorService } from '../services/marcador.service';
+import { Marcador, MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
 import * as L from 'leaflet';
 import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte';
@@ -14,16 +14,12 @@ import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte
   styleUrl: './dashboard.css'
 })
 export class DashboardComponent implements OnInit {
-
   private mapa: any;
   private marcadoresEnMapa: any[] = [];
   mostrarNuevoReporte: boolean = false;
 
-  marcadores: any[] = [];
+  marcadores: Marcador[] = [];
   tiposMarcador: any[] = [];
-
-  // colores que le ponemos a cada tipo de marcador, uno por cada tipo del seeder
-  colores: string[] = ['#e74c3c', '#f39c12', '#3498db', '#2ecc71', '#9b59b6'];
 
   constructor(
     private marcadorService: MarcadorService,
@@ -45,7 +41,6 @@ export class DashboardComponent implements OnInit {
     }).addTo(this.mapa);
   }
 
-  // pedimos la ubicacion del usuario para centrar el mapa y cargar marcadores cercanos
   private pedirUbicacion(): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -55,15 +50,12 @@ export class DashboardComponent implements OnInit {
           this.mapa.setView([lat, lng], 15);
 
           L.marker([lat, lng]).addTo(this.mapa)
-            .bindPopup('<b>Estás aquí</b>')
+            .bindPopup('<b>Estas aqui</b>')
             .openPopup();
 
           this.cargarCercanos(lat, lng);
         },
-        () => {
-          // si no da permiso cargamos todos
-          this.cargarTodos();
-        }
+        () => this.cargarTodos()
       );
     } else {
       this.cargarTodos();
@@ -72,8 +64,8 @@ export class DashboardComponent implements OnInit {
 
   private cargarCercanos(lat: number, lng: number): void {
     this.marcadorService.obtenerCercanos(lat, lng).subscribe({
-      next: (data) => {
-        this.marcadores = data;
+      next: (dataRaw) => {
+        this.marcadores = this.ordenarMarcadoresRecientes(this.marcadorService.normalizarLista(dataRaw));
         this.pintarMarcadores();
       },
       error: (err) => console.error('Error:', err)
@@ -82,8 +74,8 @@ export class DashboardComponent implements OnInit {
 
   private cargarTodos(): void {
     this.marcadorService.obtenerTodos().subscribe({
-      next: (data) => {
-        this.marcadores = data;
+      next: (dataRaw) => {
+        this.marcadores = this.ordenarMarcadoresRecientes(this.marcadorService.normalizarLista(dataRaw));
         this.pintarMarcadores();
       },
       error: (err) => console.error('Error:', err)
@@ -99,59 +91,63 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // pintamos cada marcador como un circulito con el color de su tipo
   private pintarMarcadores(): void {
-    this.marcadores.forEach((m) => {
-      const idx = this.tiposMarcador.findIndex(t => t.id_tipo_marcador === m.id_tipo_marcador);
-      const color = this.colores[idx] || '#999';
+    this.marcadoresEnMapa.forEach((m) => this.mapa.removeLayer(m));
+    this.marcadoresEnMapa = [];
 
-      const circulo = L.circleMarker([m.latitud, m.longitud], {
-        radius: 10,
-        fillColor: color,
-        color: '#fff',
-        weight: 2,
-        fillOpacity: 0.9
+    this.marcadores.forEach((m) => {
+      const marker = L.marker([m.latitud, m.longitud], {
+        icon: L.divIcon({
+          className: 'emoji-marker-wrapper',
+          html: `<div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:20px;border-radius:50%;background:rgba(255,255,255,0.92);box-shadow:0 4px 12px rgba(19,41,66,0.2);">${this.iconoPorTipo(m.id_tipo_marcador)}</div>`,
+          iconSize: [32, 32],
+          iconAnchor: [16, 16]
+        })
       }).addTo(this.mapa);
 
-      const tipoNombre = m.tipo_marcador?.nombre || 'Sin tipo';
-      circulo.bindPopup(`
-        <b>${tipoNombre}</b><br>
+      const titulo = m.titulo || m.tipo_marcador?.nombre || 'Marcador';
+      marker.bindPopup(`
+        <b>${titulo}</b><br>
         ${m.descripcion}<br>
         <small>Estado: ${m.estado}</small>
       `);
 
-      this.marcadoresEnMapa.push(circulo);
+      this.marcadoresEnMapa.push(marker);
     });
   }
 
-  getColor(i: number): string {
-    return this.colores[i] || '#999';
+  private ordenarMarcadoresRecientes(marcadores: Marcador[]): Marcador[] {
+    return [...marcadores].sort((a, b) => b.id_marcador - a.id_marcador);
   }
 
-  abrirModalReporte() {
+  iconoPorTipo(idTipo: number): string {
+    switch (idTipo) {
+      case 1: return '👊';
+      case 2: return '🛠️';
+      case 3: return '🕒';
+      case 4: return '‼️';
+      default: return '📍';
+    }
+  }
+
+  abrirModalReporte(): void {
     this.mostrarNuevoReporte = true;
   }
 
-  cerrarModalReporte() {
+  cerrarModalReporte(): void {
     this.mostrarNuevoReporte = false;
   }
 
-  guardarReporte(datos: any) {
+  guardarReporte(datos: any): void {
     this.marcadorService.crear(datos).subscribe({
-      next: (res) => {
-        alert('¡Reporte guardado de verdad en la base de datos!');
+      next: () => {
+        alert('Reporte guardado correctamente');
         this.cerrarModalReporte();
-        
-        // Limpiamos los marcadores del mapa para no duplicarlos
-        this.marcadoresEnMapa.forEach(m => this.mapa.removeLayer(m));
-        this.marcadoresEnMapa = [];
-        
-        // Recargamos los datos (cercanos o todos)
-        this.pedirUbicacion(); 
+        this.pedirUbicacion();
       },
       error: (err) => {
         console.error('Error guardando reporte:', err);
-        alert('Error al guardar en la BD. Asegúrate de tener token JWT y backend encendido.');
+        alert('Error al guardar en la BD. Asegurate de tener token JWT y backend encendido.');
       }
     });
   }

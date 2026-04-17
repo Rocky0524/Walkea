@@ -57,6 +57,7 @@ class MarcadorController extends Controller
         $request->validate([
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
+            'titulo' => 'required|string|max:120',
             'descripcion' => 'required|string',
             'id_tipo_marcador' => 'required|exists:tipo_marcador,id_tipo_marcador',
         ]);
@@ -68,6 +69,7 @@ class MarcadorController extends Controller
         $marcador = Marcador::create([
             'latitud' => $request->latitud,
             'longitud' => $request->longitud,
+            'titulo' => $request->titulo,
             'descripcion' => $request->descripcion,
             'id_usuario' => $usuario->id_usuario,
             'id_tipo_marcador' => $request->id_tipo_marcador,
@@ -90,6 +92,7 @@ class MarcadorController extends Controller
         $request->validate([
             'latitud' => 'sometimes|numeric',
             'longitud' => 'sometimes|numeric',
+            'titulo' => 'sometimes|string|max:120',
             'descripcion' => 'sometimes|string',
             'id_tipo_marcador' => 'sometimes|exists:tipo_marcador,id_tipo_marcador',
         ]);

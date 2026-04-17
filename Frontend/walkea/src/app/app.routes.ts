@@ -8,7 +8,6 @@ import { MapaComponent } from './mapa/mapa';
 import { MisReportes } from './components/mis-reportes/mis-reportes';
 import { PerfilPageComponent } from './perfil-page/perfil-page';
 import { AjustesPageComponent } from './ajustes-page/ajustes-page';
-import { ReportesVotosComponent } from './reportes-votos/reportes-votos';
 
 export const routes: Routes = [
   // Rutas publicas (sin sidebar)
@@ -26,7 +25,6 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'mapa', component: MapaComponent },
       { path: 'mis-reportes', component: MisReportes },
-      { path: 'votos', component: ReportesVotosComponent },
       { path: 'perfil', component: PerfilPageComponent },
       { path: 'ajustes', component: AjustesPageComponent },
     ]

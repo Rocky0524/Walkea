@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as L from 'leaflet';
@@ -15,35 +15,32 @@ export class NuevoReporteComponent implements AfterViewInit {
   @Output() enviar = new EventEmitter<any>();
 
   private map: any;
-  latitudReal: number = 41.6167; // Por defecto Lleida
-  longitudReal: number = 0.6222; // Por defecto Lleida
+  latitudReal: number = 41.6167;
+  longitudReal: number = 0.6222;
 
-  // ID según el seeder (1: Peligro, 2: Obras, 3: Zona segura, 4: Otros)
-  // En este diseño: Peligro, Obras, Zona segura, Otros.
   tipoSeleccionado: number | null = null;
+  titulo: string = '';
   descripcion: string = '';
 
-  // Mapeamos los ID a los que existen en la BD real (1 al 5) según el seeder
   tipos = [
     { id: 1, nombre: 'Peligro', icono: '👊' },
     { id: 2, nombre: 'Obras', icono: '🛠️' },
     { id: 3, nombre: 'Zona segura', icono: '🕒' },
-    { id: 4, nombre: 'Otros..', icono: '⁉️' } // Usamos el ID 4 en vez de 6 para no fallar la validación
+    { id: 4, nombre: 'Otros', icono: '‼️' }
   ];
 
-  seleccionarTipo(id: number) {
+  seleccionarTipo(id: number): void {
     this.tipoSeleccionado = id;
   }
 
-  ngAfterViewInit() {
-    // Timeout pequeño para dar tiempo a que Angular monte el #mapa-nuevo-reporte en el DOM
+  ngAfterViewInit(): void {
     setTimeout(() => {
       this.initMap();
       this.obtenerUbicacion();
     }, 100);
   }
 
-  private initMap() {
+  private initMap(): void {
     this.map = L.map('mapa-nuevo-reporte').setView([this.latitudReal, this.longitudReal], 15);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -51,41 +48,47 @@ export class NuevoReporteComponent implements AfterViewInit {
     }).addTo(this.map);
   }
 
-  private obtenerUbicacion() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          this.latitudReal = pos.coords.latitude;
-          this.longitudReal = pos.coords.longitude;
-          
-          this.map.setView([this.latitudReal, this.longitudReal], 16);
-          L.marker([this.latitudReal, this.longitudReal]).addTo(this.map)
-            .bindPopup('<b>Aquí estás</b>').openPopup();
-        },
-        (error) => {
-          console.error("GPS denegado o error.", error);
-          // Si deniegan, dejamos las coordenadas por defecto
-          L.marker([this.latitudReal, this.longitudReal]).addTo(this.map)
-            .bindPopup('<b>Ubicación por defecto</b>').openPopup();
-        }
-      );
+  private obtenerUbicacion(): void {
+    if (!navigator.geolocation) {
+      return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.latitudReal = pos.coords.latitude;
+        this.longitudReal = pos.coords.longitude;
+
+        this.map.setView([this.latitudReal, this.longitudReal], 16);
+        L.marker([this.latitudReal, this.longitudReal]).addTo(this.map)
+          .bindPopup('<b>Aqui estas</b>').openPopup();
+      },
+      (error) => {
+        console.error('GPS denegado o error.', error);
+        L.marker([this.latitudReal, this.longitudReal]).addTo(this.map)
+          .bindPopup('<b>Ubicacion por defecto</b>').openPopup();
+      }
+    );
   }
 
-  cancelar() {
+  cancelar(): void {
     this.cerrar.emit();
   }
 
-  enviarReporte() {
+  enviarReporte(): void {
     if (!this.tipoSeleccionado) {
-      alert("Por favor selecciona un tipo de reporte.");
+      alert('Por favor selecciona un tipo de reporte.');
       return;
     }
-    
-    // Datos formateados como espera el backend de Laravel usando tu ubicación real
+
+    if (!this.titulo.trim()) {
+      alert('Por favor escribe un titulo para el marcador.');
+      return;
+    }
+
     const data = {
       id_tipo_marcador: this.tipoSeleccionado,
-      descripcion: this.descripcion || 'Sin descripción',
+      titulo: this.titulo.trim(),
+      descripcion: this.descripcion || 'Sin descripcion',
       latitud: this.latitudReal,
       longitud: this.longitudReal
     };

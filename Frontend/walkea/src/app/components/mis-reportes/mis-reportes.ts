@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../auth';
 import { Marcador, MarcadorService } from '../../services/marcador.service';
 
 @Component({
@@ -12,73 +13,58 @@ import { Marcador, MarcadorService } from '../../services/marcador.service';
 export class MisReportes implements OnInit {
   misReportes: Marcador[] = [];
   cargando = true;
-  votoEnCursoId: number | null = null;
-  mensaje = '';
   error = '';
 
-  constructor(private marcadorService: MarcadorService) {}
+  constructor(
+    private marcadorService: MarcadorService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    this.cargarReportes();
+    this.cargarMisReportes();
   }
 
-  cargarReportes(): void {
+  cargarMisReportes(): void {
     this.cargando = true;
     this.error = '';
 
-    this.marcadorService.obtenerTodos().subscribe({
-      next: (data) => {
-        this.misReportes = data.map(m => ({ 
-          ...m, 
-          hp_vida: m.hp_vida ?? m.vida,
-          latitud: Number(m.latitud),
-          longitud: Number(m.longitud),
-          estado: m.estado || 'desconocido'
-        }));
-        this.cargando = false;
+    this.authService.me().subscribe({
+      next: (usuario) => {
+        const idUsuario = Number(usuario?.id_usuario ?? usuario?.id ?? 0);
+        if (!idUsuario) {
+          this.error = 'No se pudo identificar tu usuario.';
+          this.cargando = false;
+          return;
+        }
+
+        this.marcadorService.obtenerTodos().subscribe({
+          next: (marcadoresRaw) => {
+            const marcadores = this.marcadorService.normalizarLista(marcadoresRaw);
+            this.misReportes = marcadores
+              .filter((m) => Number(m.id_usuario ?? m.usuario?.id_usuario ?? 0) === idUsuario)
+              .sort((a, b) => b.id_marcador - a.id_marcador);
+            this.cargando = false;
+          },
+          error: () => {
+            this.error = 'No se pudieron cargar tus reportes.';
+            this.cargando = false;
+          }
+        });
       },
       error: () => {
-        this.error = 'No se pudieron cargar los reportes.';
+        this.error = 'Sesion no valida. Inicia sesion de nuevo.';
         this.cargando = false;
       }
     });
   }
 
-  eliminarReporte(reporte: Marcador) {
-    if(confirm('¿Estás seguro de que quieres eliminar este reporte?')) {
-      this.marcadorService.eliminar(reporte.id_marcador).subscribe({
-        next: () => {
-          this.misReportes = this.misReportes.filter(r => r.id_marcador !== reporte.id_marcador);
-          this.mensaje = 'Reporte eliminado correctamente.';
-          this.error = '';
-        },
-        error: (err) => {
-          this.error = err?.error?.mensaje || 'No se pudo eliminar el reporte. Es posible que no tengas permisos.';
-          this.mensaje = '';
-        }
-      });
+  textoUbicacion(reporte: Marcador): string {
+    const lat = Number(reporte.latitud);
+    const lng = Number(reporte.longitud);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) {
+      return 'No disponible';
     }
-  }
 
-  votar(reporte: Marcador, tipo: 'positivo' | 'negativo') {
-    this.votoEnCursoId = reporte.id_marcador;
-    this.mensaje = '';
-    this.error = '';
-
-    this.marcadorService.votar(reporte.id_marcador, tipo).subscribe({
-      next: (respuesta) => {
-        reporte.vida = respuesta.vida_marcador;
-        reporte.hp_vida = respuesta.hp_vida;
-        if (respuesta.hp_vida === 0) {
-          reporte.estado = 'agotado';
-        }
-        this.mensaje = `Voto ${tipo} aplicado.`;
-        this.votoEnCursoId = null;
-      },
-      error: (err) => {
-        this.error = err?.error?.mensaje || 'No se pudo registrar el voto.';
-        this.votoEnCursoId = null;
-      }
-    });
+    return `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
   }
 }
