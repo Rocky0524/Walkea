@@ -1,10 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Poppins:wght@400;600;700&display=swap');
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 html, body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f2f7fd; 
+  background-color: #f2f7fd;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -15,4 +22,11 @@ h1, h2, h3, h4, h5, h6 {
 button, .btn-submit, .btn-main-action {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
+}
+
+app-root {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }

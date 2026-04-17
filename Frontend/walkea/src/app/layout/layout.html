@@ -1,35 +1,43 @@
 <div class="layout-wrapper">
-  @if (isMobile) {
-    <header class="mobile-topbar">
-      <button class="icon-btn" type="button" aria-label="Abrir menu" (click)="toggleSidebar()">☰</button>
-      <div class="mobile-title">Walkea</div>
-      <div class="mobile-spacer"></div>
-    </header>
+  @if (menuAbierto) {
+    <button class="mobile-backdrop" type="button" aria-label="Cerrar menu" (click)="cerrarMenu()"></button>
   }
 
-  @if (isMobile && sidebarOpen) {
-    <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
-  }
-
-  <aside class="sidebar" [class.sidebar-open]="sidebarOpen" [class.sidebar-mobile]="isMobile">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" [class.sidebar-open]="menuAbierto">
     <div class="sidebar-logo">
-      <img src="logo-walkea.png" alt="Walkea Logo" class="logo-img">
+      <button class="mobile-close" type="button" aria-label="Cerrar menu" (click)="cerrarMenu()">×</button>
+      <div class="logo-circle">
+        <img src="logo-walkea.png" alt="Walkea Logo" class="logo-img">
+      </div>
     </div>
 
     <nav class="sidebar-nav">
-      <button class="nav-btn" routerLink="/app/dashboard" routerLinkActive="active" (click)="closeSidebarOnMobile()">Inicio</button>
-      <button class="nav-btn" routerLink="/app/mapa" routerLinkActive="active" (click)="closeSidebarOnMobile()">Mapa completo</button>
-      <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active" (click)="closeSidebarOnMobile()">Mis reportes</button>
-      <button class="nav-btn" routerLink="/app/perfil" routerLinkActive="active" (click)="closeSidebarOnMobile()">Perfil</button>
-      <button class="nav-btn" routerLink="/app/ajustes" routerLinkActive="active" (click)="closeSidebarOnMobile()">Ajustes</button>
+      <button class="nav-btn" routerLink="/app/dashboard" routerLinkActive="active" (click)="cerrarMenu()">Inicio (Dashboard)</button>
+      <button class="nav-btn" routerLink="/app/mapa" routerLinkActive="active" (click)="cerrarMenu()">Mapa Completo</button>
+      <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active" (click)="cerrarMenu()">Mis Reportes</button>
+      <button class="nav-btn" routerLink="/app/perfil" routerLinkActive="active" (click)="cerrarMenu()">Perfil</button>
+      <button class="nav-btn" routerLink="/app/ajustes" routerLinkActive="active" (click)="cerrarMenu()">Ajustes</button>
     </nav>
 
     <div class="sidebar-footer">
+      <div class="user-avatar">👤</div>
       <span class="user-role">Rango</span>
     </div>
   </aside>
 
+  <!-- CONTENIDO HIJO -->
   <main class="main-content">
+    <div class="mobile-topbar">
+      <button class="mobile-menu-btn" type="button" aria-label="Abrir menu" (click)="toggleMenu()">☰</button>
+      <div class="mobile-brand">
+        <img src="logo-walkea.png" alt="Walkea Logo" class="mobile-brand-logo">
+        <span>Walkea</span>
+      </div>
+    </div>
+
     <router-outlet></router-outlet>
   </main>
 </div>
+
+
