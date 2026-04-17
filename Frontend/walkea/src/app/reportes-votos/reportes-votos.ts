@@ -28,7 +28,14 @@ export class ReportesVotosComponent implements OnInit {
 
     this.marcadorService.obtenerTodos().subscribe({
       next: (data) => {
-        this.reportes = data.map(m => ({ ...m, hp_vida: m.hp_vida ?? m.vida }));
+        this.reportes = data.map(m => ({
+          ...m,
+          descripcion: m.descripcion || 'Sin descripcion',
+          latitud: Number(m.latitud),
+          longitud: Number(m.longitud),
+          estado: m.estado || 'desconocido',
+          hp_vida: m.hp_vida ?? m.vida
+        }));
         this.cargando = false;
       },
       error: () => {

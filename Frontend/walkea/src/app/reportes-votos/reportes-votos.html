@@ -16,6 +16,51 @@
         <div class="feedback error">{{ error }}</div>
       }
 
+      <div class="mobile-report-list">
+        @if (cargando) {
+          <div class="empty-state">Cargando reportes...</div>
+        } @else {
+          @for (reporte of reportes; track reporte.id_marcador) {
+            <article class="mobile-report-card">
+              <div class="mobile-report-top">
+                <div>
+                  <h3>{{ reporte.descripcion }}</h3>
+                </div>
+                <span class="badge" [ngClass]="reporte.estado">
+                  {{ reporte.estado | titlecase }}
+                </span>
+              </div>
+
+              <div class="mobile-report-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Ubicacion</span>
+                  <strong>{{ reporte.latitud.toFixed(3) }}, {{ reporte.longitud.toFixed(3) }}</strong>
+                </div>
+
+                <div class="meta-item">
+                  <span class="meta-label">Estado</span>
+                  <strong>{{ reporte.estado | titlecase }}</strong>
+                </div>
+
+                <div class="meta-item">
+                  <span class="meta-label">Vida</span>
+                  <strong>{{ reporte.hp_vida ?? reporte.vida }}/10 HP</strong>
+                </div>
+              </div>
+
+              <div class="mobile-report-bottom">
+                <div class="vote-actions">
+                  <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'positivo')">+</button>
+                  <button class="btn-vote btn-negative" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'negativo')">-</button>
+                </div>
+              </div>
+            </article>
+          } @empty {
+            <div class="empty-state">No hay reportes disponibles.</div>
+          }
+        }
+      </div>
+
       <table class="report-table">
         <thead>
           <tr>

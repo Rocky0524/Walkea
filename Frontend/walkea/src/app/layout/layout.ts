@@ -8,4 +8,14 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './layout.html',
   styleUrl: './layout.css'
 })
-export class LayoutComponent {}
+export class LayoutComponent {
+  menuAbierto = false;
+
+  toggleMenu(): void {
+    this.menuAbierto = !this.menuAbierto;
+  }
+
+  cerrarMenu(): void {
+    this.menuAbierto = false;
+  }
+}

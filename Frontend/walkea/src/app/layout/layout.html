@@ -1,18 +1,23 @@
 <div class="layout-wrapper">
+  @if (menuAbierto) {
+    <button class="mobile-backdrop" type="button" aria-label="Cerrar menu" (click)="cerrarMenu()"></button>
+  }
+
   <!-- SIDEBAR -->
-  <aside class="sidebar">
+  <aside class="sidebar" [class.sidebar-open]="menuAbierto">
     <div class="sidebar-logo">
+      <button class="mobile-close" type="button" aria-label="Cerrar menu" (click)="cerrarMenu()">×</button>
       <div class="logo-circle">
         <img src="logo-walkea.png" alt="Walkea Logo" class="logo-img">
       </div>
     </div>
 
     <nav class="sidebar-nav">
-      <button class="nav-btn" routerLink="/app/dashboard" routerLinkActive="active">Inicio (Dashboard)</button>
-      <button class="nav-btn" routerLink="/app/mapa" routerLinkActive="active">Mapa Completo</button>
-      <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active">Mis Reportes</button>
-      <button class="nav-btn" routerLink="/app/perfil" routerLinkActive="active">Perfil</button>
-      <button class="nav-btn" routerLink="/app/ajustes" routerLinkActive="active">Ajustes</button>
+      <button class="nav-btn" routerLink="/app/dashboard" routerLinkActive="active" (click)="cerrarMenu()">Inicio (Dashboard)</button>
+      <button class="nav-btn" routerLink="/app/mapa" routerLinkActive="active" (click)="cerrarMenu()">Mapa Completo</button>
+      <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active" (click)="cerrarMenu()">Mis Reportes</button>
+      <button class="nav-btn" routerLink="/app/perfil" routerLinkActive="active" (click)="cerrarMenu()">Perfil</button>
+      <button class="nav-btn" routerLink="/app/ajustes" routerLinkActive="active" (click)="cerrarMenu()">Ajustes</button>
     </nav>
 
     <div class="sidebar-footer">
@@ -23,6 +28,14 @@
 
   <!-- CONTENIDO HIJO -->
   <main class="main-content">
+    <div class="mobile-topbar">
+      <button class="mobile-menu-btn" type="button" aria-label="Abrir menu" (click)="toggleMenu()">☰</button>
+      <div class="mobile-brand">
+        <img src="logo-walkea.png" alt="Walkea Logo" class="mobile-brand-logo">
+        <span>Walkea</span>
+      </div>
+    </div>
+
     <router-outlet></router-outlet>
   </main>
 </div>
