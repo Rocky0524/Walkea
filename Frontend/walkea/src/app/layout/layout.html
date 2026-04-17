@@ -1,30 +1,36 @@
 <div class="layout-wrapper">
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
+  @if (isMobile) {
+    <header class="mobile-topbar">
+      <button class="icon-btn" type="button" aria-label="Abrir menu" (click)="toggleSidebar()">☰</button>
+      <div class="mobile-title">Walkea</div>
+      <div class="mobile-spacer"></div>
+    </header>
+  }
+
+  @if (isMobile && sidebarOpen) {
+    <div class="sidebar-overlay" (click)="toggleSidebar()"></div>
+  }
+
+  <aside class="sidebar" [class.sidebar-open]="sidebarOpen" [class.sidebar-mobile]="isMobile">
     <div class="sidebar-logo">
-      <div class="logo-circle">
-        <img src="logo-walkea.png" alt="Walkea Logo" class="logo-img">
-      </div>
+      <img src="logo-walkea.png" alt="Walkea Logo" class="logo-img">
     </div>
 
     <nav class="sidebar-nav">
-      <button class="nav-btn" routerLink="/app/dashboard" routerLinkActive="active">Inicio (Dashboard)</button>
-      <button class="nav-btn" routerLink="/app/mapa" routerLinkActive="active">Mapa Completo</button>
-      <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active">Mis Reportes</button>
-      <button class="nav-btn" routerLink="/app/perfil" routerLinkActive="active">Perfil</button>
-      <button class="nav-btn" routerLink="/app/ajustes" routerLinkActive="active">Ajustes</button>
+      <button class="nav-btn" routerLink="/app/dashboard" routerLinkActive="active" (click)="closeSidebarOnMobile()">Inicio</button>
+      <button class="nav-btn" routerLink="/app/mapa" routerLinkActive="active" (click)="closeSidebarOnMobile()">Mapa completo</button>
+      <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active" (click)="closeSidebarOnMobile()">Mis reportes</button>
+      <button class="nav-btn" routerLink="/app/votos" routerLinkActive="active" (click)="closeSidebarOnMobile()">Votos</button>
+      <button class="nav-btn" routerLink="/app/perfil" routerLinkActive="active" (click)="closeSidebarOnMobile()">Perfil</button>
+      <button class="nav-btn" routerLink="/app/ajustes" routerLinkActive="active" (click)="closeSidebarOnMobile()">Ajustes</button>
     </nav>
 
     <div class="sidebar-footer">
-      <div class="user-avatar">👤</div>
       <span class="user-role">Rango</span>
     </div>
   </aside>
 
-  <!-- CONTENIDO HIJO -->
   <main class="main-content">
     <router-outlet></router-outlet>
   </main>
 </div>
-
-

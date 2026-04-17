@@ -31,7 +31,6 @@ export interface AjustesPayload {
 }
 
 export interface PreferenciasAjustes {
-  notificaciones: boolean;
   geolocalizacion: boolean;
   modoOscuro: boolean;
 }
@@ -58,7 +57,6 @@ export class PerfilService {
 
     if (!guardadas) {
       return {
-        notificaciones: true,
         geolocalizacion: true,
         modoOscuro: false
       };
@@ -68,7 +66,6 @@ export class PerfilService {
       return JSON.parse(guardadas) as PreferenciasAjustes;
     } catch {
       return {
-        notificaciones: true,
         geolocalizacion: true,
         modoOscuro: false
       };

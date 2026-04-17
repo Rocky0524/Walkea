@@ -109,6 +109,38 @@
   transform: scale(1.05);
 }
 
+.popup-voto {
+  min-width: 220px;
+}
+
+.popup-actions {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.4rem;
+}
+
+.vote-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 0.45rem 0.55rem;
+  font-size: 0.76rem;
+  cursor: pointer;
+  color: #fff;
+}
+
+.vote-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.vote-positive {
+  background: #1f9d55;
+}
+
+.vote-negative {
+  background: #d9534f;
+}
+
 @media (max-width: 900px) {
   .mapa-content {
     padding: 0.75rem;

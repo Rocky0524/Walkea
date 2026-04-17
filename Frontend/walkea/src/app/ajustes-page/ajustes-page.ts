@@ -19,7 +19,6 @@ export class AjustesPageComponent implements OnInit {
   emailActual = '';
 
   preferencias: PreferenciasAjustes = {
-    notificaciones: true,
     geolocalizacion: true,
     modoOscuro: false
   };
