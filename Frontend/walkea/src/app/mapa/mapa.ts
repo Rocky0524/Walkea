@@ -1,7 +1,7 @@
 import { AfterViewInit, Component } from '@angular/core';
 import * as L from 'leaflet';
 import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte';
-import { MarcadorService } from '../services/marcador.service';
+import { Marcador, MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
 
 @Component({
@@ -14,13 +14,13 @@ import { TipoMarcadorService } from '../services/tipo-marcador.service';
 export class MapaComponent implements AfterViewInit {
   private map: any;
   private marcadoresLayer: L.LayerGroup = L.layerGroup();
+  private votoEnCursoId: number | null = null;
 
   mostrarNuevoReporte: boolean = false;
-  marcadores: any[] = [];
+  marcadores: Marcador[] = [];
   tiposMarcador: any[] = [];
   colores: string[] = ['#e74c3c', '#f39c12', '#3498db', '#2ecc71', '#9b59b6'];
 
-  // null = mostrar todos. Si tiene numero, es el id_tipo_marcador
   filtroActivo: number | null = null;
 
   constructor(
@@ -60,7 +60,7 @@ export class MapaComponent implements AfterViewInit {
   private cargarMarcadores(): void {
     this.marcadorService.obtenerTodos().subscribe({
       next: (data) => {
-        this.marcadores = data;
+        this.marcadores = data.map((m) => ({ ...m, hp_vida: m.hp_vida ?? m.vida }));
         this.pintarMarcadores();
       },
       error: (err) => console.error('Error cargando marcadores:', err)
@@ -86,23 +86,72 @@ export class MapaComponent implements AfterViewInit {
         fillOpacity: 0.9
       });
 
-      const tipoNombre = m.tipo_marcador?.nombre || 'Sin tipo';
-      circulo.bindPopup(`
-        <b>${tipoNombre}</b><br>
-        ${m.descripcion}<br>
-        <small>Estado: ${m.estado}</small>
-      `);
-
+      circulo.bindPopup(this.crearContenidoPopup(m));
       this.marcadoresLayer.addLayer(circulo);
     });
   }
 
-  filtrarPorTipo(idTipo: number | null): void {
-    if (this.filtroActivo === idTipo) {
-      this.filtroActivo = null;
-    } else {
-      this.filtroActivo = idTipo;
+  private crearContenidoPopup(marcador: Marcador): HTMLElement {
+    const tipoNombre = marcador.tipo_marcador?.nombre || 'Sin tipo';
+    const hp = marcador.hp_vida ?? marcador.vida;
+    const agotado = hp === 0;
+    const contenedor = document.createElement('div');
+    contenedor.className = 'popup-voto';
+    contenedor.innerHTML = `
+      <strong>${tipoNombre}</strong><br>
+      <span>${marcador.descripcion}</span><br>
+      <small>Estado: ${marcador.estado} | HP: ${hp}/10</small>
+      <div class="popup-actions">
+        <button class="vote-btn vote-positive" ${agotado ? 'disabled' : ''}>Sigue ahi</button>
+        <button class="vote-btn vote-negative" ${agotado ? 'disabled' : ''}>Ya no esta</button>
+      </div>
+    `;
+
+    const btnPos = contenedor.querySelector('.vote-positive') as HTMLButtonElement | null;
+    const btnNeg = contenedor.querySelector('.vote-negative') as HTMLButtonElement | null;
+
+    if (btnPos) {
+      btnPos.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.votarDesdeMapa(marcador, 'positivo');
+      });
     }
+
+    if (btnNeg) {
+      btnNeg.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this.votarDesdeMapa(marcador, 'negativo');
+      });
+    }
+
+    return contenedor;
+  }
+
+  private votarDesdeMapa(marcador: Marcador, tipo: 'positivo' | 'negativo'): void {
+    if (this.votoEnCursoId === marcador.id_marcador) {
+      return;
+    }
+
+    this.votoEnCursoId = marcador.id_marcador;
+
+    this.marcadorService.votar(marcador.id_marcador, tipo).subscribe({
+      next: (respuesta) => {
+        this.votoEnCursoId = null;
+        alert(`Voto ${tipo} aplicado con peso ${respuesta.peso_voto}.`);
+        this.cargarMarcadores();
+      },
+      error: (err) => {
+        this.votoEnCursoId = null;
+        const mensaje = err?.error?.mensaje || 'No se pudo registrar el voto.';
+        alert(mensaje);
+      }
+    });
+  }
+
+  filtrarPorTipo(idTipo: number | null): void {
+    this.filtroActivo = this.filtroActivo === idTipo ? null : idTipo;
     this.pintarMarcadores();
   }
 
