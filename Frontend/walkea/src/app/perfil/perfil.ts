@@ -38,6 +38,9 @@ export class PerfilComponent implements OnInit {
     this.perfilService.obtenerPerfil().subscribe({
       next: (data) => {
         this.perfil = data;
+
+        localStorage.setItem('rol', data.usuario.rol);
+
         this.ajustesForm.patchValue({
           nombre: data.usuario.nombre,
           email: data.usuario.email,
