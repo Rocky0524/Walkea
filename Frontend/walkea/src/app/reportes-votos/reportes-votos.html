@@ -34,7 +34,7 @@
               <div class="mobile-report-meta">
                 <div class="meta-item">
                   <span class="meta-label">Ubicacion</span>
-                  <strong>{{ reporte.latitud.toFixed(3) }}, {{ reporte.longitud.toFixed(3) }}</strong>
+                  <strong>{{ textoUbicacion(reporte) }}</strong>
                 </div>
 
                 <div class="meta-item">
@@ -44,7 +44,7 @@
 
                 <div class="meta-item">
                   <span class="meta-label">Vida</span>
-                  <strong>{{ reporte.hp_vida ?? reporte.vida }}/10 HP</strong>
+                  <strong>{{ vidaVisible(reporte) }}/10 HP</strong>
                 </div>
               </div>
 
@@ -88,7 +88,7 @@
                     {{ (reporte.estado || 'activo') | titlecase }}
                   </span>
                 </td>
-                <td class="vida-cell">{{ reporte.hp_vida ?? reporte.vida ?? 0 }}/10 HP</td>
+                <td class="vida-cell">{{ vidaVisible(reporte) }}/10 HP</td>
                 <td>
                   <div class="vote-actions">
                     <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'positivo')">Sigue ahi</button>

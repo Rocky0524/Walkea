@@ -128,10 +128,45 @@
 
 .popup-voto {
   min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.popup-voto-title {
+  font-weight: 700;
+  color: #1d3553;
+}
+
+.popup-voto-description {
+  margin: 0;
+  color: #4d6073;
+  line-height: 1.4;
+}
+
+.popup-voto-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.popup-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  background: #edf5fd;
+  color: #29537d;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.popup-voto-hint {
+  color: #62778c;
 }
 
 .popup-actions {
-  margin-top: 0.6rem;
+  margin-top: 0.2rem;
   display: flex;
   gap: 0.4rem;
 }

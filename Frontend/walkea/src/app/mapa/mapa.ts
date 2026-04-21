@@ -99,15 +99,20 @@ export class MapaComponent implements AfterViewInit {
   }
 
   private crearContenidoPopup(marcador: Marcador): HTMLElement {
-    const titulo = marcador.titulo || marcador.tipo_marcador?.nombre || 'Marcador';
+    const titulo = this.escapeHtml(marcador.titulo || marcador.tipo_marcador?.nombre || 'Marcador');
+    const descripcion = this.escapeHtml(marcador.descripcion || 'Sin descripcion');
     const hp = marcador.hp_vida ?? marcador.vida;
     const agotado = hp === 0;
     const contenedor = document.createElement('div');
     contenedor.className = 'popup-voto';
     contenedor.innerHTML = `
-      <strong>${titulo}</strong><br>
-      <span>${marcador.descripcion}</span><br>
-      <small>Estado: ${marcador.estado} | HP: ${hp}/10</small>
+      <div class="popup-voto-title">${titulo}</div>
+      <p class="popup-voto-description">${descripcion}</p>
+      <div class="popup-voto-meta">
+        <span class="popup-meta-chip">Estado: ${this.escapeHtml(marcador.estado)}</span>
+        <span class="popup-meta-chip">HP: ${hp}/10</span>
+      </div>
+      <small class="popup-voto-hint">Vota este reporte desde el mapa</small>
       <div class="popup-actions">
         <button class="vote-btn vote-positive" ${agotado ? 'disabled' : ''}>Sigue ahi</button>
         <button class="vote-btn vote-negative" ${agotado ? 'disabled' : ''}>Ya no esta</button>
@@ -199,5 +204,14 @@ export class MapaComponent implements AfterViewInit {
         alert('Error al guardar en la BD. Asegurate de tener token JWT y backend encendido.');
       }
     });
+  }
+
+  private escapeHtml(value: string): string {
+    return value
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
   }
 }

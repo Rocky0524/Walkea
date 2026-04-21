@@ -66,4 +66,12 @@ export class ReportesVotosComponent implements OnInit {
       }
     });
   }
+
+  textoUbicacion(reporte: Marcador): string {
+    return `${Number(reporte.latitud).toFixed(3)}, ${Number(reporte.longitud).toFixed(3)}`;
+  }
+
+  vidaVisible(reporte: Marcador): number {
+    return Number(reporte.hp_vida ?? reporte.vida ?? 0);
+  }
 }

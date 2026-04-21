@@ -3,10 +3,9 @@
     <button class="mobile-backdrop" type="button" aria-label="Cerrar menu" (click)="cerrarMenu()"></button>
   }
 
-  <!-- SIDEBAR -->
   <aside class="sidebar" [class.sidebar-open]="menuAbierto">
     <div class="sidebar-logo">
-      <button class="mobile-close" type="button" aria-label="Cerrar menu" (click)="cerrarMenu()">×</button>
+      <button class="mobile-close" type="button" aria-label="Cerrar menu" (click)="cerrarMenu()">x</button>
       <div class="logo-circle">
         <img src="logo-walkea.png" alt="Walkea Logo" class="logo-img">
       </div>
@@ -21,23 +20,58 @@
     </nav>
 
     <div class="sidebar-footer">
-      <div class="user-avatar">👤</div>
+      <div class="user-avatar">&#128100;</div>
       <span class="user-role">Rango</span>
     </div>
   </aside>
 
-  <!-- CONTENIDO HIJO -->
   <main class="main-content">
     <div class="mobile-topbar">
-      <button class="mobile-menu-btn" type="button" aria-label="Abrir menu" (click)="toggleMenu()">☰</button>
+      <button class="mobile-menu-btn" type="button" aria-label="Abrir menu" (click)="toggleMenu()">&#9776;</button>
       <div class="mobile-brand">
         <img src="logo-walkea.png" alt="Walkea Logo" class="mobile-brand-logo">
         <span>Walkea</span>
       </div>
+      <button class="notification-btn mobile-notification-btn" type="button" aria-label="Abrir notificaciones" (click)="toggleNotificaciones()">
+        <span>&#128276;</span>
+        @if (notificacionesNoLeidas > 0) {
+          <span class="notification-badge">{{ notificacionesNoLeidas }}</span>
+        }
+      </button>
     </div>
+
+    <button class="notification-btn desktop-notification-btn" type="button" aria-label="Abrir notificaciones" (click)="toggleNotificaciones()">
+      <span>&#128276;</span>
+      @if (notificacionesNoLeidas > 0) {
+        <span class="notification-badge">{{ notificacionesNoLeidas }}</span>
+      }
+    </button>
+
+    @if (panelNotificacionesAbierto) {
+      <section class="notification-panel">
+        <div class="notification-panel-header">
+          <div>
+            <strong>Notificaciones</strong>
+            <p>Actividad reciente en tus reportes</p>
+          </div>
+          <button class="notification-clear-btn" type="button" (click)="vaciarNotificaciones()">Vaciar</button>
+        </div>
+
+        <div class="notification-list">
+          @if (notificaciones.length === 0) {
+            <p class="notification-empty">Todavia no hay notificaciones.</p>
+          } @else {
+            @for (notificacion of notificaciones; track notificacion.id) {
+              <article class="notification-item" [class.notification-item-unread]="!notificacion.leida">
+                <p>{{ notificacion.texto }}</p>
+                <small>{{ notificacion.fecha | date:'short' }}</small>
+              </article>
+            }
+          }
+        </div>
+      </section>
+    }
 
     <router-outlet></router-outlet>
   </main>
 </div>
-
-
