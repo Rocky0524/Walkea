@@ -6,7 +6,7 @@
   <div class="content-body-list">
     <div class="table-container">
       <h2>Reportes disponibles</h2>
-      <p>Estos datos salen del backend actual y los votos se envian a la API real.</p>
+      <p>Estos datos salen del backend actual y los votos se env&iacute;an a la API real.</p>
 
       @if (mensaje) {
         <div class="feedback success">{{ mensaje }}</div>
@@ -33,7 +33,7 @@
 
               <div class="mobile-report-meta">
                 <div class="meta-item">
-                  <span class="meta-label">Ubicacion</span>
+                  <span class="meta-label">Ubicaci&oacute;n</span>
                   <strong>{{ textoUbicacion(reporte) }}</strong>
                 </div>
 
@@ -65,8 +65,8 @@
         <thead>
           <tr>
             <th>Titulo</th>
-            <th>Descripcion</th>
-            <th>Ubicacion</th>
+            <th>Descripci&oacute;n</th>
+            <th>Ubicaci&oacute;n</th>
             <th>Estado</th>
             <th>Vida</th>
             <th>Acciones</th>
@@ -80,8 +80,8 @@
           } @else {
             @for (reporte of reportes; track reporte.id_marcador || $index) {
               <tr>
-                <td>{{ reporte.titulo || 'Sin titulo' }}</td>
-                <td>{{ reporte.descripcion || 'Sin descripcion' }}</td>
+                <td>{{ reporte.titulo || 'Sin título' }}</td>
+                <td>{{ reporte.descripcion || 'Sin descripción' }}</td>
                 <td>{{ textoUbicacion(reporte) }}</td>
                 <td>
                   <span class="badge" [ngClass]="reporte.estado || 'activo'">
@@ -91,8 +91,8 @@
                 <td class="vida-cell">{{ vidaVisible(reporte) }}/10 HP</td>
                 <td>
                   <div class="vote-actions">
-                    <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'positivo')">Sigue ahi</button>
-                    <button class="btn-vote btn-negative" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'negativo')">Ya no esta</button>
+                    <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'positivo')">Sigue ahí</button>
+                    <button class="btn-vote btn-negative" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'negativo')">Ya no está</button>
                   </div>
                 </td>
               </tr>

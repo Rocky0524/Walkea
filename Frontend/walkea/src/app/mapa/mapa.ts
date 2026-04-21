@@ -12,11 +12,11 @@ import { TipoMarcadorService } from '../services/tipo-marcador.service';
   styleUrl: './mapa.css'
 })
 export class MapaComponent implements AfterViewInit {
-  private map: any;
+  private map!: L.Map;
   private marcadoresLayer: L.LayerGroup = L.layerGroup();
   private votoEnCursoId: number | null = null;
 
-  mostrarNuevoReporte: boolean = false;
+  mostrarNuevoReporte = false;
   marcadores: Marcador[] = [];
   tiposMarcador: any[] = [];
   filtroActivo: number | null = null;
@@ -90,17 +90,23 @@ export class MapaComponent implements AfterViewInit {
 
   private iconoPorTipo(idTipo: number): string {
     switch (idTipo) {
-      case 1: return '👊';
-      case 2: return '🛠️';
-      case 3: return '🕒';
-      case 4: return '‼️';
-      default: return '📍';
+      case 1:
+        return '👊';
+      case 2:
+        return '🛠️';
+      case 3:
+        return '🕒';
+      case 4:
+        return '‼️';
+      default:
+        return '📍';
     }
   }
 
   private crearContenidoPopup(marcador: Marcador): HTMLElement {
     const titulo = this.escapeHtml(marcador.titulo || marcador.tipo_marcador?.nombre || 'Marcador');
-    const descripcion = this.escapeHtml(marcador.descripcion || 'Sin descripcion');
+    const descripcion = this.escapeHtml(marcador.descripcion || 'Sin descripci\u00f3n');
+    const estado = this.escapeHtml(marcador.estado || 'activo');
     const hp = marcador.hp_vida ?? marcador.vida;
     const agotado = hp === 0;
     const contenedor = document.createElement('div');
@@ -109,13 +115,13 @@ export class MapaComponent implements AfterViewInit {
       <div class="popup-voto-title">${titulo}</div>
       <p class="popup-voto-description">${descripcion}</p>
       <div class="popup-voto-meta">
-        <span class="popup-meta-chip">Estado: ${this.escapeHtml(marcador.estado)}</span>
+        <span class="popup-meta-chip">Estado: ${estado}</span>
         <span class="popup-meta-chip">HP: ${hp}/10</span>
       </div>
       <small class="popup-voto-hint">Vota este reporte desde el mapa</small>
       <div class="popup-actions">
-        <button class="vote-btn vote-positive" ${agotado ? 'disabled' : ''}>Sigue ahi</button>
-        <button class="vote-btn vote-negative" ${agotado ? 'disabled' : ''}>Ya no esta</button>
+        <button class="vote-btn vote-positive" ${agotado ? 'disabled' : ''}>Sigue ah\u00ed</button>
+        <button class="vote-btn vote-negative" ${agotado ? 'disabled' : ''}>Ya no est\u00e1</button>
       </div>
     `;
 
@@ -176,10 +182,10 @@ export class MapaComponent implements AfterViewInit {
       (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        L.marker([lat, lon]).addTo(this.map).bindPopup('<b>Estas aqui</b>');
+        L.marker([lat, lon]).addTo(this.map).bindPopup('<b>Est\u00e1s aqu\u00ed</b>');
       },
       (error) => {
-        console.error('Error obteniendo la ubicacion', error);
+        console.error('Error obteniendo la ubicaci\u00f3n', error);
       }
     );
   }
@@ -201,7 +207,7 @@ export class MapaComponent implements AfterViewInit {
       },
       error: (err) => {
         console.error('Error guardando reporte:', err);
-        alert('Error al guardar en la BD. Asegurate de tener token JWT y backend encendido.');
+        alert('Error al guardar en la BD. Aseg\u00farate de tener token JWT y backend encendido.');
       }
     });
   }

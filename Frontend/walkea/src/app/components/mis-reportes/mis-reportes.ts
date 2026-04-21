@@ -52,7 +52,7 @@ export class MisReportes implements OnInit {
         });
       },
       error: () => {
-        this.error = 'Sesion no valida. Inicia sesion de nuevo.';
+        this.error = 'Sesi\u00f3n no v\u00e1lida. Inicia sesi\u00f3n de nuevo.';
         this.cargando = false;
       }
     });
@@ -66,5 +66,9 @@ export class MisReportes implements OnInit {
     }
 
     return `${lat.toFixed(3)}, ${lng.toFixed(3)}`;
+  }
+
+  vidaVisible(reporte: Marcador): number {
+    return Number(reporte.hp_vida ?? reporte.vida ?? 0);
   }
 }

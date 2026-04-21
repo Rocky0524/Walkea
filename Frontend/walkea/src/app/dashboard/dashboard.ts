@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, SlicePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { Marcador, MarcadorService } from '../services/marcador.service';
-import { TipoMarcadorService } from '../services/tipo-marcador.service';
 import * as L from 'leaflet';
 import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte';
+import { Marcador, MarcadorService } from '../services/marcador.service';
+import { TipoMarcadorService } from '../services/tipo-marcador.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,10 +14,10 @@ import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte
   styleUrl: './dashboard.css'
 })
 export class DashboardComponent implements OnInit {
-  private mapa: any;
-  private marcadoresEnMapa: any[] = [];
-  mostrarNuevoReporte: boolean = false;
+  private mapa: L.Map | null = null;
+  private marcadoresEnMapa: L.Marker[] = [];
 
+  mostrarNuevoReporte = false;
   marcadores: Marcador[] = [];
   tiposMarcador: any[] = [];
 
@@ -42,24 +42,30 @@ export class DashboardComponent implements OnInit {
   }
 
   private pedirUbicacion(): void {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
-          this.mapa.setView([lat, lng], 15);
-
-          L.marker([lat, lng]).addTo(this.mapa)
-            .bindPopup('<b>Estas aqui</b>')
-            .openPopup();
-
-          this.cargarCercanos(lat, lng);
-        },
-        () => this.cargarTodos()
-      );
-    } else {
+    if (!navigator.geolocation || !this.mapa) {
       this.cargarTodos();
+      return;
     }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        if (!this.mapa) {
+          return;
+        }
+
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        this.mapa.setView([lat, lng], 15);
+
+        L.marker([lat, lng])
+          .addTo(this.mapa)
+          .bindPopup('<b>Est\u00e1s aqu\u00ed</b>')
+          .openPopup();
+
+        this.cargarCercanos(lat, lng);
+      },
+      () => this.cargarTodos()
+    );
   }
 
   private cargarCercanos(lat: number, lng: number): void {
@@ -92,7 +98,13 @@ export class DashboardComponent implements OnInit {
   }
 
   private pintarMarcadores(): void {
-    this.marcadoresEnMapa.forEach((m) => this.mapa.removeLayer(m));
+    if (!this.mapa) {
+      return;
+    }
+
+    const mapa = this.mapa;
+
+    this.marcadoresEnMapa.forEach((marker) => mapa.removeLayer(marker));
     this.marcadoresEnMapa = [];
 
     this.marcadores.forEach((m) => {
@@ -103,12 +115,13 @@ export class DashboardComponent implements OnInit {
           iconSize: [32, 32],
           iconAnchor: [16, 16]
         })
-      }).addTo(this.mapa);
+      }).addTo(mapa);
 
       const titulo = m.titulo || m.tipo_marcador?.nombre || 'Marcador';
+      const descripcion = m.descripcion || 'Sin descripci\u00f3n';
       marker.bindPopup(`
         <b>${titulo}</b><br>
-        ${m.descripcion}<br>
+        ${descripcion}<br>
         <small>Estado: ${m.estado}</small>
       `);
 
@@ -122,11 +135,16 @@ export class DashboardComponent implements OnInit {
 
   iconoPorTipo(idTipo: number): string {
     switch (idTipo) {
-      case 1: return '👊';
-      case 2: return '🛠️';
-      case 3: return '🕒';
-      case 4: return '‼️';
-      default: return '📍';
+      case 1:
+        return '👊';
+      case 2:
+        return '🛠️';
+      case 3:
+        return '🕒';
+      case 4:
+        return '‼️';
+      default:
+        return '📍';
     }
   }
 
@@ -147,7 +165,7 @@ export class DashboardComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error guardando reporte:', err);
-        alert('Error al guardar en la BD. Asegurate de tener token JWT y backend encendido.');
+        alert('Error al guardar en la BD. Aseg\u00farate de tener token JWT y backend encendido.');
       }
     });
   }

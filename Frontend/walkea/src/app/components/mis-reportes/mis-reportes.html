@@ -1,6 +1,6 @@
 <div class="mis-reportes-content">
   <header class="header-banner">
-    Gestion de tus incidencias reportadas.
+    Gesti&oacute;n de tus incidencias reportadas.
   </header>
 
   <div class="content-body-list">
@@ -19,9 +19,9 @@
       <table class="report-table">
         <thead>
           <tr>
-            <th>Titulo</th>
-            <th>Descripcion</th>
-            <th>Ubicacion (Lat, Lng)</th>
+            <th>T&iacute;tulo</th>
+            <th>Descripci&oacute;n</th>
+            <th>Ubicaci&oacute;n (Lat, Lng)</th>
             <th>Estado</th>
             <th>Vida</th>
           </tr>
@@ -29,20 +29,20 @@
         <tbody>
           @for (reporte of misReportes; track reporte.id_marcador || $index) {
             <tr>
-              <td>{{ reporte.titulo || 'Sin titulo' }}</td>
-              <td>{{ reporte.descripcion || 'Sin descripcion' }}</td>
+              <td>{{ reporte.titulo || 'Sin título' }}</td>
+              <td>{{ reporte.descripcion || 'Sin descripción' }}</td>
               <td>{{ textoUbicacion(reporte) }}</td>
               <td>
                 <span class="badge" [ngClass]="reporte.estado || 'activo'">
                   {{ (reporte.estado || 'activo') | titlecase }}
                 </span>
               </td>
-              <td class="vida-cell">{{ reporte.hp_vida ?? reporte.vida ?? 0 }}/10 HP</td>
+              <td class="vida-cell">{{ vidaVisible(reporte) }}/10 HP</td>
             </tr>
           } @empty {
             @if (!cargando) {
               <tr>
-                <td colspan="5" style="text-align: center; padding: 2rem;">No has enviado ningun reporte todavia.</td>
+                <td colspan="5" style="text-align: center; padding: 2rem;">No has enviado ning&uacute;n reporte todav&iacute;a.</td>
               </tr>
             }
           }

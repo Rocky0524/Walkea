@@ -30,7 +30,7 @@ export class ReportesVotosComponent implements OnInit {
       next: (data) => {
         this.reportes = data.map(m => ({
           ...m,
-          descripcion: m.descripcion || 'Sin descripcion',
+          descripcion: m.descripcion || 'Sin descripción',
           latitud: Number(m.latitud),
           longitud: Number(m.longitud),
           estado: m.estado || 'desconocido',

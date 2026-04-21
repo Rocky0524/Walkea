@@ -59,7 +59,7 @@
 
         <div class="notification-list">
           @if (notificaciones.length === 0) {
-            <p class="notification-empty">Todavia no hay notificaciones.</p>
+            <p class="notification-empty">Todav&iacute;a no hay notificaciones.</p>
           } @else {
             @for (notificacion of notificaciones; track notificacion.id) {
               <article class="notification-item" [class.notification-item-unread]="!notificacion.leida">

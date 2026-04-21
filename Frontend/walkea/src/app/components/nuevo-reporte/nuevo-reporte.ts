@@ -14,13 +14,13 @@ export class NuevoReporteComponent implements AfterViewInit {
   @Output() cerrar = new EventEmitter<void>();
   @Output() enviar = new EventEmitter<any>();
 
-  private map: any;
-  latitudReal: number = 41.6167;
-  longitudReal: number = 0.6222;
+  private map!: L.Map;
+  latitudReal = 41.6167;
+  longitudReal = 0.6222;
 
   tipoSeleccionado: number | null = null;
-  titulo: string = '';
-  descripcion: string = '';
+  titulo = '';
+  descripcion = '';
 
   tipos = [
     { id: 1, nombre: 'Peligro', icono: '👊' },
@@ -44,7 +44,7 @@ export class NuevoReporteComponent implements AfterViewInit {
     this.map = L.map('mapa-nuevo-reporte').setView([this.latitudReal, this.longitudReal], 15);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
-      attribution: '© OpenStreetMap'
+      attribution: '&copy; OpenStreetMap'
     }).addTo(this.map);
   }
 
@@ -60,12 +60,14 @@ export class NuevoReporteComponent implements AfterViewInit {
 
         this.map.setView([this.latitudReal, this.longitudReal], 16);
         L.marker([this.latitudReal, this.longitudReal]).addTo(this.map)
-          .bindPopup('<b>Aqui estas</b>').openPopup();
+          .bindPopup('<b>Aquí estás</b>')
+          .openPopup();
       },
       (error) => {
         console.error('GPS denegado o error.', error);
         L.marker([this.latitudReal, this.longitudReal]).addTo(this.map)
-          .bindPopup('<b>Ubicacion por defecto</b>').openPopup();
+          .bindPopup('<b>Ubicación por defecto</b>')
+          .openPopup();
       }
     );
   }
@@ -81,14 +83,14 @@ export class NuevoReporteComponent implements AfterViewInit {
     }
 
     if (!this.titulo.trim()) {
-      alert('Por favor escribe un titulo para el marcador.');
+      alert('Por favor escribe un título para el marcador.');
       return;
     }
 
     const data = {
       id_tipo_marcador: this.tipoSeleccionado,
       titulo: this.titulo.trim(),
-      descripcion: this.descripcion || 'Sin descripcion',
+      descripcion: this.descripcion || 'Sin descripción',
       latitud: this.latitudReal,
       longitud: this.longitudReal
     };

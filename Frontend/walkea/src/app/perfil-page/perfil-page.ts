@@ -31,7 +31,7 @@ export class PerfilPageComponent implements OnInit {
         this.cargando = false;
       },
       error: () => {
-        this.error = 'No se pudo cargar el perfil. Revisa si el backend esta encendido y si has iniciado sesion.';
+        this.error = 'No se pudo cargar el perfil. Revisa si el backend est\u00e1 encendido y si has iniciado sesi\u00f3n.';
         this.cargando = false;
       }
     });

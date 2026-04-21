@@ -71,7 +71,7 @@ export class AjustesPageComponent implements OnInit {
     const formValue = this.ajustesForm.getRawValue();
 
     if (formValue.password && formValue.password !== formValue.password_confirmation) {
-      this.error = 'La nueva contrasena y la confirmacion no coinciden.';
+      this.error = 'La nueva contrase\u00f1a y la confirmaci\u00f3n no coinciden.';
       this.mensaje = '';
       return;
     }
@@ -98,7 +98,7 @@ export class AjustesPageComponent implements OnInit {
     }
 
     if ((payload.email || payload.password) && !formValue.current_password) {
-      this.error = 'Necesitas escribir la contrasena actual para cambiar email o contrasena.';
+      this.error = 'Necesitas escribir la contrase\u00f1a actual para cambiar email o contrase\u00f1a.';
       this.mensaje = '';
       return;
     }
