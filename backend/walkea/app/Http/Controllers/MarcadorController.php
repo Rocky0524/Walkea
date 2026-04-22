@@ -65,6 +65,8 @@ class MarcadorController extends Controller
         // Cogemos al usuario logueado en este momento (sacado del token JWT)
         $usuario = auth()->user();
 
+        $vidaInicial = $usuario->resolverPesoVoto();
+
         // Creamos el marcador
         $marcador = Marcador::create([
             'latitud' => $request->latitud,
@@ -73,7 +75,7 @@ class MarcadorController extends Controller
             'descripcion' => $request->descripcion,
             'id_usuario' => $usuario->id_usuario,
             'id_tipo_marcador' => $request->id_tipo_marcador,
-            'vida' => 10, // Por la prueba, le ponemos 10 de vida base
+            'vida' => $vidaInicial,
             'estado' => 'activo'
         ]);
 

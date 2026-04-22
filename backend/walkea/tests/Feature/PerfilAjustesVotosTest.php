@@ -18,19 +18,19 @@ class PerfilAjustesVotosTest extends TestCase
 
     public function test_el_perfil_devuelve_los_counts_del_usuario_activo(): void
     {
-        $usuario = Usuario::create([
+        $usuario = $this->crearUsuarioConAntiguedad([
             'nombre' => 'Anas',
             'email' => 'anas@walkea.test',
             'password' => 'secret123',
             'reputacion' => 30,
-        ]);
+        ], 45);
 
-        $otroUsuario = Usuario::create([
+        $otroUsuario = $this->crearUsuarioConAntiguedad([
             'nombre' => 'Otro',
             'email' => 'otro@walkea.test',
             'password' => 'secret123',
             'reputacion' => 0,
-        ]);
+        ], 5);
 
         $tipo = TipoMarcador::create([
             'nombre' => 'Obras',
@@ -95,7 +95,7 @@ class PerfilAjustesVotosTest extends TestCase
             ->assertOk()
             ->assertJsonPath('estadisticas.total_reportes', 2)
             ->assertJsonPath('estadisticas.total_votos', 2)
-            ->assertJsonPath('estadisticas.nivel', 'veterano')
+            ->assertJsonPath('estadisticas.nivel', 'medio')
             ->assertJsonPath('estadisticas.peso_voto', 2);
     }
 
@@ -128,23 +128,88 @@ class PerfilAjustesVotosTest extends TestCase
         $this->assertTrue(Hash::check('secret456', $usuario->password));
     }
 
+    public function test_la_vida_inicial_del_reporte_sale_del_rango_del_usuario(): void
+    {
+        $tipo = TipoMarcador::create([
+            'nombre' => 'Obras',
+            'icono' => 'obras',
+        ]);
+
+        $novato = $this->crearUsuarioConAntiguedad([
+            'nombre' => 'Novato',
+            'email' => 'novato@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 0,
+        ], 5);
+
+        $medio = $this->crearUsuarioConAntiguedad([
+            'nombre' => 'Medio',
+            'email' => 'medio@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 30,
+        ], 45);
+
+        $veterano = $this->crearUsuarioConAntiguedad([
+            'nombre' => 'Veterano',
+            'email' => 'veterano.inicial@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 120,
+        ], 120);
+
+        $respuestaNovato = $this->postJson('/api/marcador', [
+            'latitud' => 41.6167000,
+            'longitud' => 0.6222000,
+            'titulo' => 'Reporte novato',
+            'descripcion' => 'Incidencia creada por novato',
+            'id_tipo_marcador' => $tipo->id_tipo_marcador,
+        ], $this->authHeaders($novato));
+
+        $respuestaMedio = $this->postJson('/api/marcador', [
+            'latitud' => 41.6177000,
+            'longitud' => 0.6232000,
+            'titulo' => 'Reporte medio',
+            'descripcion' => 'Incidencia creada por rango medio',
+            'id_tipo_marcador' => $tipo->id_tipo_marcador,
+        ], $this->authHeaders($medio));
+
+        $respuestaVeterano = $this->postJson('/api/marcador', [
+            'latitud' => 41.6187000,
+            'longitud' => 0.6242000,
+            'titulo' => 'Reporte veterano',
+            'descripcion' => 'Incidencia creada por veterano',
+            'id_tipo_marcador' => $tipo->id_tipo_marcador,
+        ], $this->authHeaders($veterano));
+
+        $respuestaNovato
+            ->assertCreated()
+            ->assertJsonPath('marcador.vida', 1);
+
+        $respuestaMedio
+            ->assertCreated()
+            ->assertJsonPath('marcador.vida', 2);
+
+        $respuestaVeterano
+            ->assertCreated()
+            ->assertJsonPath('marcador.vida', 3);
+    }
+
     public function test_un_voto_negativo_con_peso_agota_el_reporte_y_notifica_al_creador(): void
     {
         Notification::fake();
 
-        $creador = Usuario::create([
+        $creador = $this->crearUsuarioConAntiguedad([
             'nombre' => 'Creador',
             'email' => 'creador@walkea.test',
             'password' => 'secret123',
             'reputacion' => 0,
-        ]);
+        ], 5);
 
-        $votante = Usuario::create([
+        $votante = $this->crearUsuarioConAntiguedad([
             'nombre' => 'Veterano',
             'email' => 'veterano@walkea.test',
             'password' => 'secret123',
             'reputacion' => 120,
-        ]);
+        ], 120);
 
         $tipo = TipoMarcador::create([
             'nombre' => 'Peligro',
@@ -169,7 +234,7 @@ class PerfilAjustesVotosTest extends TestCase
 
         $response
             ->assertCreated()
-            ->assertJsonPath('nivel_usuario', 'experto')
+            ->assertJsonPath('nivel_usuario', 'veterano')
             ->assertJsonPath('peso_voto', 3)
             ->assertJsonPath('vida_marcador', 0)
             ->assertJsonPath('hp_vida', 0);
@@ -182,6 +247,83 @@ class PerfilAjustesVotosTest extends TestCase
         Notification::assertSentTo($creador, ReporteSinVidaNotification::class);
     }
 
+    public function test_el_creador_no_puede_votar_su_propio_reporte(): void
+    {
+        $usuario = $this->crearUsuarioConAntiguedad([
+            'nombre' => 'Autor',
+            'email' => 'autor@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 0,
+        ], 5);
+
+        $tipo = TipoMarcador::create([
+            'nombre' => 'Obras',
+            'icono' => 'obras',
+        ]);
+
+        $marcador = Marcador::create([
+            'latitud' => 41.6167000,
+            'longitud' => 0.6222000,
+            'descripcion' => 'Reporte propio',
+            'vida' => 8,
+            'estado' => 'activo',
+            'id_usuario' => $usuario->id_usuario,
+            'id_tipo_marcador' => $tipo->id_tipo_marcador,
+        ]);
+
+        $response = $this->postJson(
+            "/api/marcador/{$marcador->id_marcador}/votar",
+            ['tipo' => 'positivo'],
+            $this->authHeaders($usuario)
+        );
+
+        $response
+            ->assertForbidden()
+            ->assertJsonPath('mensaje', 'No puedes votar tu propio reporte');
+    }
+
+    public function test_un_reporte_agotado_no_admite_mas_votos(): void
+    {
+        $creador = $this->crearUsuarioConAntiguedad([
+            'nombre' => 'Autor',
+            'email' => 'autor2@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 0,
+        ], 5);
+
+        $votante = $this->crearUsuarioConAntiguedad([
+            'nombre' => 'Usuario',
+            'email' => 'usuario@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 0,
+        ], 5);
+
+        $tipo = TipoMarcador::create([
+            'nombre' => 'Otros',
+            'icono' => 'otros',
+        ]);
+
+        $marcador = Marcador::create([
+            'latitud' => 41.6167000,
+            'longitud' => 0.6222000,
+            'descripcion' => 'Reporte agotado',
+            'vida' => 0,
+            'estado' => 'agotado',
+            'id_usuario' => $creador->id_usuario,
+            'id_tipo_marcador' => $tipo->id_tipo_marcador,
+        ]);
+
+        $response = $this->postJson(
+            "/api/marcador/{$marcador->id_marcador}/votar",
+            ['tipo' => 'positivo'],
+            $this->authHeaders($votante)
+        );
+
+        $response
+            ->assertStatus(409)
+            ->assertJsonPath('mensaje', 'Este reporte ya esta agotado y no admite mas votos');
+    }
+
     private function authHeaders(Usuario $usuario): array
     {
         $token = auth('api')->login($usuario);
@@ -189,5 +331,20 @@ class PerfilAjustesVotosTest extends TestCase
         return [
             'Authorization' => "Bearer {$token}",
         ];
+    }
+
+    private function crearUsuarioConAntiguedad(array $datos, int $diasAntiguedad): Usuario
+    {
+        $usuario = Usuario::create($datos);
+
+        Usuario::withoutTimestamps(function () use ($usuario, $diasAntiguedad) {
+            $fecha = now()->subDays($diasAntiguedad);
+            $usuario->forceFill([
+                'created_at' => $fecha,
+                'updated_at' => $fecha,
+            ])->saveQuietly();
+        });
+
+        return $usuario->fresh();
     }
 }

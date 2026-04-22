@@ -9,19 +9,29 @@ import { environment } from '../environments/environment';
 export class AuthService {
   private apiUrl = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
-  // Función para registrarse
   registro(datosUsuario: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, datosUsuario);
   }
 
-  // Función para iniciar sesión
   login(credenciales: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credenciales);
   }
 
   me(): Observable<any> {
     return this.http.get(`${this.apiUrl}/me`);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
+
+  logout(): void {
+    localStorage.removeItem('token');
   }
 }

@@ -7,6 +7,14 @@
     </div>
   </header>
 
+  @if (mensaje) {
+    <div class="map-feedback map-feedback-success">{{ mensaje }}</div>
+  }
+
+  @if (error) {
+    <div class="map-feedback map-feedback-error">{{ error }}</div>
+  }
+
   <div class="full-map-container">
     <div id="map"></div>
   </div>

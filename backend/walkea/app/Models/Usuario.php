@@ -42,15 +42,24 @@ class Usuario extends Authenticatable implements JWTSubject
         return $this->hasMany(Voto::class, 'id_usuario', 'id_usuario');
     }
 
+    public function resolverAntiguedadDias(): int
+    {
+        if (!$this->created_at) {
+            return 0;
+        }
+
+        return (int) $this->created_at->diffInDays(now());
+    }
+
     public function resolverPesoVoto(): int
     {
-        $reputacion = (int) ($this->reputacion ?? 0);
+        $dias = $this->resolverAntiguedadDias();
 
-        if ($reputacion >= 100) {
+        if ($dias >= 90) {
             return 3;
         }
 
-        if ($reputacion >= 25) {
+        if ($dias >= 30) {
             return 2;
         }
 
@@ -60,8 +69,8 @@ class Usuario extends Authenticatable implements JWTSubject
     public function resolverNivel(): string
     {
         return match ($this->resolverPesoVoto()) {
-            3 => 'experto',
-            2 => 'veterano',
+            3 => 'veterano',
+            2 => 'medio',
             default => 'novato',
         };
     }

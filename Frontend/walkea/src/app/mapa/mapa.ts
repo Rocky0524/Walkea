@@ -1,5 +1,6 @@
 import { AfterViewInit, Component } from '@angular/core';
 import * as L from 'leaflet';
+import { AuthService } from '../auth';
 import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte';
 import { Marcador, MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
@@ -20,8 +21,12 @@ export class MapaComponent implements AfterViewInit {
   marcadores: Marcador[] = [];
   tiposMarcador: any[] = [];
   filtroActivo: number | null = null;
+  currentUserId: number | null = null;
+  mensaje = '';
+  error = '';
 
   constructor(
+    private authService: AuthService,
     private marcadorService: MarcadorService,
     private tipoMarcadorService: TipoMarcadorService
   ) {}
@@ -29,8 +34,22 @@ export class MapaComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.initMap();
     setTimeout(() => this.map.invalidateSize(), 0);
-    this.cargarTipos();
-    this.obtenerUbicacionReal();
+    this.cargarUsuarioActual();
+  }
+
+  private cargarUsuarioActual(): void {
+    this.authService.me().subscribe({
+      next: (usuario) => {
+        this.currentUserId = Number(usuario?.id_usuario ?? usuario?.id ?? 0) || null;
+        this.cargarTipos();
+        this.obtenerUbicacionReal();
+      },
+      error: () => {
+        this.currentUserId = null;
+        this.cargarTipos();
+        this.obtenerUbicacionReal();
+      }
+    });
   }
 
   private initMap(): void {
@@ -73,11 +92,10 @@ export class MapaComponent implements AfterViewInit {
       : this.marcadores;
 
     marcadoresAMostrar.forEach((m) => {
-      const iconoEmoji = this.iconoPorTipo(m.id_tipo_marcador);
       const marker = L.marker([m.latitud, m.longitud], {
         icon: L.divIcon({
           className: 'emoji-marker-wrapper',
-          html: `<div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:50%;background:rgba(255,255,255,0.92);box-shadow:0 6px 14px rgba(25,42,68,0.2);">${iconoEmoji}</div>`,
+          html: `<div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:50%;background:rgba(255,255,255,0.92);box-shadow:0 6px 14px rgba(25,42,68,0.2);">${this.iconoPorTipo(m.id_tipo_marcador)}</div>`,
           iconSize: [34, 34],
           iconAnchor: [17, 17]
         })
@@ -105,10 +123,17 @@ export class MapaComponent implements AfterViewInit {
 
   private crearContenidoPopup(marcador: Marcador): HTMLElement {
     const titulo = this.escapeHtml(marcador.titulo || marcador.tipo_marcador?.nombre || 'Marcador');
-    const descripcion = this.escapeHtml(marcador.descripcion || 'Sin descripci\u00f3n');
+    const descripcion = this.escapeHtml(marcador.descripcion || 'Sin descripción');
     const estado = this.escapeHtml(marcador.estado || 'activo');
     const hp = marcador.hp_vida ?? marcador.vida;
-    const agotado = hp === 0;
+    const agotado = this.estaAgotado(marcador);
+    const propio = this.esPropio(marcador);
+    const mensajeBloqueo = propio
+      ? 'No puedes votar tu propio reporte.'
+      : agotado
+        ? 'Este reporte ya está agotado y no admite más votos.'
+        : '';
+
     const contenedor = document.createElement('div');
     contenedor.className = 'popup-voto';
     contenedor.innerHTML = `
@@ -118,10 +143,10 @@ export class MapaComponent implements AfterViewInit {
         <span class="popup-meta-chip">Estado: ${estado}</span>
         <span class="popup-meta-chip">HP: ${hp}/10</span>
       </div>
-      <small class="popup-voto-hint">Vota este reporte desde el mapa</small>
+      <small class="popup-voto-hint">${this.escapeHtml(mensajeBloqueo || 'Vota este reporte desde el mapa')}</small>
       <div class="popup-actions">
-        <button class="vote-btn vote-positive" ${agotado ? 'disabled' : ''}>Sigue ah\u00ed</button>
-        <button class="vote-btn vote-negative" ${agotado ? 'disabled' : ''}>Ya no est\u00e1</button>
+        <button class="vote-btn vote-positive" ${(agotado || propio) ? 'disabled' : ''}>Sigue ahí</button>
+        <button class="vote-btn vote-negative" ${(agotado || propio) ? 'disabled' : ''}>Ya no está</button>
       </div>
     `;
 
@@ -148,22 +173,37 @@ export class MapaComponent implements AfterViewInit {
   }
 
   private votarDesdeMapa(marcador: Marcador, tipo: 'positivo' | 'negativo'): void {
+    if (this.esPropio(marcador)) {
+      this.error = 'No puedes votar tu propio reporte.';
+      this.mensaje = '';
+      return;
+    }
+
+    if (this.estaAgotado(marcador)) {
+      this.error = 'Este reporte ya está agotado y no admite más votos.';
+      this.mensaje = '';
+      return;
+    }
+
     if (this.votoEnCursoId === marcador.id_marcador) {
       return;
     }
 
     this.votoEnCursoId = marcador.id_marcador;
+    this.error = '';
+    this.mensaje = '';
 
     this.marcadorService.votar(marcador.id_marcador, tipo).subscribe({
       next: (respuesta) => {
         this.votoEnCursoId = null;
-        alert(`Voto ${tipo} aplicado con peso ${respuesta.peso_voto}.`);
+        this.mensaje = respuesta.hp_vida === 0
+          ? 'Tu voto se ha registrado y el reporte ha quedado agotado.'
+          : `Voto ${tipo} aplicado con peso ${respuesta.peso_voto}.`;
         this.cargarMarcadores();
       },
       error: (err) => {
         this.votoEnCursoId = null;
-        const mensaje = err?.error?.mensaje || 'No se pudo registrar el voto.';
-        alert(mensaje);
+        this.error = this.obtenerMensajeErrorVoto(err);
       }
     });
   }
@@ -182,10 +222,10 @@ export class MapaComponent implements AfterViewInit {
       (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        L.marker([lat, lon]).addTo(this.map).bindPopup('<b>Est\u00e1s aqu\u00ed</b>');
+        L.marker([lat, lon]).addTo(this.map).bindPopup('<b>Estás aquí</b>');
       },
       (error) => {
-        console.error('Error obteniendo la ubicaci\u00f3n', error);
+        console.error('Error obteniendo la ubicación', error);
       }
     );
   }
@@ -201,15 +241,45 @@ export class MapaComponent implements AfterViewInit {
   guardarReporte(datos: any): void {
     this.marcadorService.crear(datos).subscribe({
       next: () => {
-        alert('Reporte guardado correctamente');
+        this.mensaje = 'Reporte guardado correctamente.';
+        this.error = '';
         this.cerrarModalReporte();
         this.cargarMarcadores();
       },
       error: (err) => {
         console.error('Error guardando reporte:', err);
-        alert('Error al guardar en la BD. Aseg\u00farate de tener token JWT y backend encendido.');
+        this.error = 'Error al guardar en la BD. Asegúrate de tener token JWT y backend encendido.';
+        this.mensaje = '';
       }
     });
+  }
+
+  esPropio(marcador: Marcador): boolean {
+    const autorId = Number(marcador.id_usuario ?? marcador.usuario?.id_usuario ?? 0);
+    return !!this.currentUserId && autorId === this.currentUserId;
+  }
+
+  estaAgotado(marcador: Marcador): boolean {
+    const hp = Number(marcador.hp_vida ?? marcador.vida ?? 0);
+    return hp === 0 || marcador.estado === 'agotado';
+  }
+
+  private obtenerMensajeErrorVoto(err: any): string {
+    const mensaje = String(err?.error?.mensaje ?? '');
+
+    if (mensaje) {
+      return mensaje;
+    }
+
+    if (err?.status === 403) {
+      return 'No puedes votar tu propio reporte.';
+    }
+
+    if (err?.status === 409) {
+      return 'Ya has votado este reporte o ya está agotado.';
+    }
+
+    return 'No se pudo registrar el voto.';
   }
 
   private escapeHtml(value: string): string {

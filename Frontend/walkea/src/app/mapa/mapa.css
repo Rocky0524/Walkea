@@ -49,6 +49,22 @@
   font-size: 0.98rem;
 }
 
+.map-feedback {
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  font-weight: 500;
+}
+
+.map-feedback-success {
+  background: #e8f8ee;
+  color: #177245;
+}
+
+.map-feedback-error {
+  background: #fdecec;
+  color: #9f2e2e;
+}
+
 .full-map-container {
   flex: 1;
   position: relative;

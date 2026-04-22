@@ -33,12 +33,26 @@ class VotacionController extends Controller
         $resultado = DB::transaction(function () use ($id, $tipoVoto, $usuario) {
             $marcador = Marcador::with('usuario')->lockForUpdate()->findOrFail($id);
 
+            if ((int) $marcador->id_usuario === (int) $usuario->id_usuario) {
+                return [
+                    'error_code' => 'self_vote',
+                ];
+            }
+
+            if ((int) $marcador->vida === 0 || $marcador->estado === 'agotado') {
+                return [
+                    'error_code' => 'agotado',
+                ];
+            }
+
             $yaVoto = Voto::where('id_usuario', $usuario->id_usuario)
                 ->where('id_marcador', $id)
                 ->exists();
 
             if ($yaVoto) {
-                return null;
+                return [
+                    'error_code' => 'duplicate_vote',
+                ];
             }
 
             $voto = Voto::create([
@@ -68,7 +82,19 @@ class VotacionController extends Controller
             ];
         });
 
-        if ($resultado === null) {
+        if (($resultado['error_code'] ?? null) === 'self_vote') {
+            return response()->json([
+                'mensaje' => 'No puedes votar tu propio reporte',
+            ], 403);
+        }
+
+        if (($resultado['error_code'] ?? null) === 'agotado') {
+            return response()->json([
+                'mensaje' => 'Este reporte ya esta agotado y no admite mas votos',
+            ], 409);
+        }
+
+        if (($resultado['error_code'] ?? null) === 'duplicate_vote') {
             return response()->json([
                 'mensaje' => 'Ya has votado en este marcador',
             ], 409);

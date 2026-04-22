@@ -98,7 +98,7 @@
 
 .btn-vote:disabled {
   opacity: 0.6;
-  cursor: wait;
+  cursor: not-allowed;
 }
 
 .btn-positive {
@@ -123,6 +123,13 @@
 .feedback.error {
   background: #fdecec;
   color: #9f2e2e;
+}
+
+.vote-note {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.82rem;
+  line-height: 1.35;
 }
 
 .empty-cell {
@@ -214,6 +221,7 @@
     align-items: center;
     gap: 0.8rem;
     margin-top: 0.85rem;
+    flex-wrap: wrap;
   }
 
   .report-table {

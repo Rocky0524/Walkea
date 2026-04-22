@@ -8,6 +8,7 @@ import { MapaComponent } from './mapa/mapa';
 import { ReportesVotosComponent } from './reportes-votos/reportes-votos';
 import { PerfilPageComponent } from './perfil-page/perfil-page';
 import { AjustesPageComponent } from './ajustes-page/ajustes-page';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
   // Rutas publicas (sin sidebar)
@@ -20,6 +21,7 @@ export const routes: Routes = [
   {
     path: 'app',
     component: LayoutComponent,
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },

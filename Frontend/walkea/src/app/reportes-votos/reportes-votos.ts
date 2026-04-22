@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../auth';
 import { Marcador, MarcadorService } from '../services/marcador.service';
 
 @Component({
@@ -15,11 +16,24 @@ export class ReportesVotosComponent implements OnInit {
   votoEnCursoId: number | null = null;
   mensaje = '';
   error = '';
+  currentUserId: number | null = null;
 
-  constructor(private marcadorService: MarcadorService) {}
+  constructor(
+    private marcadorService: MarcadorService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
-    this.cargarReportes();
+    this.authService.me().subscribe({
+      next: (usuario) => {
+        this.currentUserId = Number(usuario?.id_usuario ?? usuario?.id ?? 0) || null;
+        this.cargarReportes();
+      },
+      error: () => {
+        this.error = 'Tu sesión no es válida. Inicia sesión de nuevo.';
+        this.cargando = false;
+      }
+    });
   }
 
   cargarReportes(): void {
@@ -28,7 +42,7 @@ export class ReportesVotosComponent implements OnInit {
 
     this.marcadorService.obtenerTodos().subscribe({
       next: (data) => {
-        this.reportes = data.map(m => ({
+        this.reportes = data.map((m) => ({
           ...m,
           descripcion: m.descripcion || 'Sin descripción',
           latitud: Number(m.latitud),
@@ -45,7 +59,13 @@ export class ReportesVotosComponent implements OnInit {
     });
   }
 
-  votar(reporte: Marcador, tipo: 'positivo' | 'negativo') {
+  votar(reporte: Marcador, tipo: 'positivo' | 'negativo'): void {
+    if (!this.puedeVotar(reporte)) {
+      this.error = this.mensajeBloqueoVoto(reporte);
+      this.mensaje = '';
+      return;
+    }
+
     this.votoEnCursoId = reporte.id_marcador;
     this.mensaje = '';
     this.error = '';
@@ -57,11 +77,13 @@ export class ReportesVotosComponent implements OnInit {
         if (respuesta.hp_vida === 0) {
           reporte.estado = 'agotado';
         }
-        this.mensaje = `Voto ${tipo} aplicado con peso ${respuesta.peso_voto}.`;
+        this.mensaje = respuesta.hp_vida === 0
+          ? 'Tu voto se ha registrado y el reporte ha quedado agotado.'
+          : `Voto ${tipo} aplicado con peso ${respuesta.peso_voto}.`;
         this.votoEnCursoId = null;
       },
       error: (err) => {
-        this.error = err?.error?.mensaje || 'No se pudo registrar el voto.';
+        this.error = this.obtenerMensajeErrorVoto(err);
         this.votoEnCursoId = null;
       }
     });
@@ -73,5 +95,48 @@ export class ReportesVotosComponent implements OnInit {
 
   vidaVisible(reporte: Marcador): number {
     return Number(reporte.hp_vida ?? reporte.vida ?? 0);
+  }
+
+  esPropio(reporte: Marcador): boolean {
+    const autorId = Number(reporte.id_usuario ?? reporte.usuario?.id_usuario ?? 0);
+    return !!this.currentUserId && autorId === this.currentUserId;
+  }
+
+  estaAgotado(reporte: Marcador): boolean {
+    return this.vidaVisible(reporte) === 0 || reporte.estado === 'agotado';
+  }
+
+  puedeVotar(reporte: Marcador): boolean {
+    return !this.esPropio(reporte) && !this.estaAgotado(reporte);
+  }
+
+  mensajeBloqueoVoto(reporte: Marcador): string {
+    if (this.esPropio(reporte)) {
+      return 'No puedes votar tu propio reporte.';
+    }
+
+    if (this.estaAgotado(reporte)) {
+      return 'Este reporte ya está agotado y no admite más votos.';
+    }
+
+    return '';
+  }
+
+  private obtenerMensajeErrorVoto(err: any): string {
+    const mensaje = String(err?.error?.mensaje ?? '');
+
+    if (mensaje) {
+      return mensaje;
+    }
+
+    if (err?.status === 403) {
+      return 'No puedes votar tu propio reporte.';
+    }
+
+    if (err?.status === 409) {
+      return 'Ya has votado este reporte o ya está agotado.';
+    }
+
+    return 'No se pudo registrar el voto.';
   }
 }

@@ -50,9 +50,12 @@
 
               <div class="mobile-report-bottom">
                 <div class="vote-actions">
-                  <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'positivo')">+</button>
-                  <button class="btn-vote btn-negative" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'negativo')">-</button>
+                  <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)" [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'positivo')">+</button>
+                  <button class="btn-vote btn-negative" [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)" [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'negativo')">-</button>
                 </div>
+                @if (!puedeVotar(reporte)) {
+                  <p class="vote-note">{{ mensajeBloqueoVoto(reporte) }}</p>
+                }
               </div>
             </article>
           } @empty {
@@ -91,9 +94,12 @@
                 <td class="vida-cell">{{ vidaVisible(reporte) }}/10 HP</td>
                 <td>
                   <div class="vote-actions">
-                    <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'positivo')">Sigue ahí</button>
-                    <button class="btn-vote btn-negative" [disabled]="votoEnCursoId === reporte.id_marcador" (click)="votar(reporte, 'negativo')">Ya no está</button>
+                    <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)" [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'positivo')">Sigue ahí</button>
+                    <button class="btn-vote btn-negative" [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)" [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'negativo')">Ya no está</button>
                   </div>
+                  @if (!puedeVotar(reporte)) {
+                    <p class="vote-note">{{ mensajeBloqueoVoto(reporte) }}</p>
+                  }
                 </td>
               </tr>
             } @empty {
