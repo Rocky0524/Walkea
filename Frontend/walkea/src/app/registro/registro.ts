@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth';
-import { resolveAppRole } from '../utils/role.util';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-registro',
@@ -19,41 +19,42 @@ export class RegistroComponent {
     confirmPassword: new FormControl('', [Validators.required])
   });
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private toastService: ToastService
+  ) {}
 
   onSubmit(): void {
-    if (!this.registreForm.valid) {
-      this.registreForm.markAllAsTouched();
-      alert('Completa todos los campos correctamente.');
-      return;
-    }
+    if (this.registreForm.valid) {
+      const formValue = this.registreForm.value;
 
-    const formValue = this.registreForm.getRawValue();
-
-    if (formValue.password !== formValue.confirmPassword) {
-      alert('Las contraseñas no coinciden');
-      return;
-    }
-
-    const payload = {
-      nombre: formValue.name,
-      email: formValue.email,
-      password: formValue.password
-    };
-
-    this.authService.registro(payload).subscribe({
-      next: (respuesta) => {
-        localStorage.setItem('token', respuesta.token);
-        const usuario = respuesta?.usuario ?? null;
-        const email = String(usuario?.email ?? formValue.email ?? '').trim().toLowerCase();
-        localStorage.setItem('rol', resolveAppRole(usuario));
-        localStorage.setItem('email', email);
-        this.router.navigate(['/app/dashboard']);
-      },
-      error: (err) => {
-        console.error('Error en registro:', err);
-        alert('Error al registrar el usuario en el backend.');
+      if (formValue.password !== formValue.confirmPassword) {
+        this.toastService.error('Las contrasenas no coinciden.');
+        return;
       }
-    });
+
+      const payload = {
+        nombre: formValue.name,
+        email: formValue.email,
+        password: formValue.password
+      };
+
+      this.authService.registro(payload).subscribe({
+        next: (respuesta) => {
+          localStorage.setItem('token', respuesta.token);
+          this.toastService.success('Cuenta creada correctamente.');
+          this.router.navigate(['/app/dashboard']);
+        },
+        error: (err) => {
+          console.error('Error en registro:', err);
+          const mensaje = err?.error?.mensaje || 'No se pudo registrar el usuario.';
+          this.toastService.error(mensaje);
+        }
+      });
+    } else {
+      this.registreForm.markAllAsTouched();
+      this.toastService.error('Rellena bien todos los campos antes de registrarte.');
+    }
   }
 }

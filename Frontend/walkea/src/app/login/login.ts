@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth';
-import { resolveAppRole } from '../utils/role.util';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -17,27 +17,29 @@ export class LoginComponent {
     password: new FormControl('', [Validators.required, Validators.minLength(6)])
   });
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private toastService: ToastService
+  ) {}
 
   onSubmit(): void {
-    if (!this.loginForm.valid) {
+    if (this.loginForm.valid) {
+      this.authService.login(this.loginForm.value).subscribe({
+        next: (respuesta) => {
+          localStorage.setItem('token', respuesta.token);
+          this.toastService.success('Sesion iniciada correctamente.');
+          this.router.navigate(['/app/dashboard']);
+        },
+        error: (error) => {
+          console.error('Error en el login:', error);
+          const mensaje = error?.error?.mensaje || 'Credenciales incorrectas o servidor no disponible.';
+          this.toastService.error(mensaje);
+        }
+      });
+    } else {
       this.loginForm.markAllAsTouched();
-      return;
+      this.toastService.error('Revisa el email y la contrasena antes de entrar.');
     }
-
-    this.authService.login(this.loginForm.value).subscribe({
-      next: (respuesta) => {
-        localStorage.setItem('token', respuesta.token);
-        const usuario = respuesta?.usuario ?? null;
-        const email = String(usuario?.email ?? '').trim().toLowerCase();
-        localStorage.setItem('rol', resolveAppRole(usuario));
-        localStorage.setItem('email', email);
-        this.router.navigate(['/app/dashboard']);
-      },
-      error: (error) => {
-        console.error('Error en el login:', error);
-        alert('Credenciales incorrectas o backend apagado.');
-      }
-    });
   }
 }

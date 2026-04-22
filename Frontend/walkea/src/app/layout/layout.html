@@ -27,8 +27,11 @@
     </nav>
 
     <div class="sidebar-footer">
-      <div class="user-avatar">&#128100;</div>
-      <span class="user-role">Rango</span>
+      <div class="user-avatar">{{ inicialUsuario }}</div>
+      <div class="user-meta">
+        <span class="user-name">{{ nombreUsuario }}</span>
+        <span class="user-role">{{ rangoUsuario }}</span>
+      </div>
     </div>
   </aside>
 
@@ -55,6 +58,8 @@
     </button>
 
     @if (panelNotificacionesAbierto) {
+      <button class="notification-backdrop" type="button" aria-label="Cerrar notificaciones" (click)="cerrarNotificaciones()"></button>
+
       <section class="notification-panel">
         <div class="notification-panel-header">
           <div>
