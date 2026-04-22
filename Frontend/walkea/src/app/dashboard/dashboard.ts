@@ -5,6 +5,7 @@ import * as L from 'leaflet';
 import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte';
 import { Marcador, MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
+import { ToastService } from '../services/toast.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +24,8 @@ export class DashboardComponent implements OnInit {
 
   constructor(
     private marcadorService: MarcadorService,
-    private tipoMarcadorService: TipoMarcadorService
+    private tipoMarcadorService: TipoMarcadorService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -59,7 +61,7 @@ export class DashboardComponent implements OnInit {
 
         L.marker([lat, lng])
           .addTo(this.mapa)
-          .bindPopup('<b>Est\u00e1s aqu\u00ed</b>')
+          .bindPopup('<b>Estas aqui</b>')
           .openPopup();
 
         this.cargarCercanos(lat, lng);
@@ -118,7 +120,7 @@ export class DashboardComponent implements OnInit {
       }).addTo(mapa);
 
       const titulo = m.titulo || m.tipo_marcador?.nombre || 'Marcador';
-      const descripcion = m.descripcion || 'Sin descripci\u00f3n';
+      const descripcion = m.descripcion || 'Sin descripcion';
       marker.bindPopup(`
         <b>${titulo}</b><br>
         ${descripcion}<br>
@@ -136,15 +138,15 @@ export class DashboardComponent implements OnInit {
   iconoPorTipo(idTipo: number): string {
     switch (idTipo) {
       case 1:
-        return '👊';
+        return '\uD83D\uDC4A';
       case 2:
-        return '🛠️';
+        return '\uD83D\uDEE0\uFE0F';
       case 3:
-        return '🕒';
+        return '\uD83D\uDEE1\uFE0F';
       case 4:
-        return '‼️';
+        return '\u203C\uFE0F';
       default:
-        return '📍';
+        return '\uD83D\uDCCD';
     }
   }
 
@@ -159,13 +161,13 @@ export class DashboardComponent implements OnInit {
   guardarReporte(datos: any): void {
     this.marcadorService.crear(datos).subscribe({
       next: () => {
-        alert('Reporte guardado correctamente');
+        this.toastService.success('Reporte guardado correctamente.');
         this.cerrarModalReporte();
         this.pedirUbicacion();
       },
       error: (err) => {
         console.error('Error guardando reporte:', err);
-        alert('Error al guardar en la BD. Aseg\u00farate de tener token JWT y backend encendido.');
+        this.toastService.error('No se pudo guardar el reporte. Revisa el token y el backend.');
       }
     });
   }

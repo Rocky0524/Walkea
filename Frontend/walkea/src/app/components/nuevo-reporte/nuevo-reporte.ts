@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, EventEmitter, Output } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, HostListener, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as L from 'leaflet';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-nuevo-reporte',
@@ -23,11 +24,13 @@ export class NuevoReporteComponent implements AfterViewInit {
   descripcion = '';
 
   tipos = [
-    { id: 1, nombre: 'Peligro', icono: '👊' },
-    { id: 2, nombre: 'Obras', icono: '🛠️' },
-    { id: 3, nombre: 'Zona segura', icono: '🕒' },
-    { id: 4, nombre: 'Otros', icono: '‼️' }
+    { id: 1, nombre: 'Peligro', icono: '\uD83D\uDC4A' },
+    { id: 2, nombre: 'Obras', icono: '\uD83D\uDEE0\uFE0F' },
+    { id: 3, nombre: 'Zona segura', icono: '\uD83D\uDEE1\uFE0F' },
+    { id: 4, nombre: 'Otros', icono: '\u203C\uFE0F' }
   ];
+
+  constructor(private toastService: ToastService) {}
 
   seleccionarTipo(id: number): void {
     this.tipoSeleccionado = id;
@@ -38,6 +41,11 @@ export class NuevoReporteComponent implements AfterViewInit {
       this.initMap();
       this.obtenerUbicacion();
     }, 100);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    this.cancelar();
   }
 
   private initMap(): void {
@@ -60,13 +68,13 @@ export class NuevoReporteComponent implements AfterViewInit {
 
         this.map.setView([this.latitudReal, this.longitudReal], 16);
         L.marker([this.latitudReal, this.longitudReal]).addTo(this.map)
-          .bindPopup('<b>Aquí estás</b>')
+          .bindPopup('<b>Estas aqui</b>')
           .openPopup();
       },
       (error) => {
         console.error('GPS denegado o error.', error);
         L.marker([this.latitudReal, this.longitudReal]).addTo(this.map)
-          .bindPopup('<b>Ubicación por defecto</b>')
+          .bindPopup('<b>Ubicacion por defecto</b>')
           .openPopup();
       }
     );
@@ -78,19 +86,19 @@ export class NuevoReporteComponent implements AfterViewInit {
 
   enviarReporte(): void {
     if (!this.tipoSeleccionado) {
-      alert('Por favor selecciona un tipo de reporte.');
+      this.toastService.error('Selecciona un tipo de reporte antes de enviarlo.');
       return;
     }
 
     if (!this.titulo.trim()) {
-      alert('Por favor escribe un título para el marcador.');
+      this.toastService.error('Escribe un titulo para el reporte.');
       return;
     }
 
     const data = {
       id_tipo_marcador: this.tipoSeleccionado,
       titulo: this.titulo.trim(),
-      descripcion: this.descripcion || 'Sin descripción',
+      descripcion: this.descripcion || 'Sin descripcion',
       latitud: this.latitudReal,
       longitud: this.longitudReal
     };

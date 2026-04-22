@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
 import { Notificacion, NotificacionService } from '../services/notificacion.service';
+import { PerfilService } from '../services/perfil.service';
 
 @Component({
   selector: 'app-layout',
@@ -16,12 +17,21 @@ export class LayoutComponent implements OnInit, OnDestroy {
   panelNotificacionesAbierto = false;
   notificaciones: Notificacion[] = [];
   notificacionesNoLeidas = 0;
+  nombreUsuario = 'Usuario';
+  rangoUsuario = 'Novato';
+  inicialUsuario = 'U';
 
   private subscriptions = new Subscription();
 
-  constructor(private notificacionService: NotificacionService) {}
+  constructor(
+    private notificacionService: NotificacionService,
+    private perfilService: PerfilService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    this.cargarPerfil();
+
     this.subscriptions.add(
       this.notificacionService.notificaciones$.subscribe((items) => {
         this.notificaciones = items;
@@ -36,10 +46,30 @@ export class LayoutComponent implements OnInit, OnDestroy {
         this.notificacionService.actualizarDesdeBackend();
       })
     );
+
+    this.subscriptions.add(
+      this.router.events.subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          this.cerrarMenu();
+          this.cerrarNotificaciones();
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.panelNotificacionesAbierto) {
+      this.cerrarNotificaciones();
+    }
+
+    if (this.menuAbierto) {
+      this.cerrarMenu();
+    }
   }
 
   toggleMenu(): void {
@@ -58,7 +88,37 @@ export class LayoutComponent implements OnInit, OnDestroy {
     }
   }
 
+  cerrarNotificaciones(): void {
+    this.panelNotificacionesAbierto = false;
+  }
+
   vaciarNotificaciones(): void {
     this.notificacionService.vaciar();
+  }
+
+  private cargarPerfil(): void {
+    this.perfilService.obtenerPerfil().subscribe({
+      next: ({ usuario, estadisticas }) => {
+        this.nombreUsuario = usuario.nombre;
+        this.rangoUsuario = this.formatearNivel(estadisticas.nivel);
+        this.inicialUsuario = usuario.nombre.trim().charAt(0).toUpperCase() || 'U';
+      },
+      error: () => {
+        this.nombreUsuario = 'Usuario';
+        this.rangoUsuario = 'Novato';
+        this.inicialUsuario = 'U';
+      }
+    });
+  }
+
+  private formatearNivel(nivel: string | null | undefined): string {
+    switch (nivel) {
+      case 'veterano':
+        return 'Veterano';
+      case 'medio':
+        return 'Medio';
+      default:
+        return 'Novato';
+    }
   }
 }

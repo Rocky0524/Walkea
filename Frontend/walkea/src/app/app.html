@@ -1,1 +1,16 @@
 <router-outlet></router-outlet>
+
+<div class="toast-stack" aria-live="polite" aria-atomic="true">
+  @for (toast of toasts; track toast.id) {
+    <button
+      class="toast-item"
+      [class.toast-success]="toast.tipo === 'success'"
+      [class.toast-error]="toast.tipo === 'error'"
+      [class.toast-info]="toast.tipo === 'info'"
+      type="button"
+      (click)="cerrarToast(toast.id)">
+      <span class="toast-text">{{ toast.texto }}</span>
+      <span class="toast-close" aria-hidden="true">&times;</span>
+    </button>
+  }
+</div>
