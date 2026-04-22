@@ -8,6 +8,8 @@ import { MapaComponent } from './mapa/mapa';
 import { ReportesVotosComponent } from './reportes-votos/reportes-votos';
 import { PerfilPageComponent } from './perfil-page/perfil-page';
 import { AjustesPageComponent } from './ajustes-page/ajustes-page';
+import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard';
+import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
   // Rutas publicas (sin sidebar)
@@ -27,6 +29,11 @@ export const routes: Routes = [
       { path: 'mis-reportes', component: ReportesVotosComponent },
       { path: 'perfil', component: PerfilPageComponent },
       { path: 'ajustes', component: AjustesPageComponent },
+      { 
+        path: 'admin', 
+        component: AdminDashboardComponent,
+        canActivate: [adminGuard] 
+      }
     ]
   }
 ];

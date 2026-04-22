@@ -3,7 +3,6 @@
     <button class="mobile-backdrop" type="button" aria-label="Cerrar menu" (click)="cerrarMenu()"></button>
   }
 
-  <!-- SIDEBAR -->
   <aside class="sidebar" [class.sidebar-open]="menuAbierto">
     <div class="sidebar-logo">
       <button class="mobile-close" type="button" aria-label="Cerrar menu" (click)="cerrarMenu()">×</button>
@@ -13,11 +12,18 @@
     </div>
 
     <nav class="sidebar-nav">
-      <button class="nav-btn" routerLink="/app/dashboard" routerLinkActive="active" (click)="cerrarMenu()">Inicio (Dashboard)</button>
-      <button class="nav-btn" routerLink="/app/mapa" routerLinkActive="active" (click)="cerrarMenu()">Mapa Completo</button>
-      <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active" (click)="cerrarMenu()">Mis Reportes</button>
+      <button class="nav-btn" routerLink="/app/dashboard" routerLinkActive="active" (click)="cerrarMenu()">Inicio</button>
+      <button class="nav-btn" routerLink="/app/mapa" routerLinkActive="active" (click)="cerrarMenu()">Mapa completo</button>
+      <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active" (click)="cerrarMenu()">Mis reportes</button>
       <button class="nav-btn" routerLink="/app/perfil" routerLinkActive="active" (click)="cerrarMenu()">Perfil</button>
       <button class="nav-btn" routerLink="/app/ajustes" routerLinkActive="active" (click)="cerrarMenu()">Ajustes</button>
+
+      @if (rolUsuario === 'admin') {
+        <div class="admin-divider"></div>
+        <button class="nav-btn btn-admin" routerLink="/app/admin" routerLinkActive="active" (click)="cerrarMenu()">
+          Panel admin
+        </button>
+      }
     </nav>
 
     <div class="sidebar-footer">
@@ -26,7 +32,6 @@
     </div>
   </aside>
 
-  <!-- CONTENIDO HIJO -->
   <main class="main-content">
     <div class="mobile-topbar">
       <button class="mobile-menu-btn" type="button" aria-label="Abrir menu" (click)="toggleMenu()">☰</button>
@@ -39,5 +44,3 @@
     <router-outlet></router-outlet>
   </main>
 </div>
-
-

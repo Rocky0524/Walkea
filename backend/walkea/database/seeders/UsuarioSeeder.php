@@ -11,13 +11,16 @@ class UsuarioSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('usuarios')->insert([
-            'nombre' => 'Profe User',
-            'email' => 'admin@walkea.com',
-            'password' => Hash::make('123456'),
-            'reputacion' => 100,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
-        ]);
+        DB::table('usuarios')->updateOrInsert(
+            ['email' => 'admin@walkea.com'],
+            [
+                'nombre' => 'Profe User',
+                'password' => Hash::make('123456'),
+                'reputacion' => 100,
+                'rol' => 'admin',
+                'updated_at' => Carbon::now(),
+                'created_at' => Carbon::now(),
+            ]
+        );
     }
 }

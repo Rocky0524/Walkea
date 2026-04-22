@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
@@ -8,8 +8,13 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './layout.html',
   styleUrl: './layout.css'
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit {
   menuAbierto = false;
+  rolUsuario: string | null = null;
+
+  ngOnInit(): void {
+    this.rolUsuario = localStorage.getItem('rol');
+  }
 
   toggleMenu(): void {
     this.menuAbierto = !this.menuAbierto;
