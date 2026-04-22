@@ -8,6 +8,7 @@ export interface UsuarioPerfil {
   nombre: string;
   email: string;
   reputacion: number;
+  rol: string;
 }
 
 export interface EstadisticasPerfil {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PerfilResponse, PerfilService } from '../services/perfil.service';
+import { resolveAppRole } from '../utils/role.util';
 
 @Component({
   selector: 'app-perfil',
@@ -38,6 +39,10 @@ export class PerfilComponent implements OnInit {
     this.perfilService.obtenerPerfil().subscribe({
       next: (data) => {
         this.perfil = data;
+        const email = String(data?.usuario?.email ?? '').trim().toLowerCase();
+        localStorage.setItem('rol', resolveAppRole(data?.usuario));
+        localStorage.setItem('email', email);
+
         this.ajustesForm.patchValue({
           nombre: data.usuario.nombre,
           email: data.usuario.email,

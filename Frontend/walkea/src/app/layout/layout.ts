@@ -1,45 +1,19 @@
-import { DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { Subscription, interval } from 'rxjs';
-import { Notificacion, NotificacionService } from '../services/notificacion.service';
+import { Component, OnInit } from '@angular/core';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, DatePipe],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './layout.html',
   styleUrl: './layout.css'
 })
-export class LayoutComponent implements OnInit, OnDestroy {
+export class LayoutComponent implements OnInit {
   menuAbierto = false;
-  panelNotificacionesAbierto = false;
-  notificaciones: Notificacion[] = [];
-  notificacionesNoLeidas = 0;
-
-  private subscriptions = new Subscription();
-
-  constructor(private notificacionService: NotificacionService) {}
+  rolUsuario: string | null = null;
 
   ngOnInit(): void {
-    this.subscriptions.add(
-      this.notificacionService.notificaciones$.subscribe((items) => {
-        this.notificaciones = items;
-        this.notificacionesNoLeidas = items.filter((item) => !item.leida).length;
-      })
-    );
-
-    this.notificacionService.actualizarDesdeBackend();
-
-    this.subscriptions.add(
-      interval(30000).subscribe(() => {
-        this.notificacionService.actualizarDesdeBackend();
-      })
-    );
-  }
-
-  ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
+    this.rolUsuario = localStorage.getItem('rol');
   }
 
   toggleMenu(): void {
@@ -48,17 +22,5 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   cerrarMenu(): void {
     this.menuAbierto = false;
-  }
-
-  toggleNotificaciones(): void {
-    this.panelNotificacionesAbierto = !this.panelNotificacionesAbierto;
-
-    if (this.panelNotificacionesAbierto) {
-      this.notificacionService.marcarTodasComoLeidas();
-    }
-  }
-
-  vaciarNotificaciones(): void {
-    this.notificacionService.vaciar();
   }
 }

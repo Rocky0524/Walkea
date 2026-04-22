@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
-import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { AuthService } from '../auth'; 
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../auth';
+import { resolveAppRole } from '../utils/role.util';
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -10,7 +12,6 @@ import { AuthService } from '../auth';
   styleUrl: './login.css'
 })
 export class LoginComponent {
-  
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [Validators.required, Validators.minLength(6)])
@@ -18,28 +19,25 @@ export class LoginComponent {
 
   constructor(private authService: AuthService, private router: Router) {}
 
-  onSubmit() {
-    if (this.loginForm.valid) {
-      console.log('Enviando datos a Laravel...', this.loginForm.value);
-      
-      this.authService.login(this.loginForm.value).subscribe({
-        
-
-        next: (respuesta) => {
-          console.log('¡Login correcto!', respuesta);
-          localStorage.setItem('token', respuesta.token);
-          this.router.navigate(['/app/dashboard']); 
-        },
-        
-        error: (error) => {
-          console.error('Error en el login:', error);
-          alert('Credenciales incorrectas o el servidor de Anas está apagado.');
-        }
-        
-      });
-
-    } else {
-      this.loginForm.markAllAsTouched(); 
+  onSubmit(): void {
+    if (!this.loginForm.valid) {
+      this.loginForm.markAllAsTouched();
+      return;
     }
+
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (respuesta) => {
+        localStorage.setItem('token', respuesta.token);
+        const usuario = respuesta?.usuario ?? null;
+        const email = String(usuario?.email ?? '').trim().toLowerCase();
+        localStorage.setItem('rol', resolveAppRole(usuario));
+        localStorage.setItem('email', email);
+        this.router.navigate(['/app/dashboard']);
+      },
+      error: (error) => {
+        console.error('Error en el login:', error);
+        alert('Credenciales incorrectas o backend apagado.');
+      }
+    });
   }
 }
