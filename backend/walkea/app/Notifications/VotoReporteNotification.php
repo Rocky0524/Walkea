@@ -8,7 +8,7 @@ use App\Models\Voto;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 
-class ReporteSinVidaNotification extends Notification
+class VotoReporteNotification extends Notification
 {
     use Queueable;
 
@@ -27,15 +27,16 @@ class ReporteSinVidaNotification extends Notification
     public function toArray(object $notifiable): array
     {
         $titulo = $this->marcador->titulo ?: "Reporte #{$this->marcador->id_marcador}";
+        $hp = $this->marcador->hp_vida;
 
         return [
-            'tipo' => 'reporte_agotado',
-            'texto' => "Tu reporte \"{$titulo}\" ha llegado a 0 HP y ha quedado agotado.",
+            'tipo' => 'voto_recibido',
+            'texto' => "{$this->votante->nombre} ha votado {$this->voto->tipo} tu reporte \"{$titulo}\". HP actual: {$hp}/10.",
             'marcador_id' => $this->marcador->id_marcador,
             'votante' => $this->votante->nombre,
             'voto' => $this->voto->tipo,
             'estado' => $this->marcador->estado,
-            'hp_vida' => $this->marcador->hp_vida,
+            'hp_vida' => $hp,
         ];
     }
 }

@@ -71,7 +71,7 @@ export class DashboardComponent implements OnInit {
   }
 
   private cargarCercanos(lat: number, lng: number): void {
-    this.marcadorService.obtenerCercanos(lat, lng).subscribe({
+    this.marcadorService.obtenerCercanos(lat, lng, true).subscribe({
       next: (dataRaw) => {
         this.marcadores = this.ordenarMarcadoresRecientes(this.marcadorService.normalizarLista(dataRaw));
         this.pintarMarcadores();
@@ -81,7 +81,7 @@ export class DashboardComponent implements OnInit {
   }
 
   private cargarTodos(): void {
-    this.marcadorService.obtenerTodos().subscribe({
+    this.marcadorService.obtenerTodos(true).subscribe({
       next: (dataRaw) => {
         this.marcadores = this.ordenarMarcadoresRecientes(this.marcadorService.normalizarLista(dataRaw));
         this.pintarMarcadores();

@@ -6,7 +6,9 @@ use App\Models\Marcador;
 use App\Models\TipoMarcador;
 use App\Models\Usuario;
 use App\Models\Voto;
+use App\Notifications\ReporteCaducadoNotification;
 use App\Notifications\ReporteSinVidaNotification;
+use App\Notifications\VotoReporteNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -322,6 +324,120 @@ class PerfilAjustesVotosTest extends TestCase
         $response
             ->assertStatus(409)
             ->assertJsonPath('mensaje', 'Este reporte ya esta agotado y no admite mas votos');
+    }
+
+    public function test_un_reporte_sin_votos_mas_de_24_horas_se_caduca_y_no_sale_en_mapa_principal(): void
+    {
+        Notification::fake();
+
+        $creador = $this->crearUsuarioConAntiguedad([
+            'nombre' => 'Creador',
+            'email' => 'caducado@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 0,
+        ], 60);
+
+        $tipo = TipoMarcador::create([
+            'nombre' => 'Obras',
+            'icono' => 'obras',
+        ]);
+
+        $caducado = Marcador::create([
+            'latitud' => 41.6167000,
+            'longitud' => 0.6222000,
+            'titulo' => 'Reporte viejo',
+            'descripcion' => 'Sin votos',
+            'vida' => 2,
+            'estado' => 'activo',
+            'id_usuario' => $creador->id_usuario,
+            'id_tipo_marcador' => $tipo->id_tipo_marcador,
+        ]);
+
+        Marcador::withoutTimestamps(function () use ($caducado) {
+            $fecha = now()->subDays(2);
+            $caducado->forceFill([
+                'created_at' => $fecha,
+                'updated_at' => $fecha,
+            ])->saveQuietly();
+        });
+
+        $activo = Marcador::create([
+            'latitud' => 41.6177000,
+            'longitud' => 0.6232000,
+            'titulo' => 'Reporte activo',
+            'descripcion' => 'Reciente',
+            'vida' => 1,
+            'estado' => 'activo',
+            'id_usuario' => $creador->id_usuario,
+            'id_tipo_marcador' => $tipo->id_tipo_marcador,
+        ]);
+
+        $response = $this->getJson('/api/marcador?solo_activos=1');
+
+        $response->assertOk();
+
+        $ids = collect($response->json())->pluck('id_marcador')->all();
+
+        $this->assertNotContains($caducado->id_marcador, $ids);
+        $this->assertContains($activo->id_marcador, $ids);
+
+        $caducado->refresh();
+
+        $this->assertSame('caducado', $caducado->estado);
+
+        Notification::assertSentTo($creador, ReporteCaducadoNotification::class);
+    }
+
+    public function test_un_voto_normal_genera_notificacion_real_en_backend_para_el_creador(): void
+    {
+        $creador = $this->crearUsuarioConAntiguedad([
+            'nombre' => 'Creador',
+            'email' => 'noti.creador@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 0,
+        ], 60);
+
+        $votante = $this->crearUsuarioConAntiguedad([
+            'nombre' => 'Usuario Medio',
+            'email' => 'noti.votante@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 0,
+        ], 45);
+
+        $tipo = TipoMarcador::create([
+            'nombre' => 'Peligro',
+            'icono' => 'alerta',
+        ]);
+
+        $marcador = Marcador::create([
+            'latitud' => 41.6167000,
+            'longitud' => 0.6222000,
+            'titulo' => 'Cruce complicado',
+            'descripcion' => 'Necesita revision',
+            'vida' => 1,
+            'estado' => 'activo',
+            'id_usuario' => $creador->id_usuario,
+            'id_tipo_marcador' => $tipo->id_tipo_marcador,
+        ]);
+
+        $this->postJson(
+            "/api/marcador/{$marcador->id_marcador}/votar",
+            ['tipo' => 'positivo'],
+            $this->authHeaders($votante)
+        )->assertCreated();
+
+        $creador->refresh();
+        $creador->load('notifications');
+
+        $this->assertCount(1, $creador->notifications);
+        $this->assertSame(VotoReporteNotification::class, $creador->notifications->first()->type);
+
+        $response = $this->getJson('/api/notificaciones', $this->authHeaders($creador));
+
+        $response
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonPath('0.tipo', 'voto_recibido');
     }
 
     private function authHeaders(Usuario $usuario): array

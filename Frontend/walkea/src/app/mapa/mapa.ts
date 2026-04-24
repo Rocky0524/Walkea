@@ -75,7 +75,7 @@ export class MapaComponent implements AfterViewInit {
   }
 
   private cargarMarcadores(): void {
-    this.marcadorService.obtenerTodos().subscribe({
+    this.marcadorService.obtenerTodos(true).subscribe({
       next: (dataRaw) => {
         this.marcadores = this.marcadorService.normalizarLista(dataRaw);
         this.pintarMarcadores();
@@ -109,30 +109,25 @@ export class MapaComponent implements AfterViewInit {
   private iconoPorTipo(idTipo: number): string {
     switch (idTipo) {
       case 1:
-        return '👊';
+        return '\uD83D\uDC4A';
       case 2:
-        return '🛠️';
+        return '\uD83D\uDEE0\uFE0F';
       case 3:
-        return '🕒';
+        return '\uD83D\uDEE1\uFE0F';
       case 4:
-        return '‼️';
+        return '\u203C\uFE0F';
       default:
-        return '📍';
+        return '\uD83D\uDCCD';
     }
   }
 
   private crearContenidoPopup(marcador: Marcador): HTMLElement {
     const titulo = this.escapeHtml(marcador.titulo || marcador.tipo_marcador?.nombre || 'Marcador');
-    const descripcion = this.escapeHtml(marcador.descripcion || 'Sin descripción');
+    const descripcion = this.escapeHtml(marcador.descripcion || 'Sin descripcion');
     const estado = this.escapeHtml(marcador.estado || 'activo');
     const hp = marcador.hp_vida ?? marcador.vida;
-    const agotado = this.estaAgotado(marcador);
-    const propio = this.esPropio(marcador);
-    const mensajeBloqueo = propio
-      ? 'No puedes votar tu propio reporte.'
-      : agotado
-        ? 'Este reporte ya está agotado y no admite más votos.'
-        : '';
+    const bloqueado = this.estaBloqueado(marcador);
+    const mensajeBloqueo = this.mensajeBloqueoVoto(marcador);
 
     const contenedor = document.createElement('div');
     contenedor.className = 'popup-voto';
@@ -145,8 +140,8 @@ export class MapaComponent implements AfterViewInit {
       </div>
       <small class="popup-voto-hint">${this.escapeHtml(mensajeBloqueo || 'Vota este reporte desde el mapa')}</small>
       <div class="popup-actions">
-        <button class="vote-btn vote-positive" ${(agotado || propio) ? 'disabled' : ''}>Sigue ahí</button>
-        <button class="vote-btn vote-negative" ${(agotado || propio) ? 'disabled' : ''}>Ya no está</button>
+        <button class="vote-btn vote-positive" ${bloqueado ? 'disabled' : ''}>Sigue ahi</button>
+        <button class="vote-btn vote-negative" ${bloqueado ? 'disabled' : ''}>Ya no esta</button>
       </div>
     `;
 
@@ -173,14 +168,8 @@ export class MapaComponent implements AfterViewInit {
   }
 
   private votarDesdeMapa(marcador: Marcador, tipo: 'positivo' | 'negativo'): void {
-    if (this.esPropio(marcador)) {
-      this.error = 'No puedes votar tu propio reporte.';
-      this.mensaje = '';
-      return;
-    }
-
-    if (this.estaAgotado(marcador)) {
-      this.error = 'Este reporte ya está agotado y no admite más votos.';
+    if (this.estaBloqueado(marcador)) {
+      this.error = this.mensajeBloqueoVoto(marcador);
       this.mensaje = '';
       return;
     }
@@ -204,6 +193,7 @@ export class MapaComponent implements AfterViewInit {
       error: (err) => {
         this.votoEnCursoId = null;
         this.error = this.obtenerMensajeErrorVoto(err);
+        this.cargarMarcadores();
       }
     });
   }
@@ -222,10 +212,10 @@ export class MapaComponent implements AfterViewInit {
       (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        L.marker([lat, lon]).addTo(this.map).bindPopup('<b>Estás aquí</b>');
+        L.marker([lat, lon]).addTo(this.map).bindPopup('<b>Estas aqui</b>');
       },
       (error) => {
-        console.error('Error obteniendo la ubicación', error);
+        console.error('Error obteniendo la ubicacion', error);
       }
     );
   }
@@ -248,7 +238,7 @@ export class MapaComponent implements AfterViewInit {
       },
       error: (err) => {
         console.error('Error guardando reporte:', err);
-        this.error = 'Error al guardar en la BD. Asegúrate de tener token JWT y backend encendido.';
+        this.error = 'Error al guardar en la BD. Asegurate de tener token JWT y backend encendido.';
         this.mensaje = '';
       }
     });
@@ -259,9 +249,29 @@ export class MapaComponent implements AfterViewInit {
     return !!this.currentUserId && autorId === this.currentUserId;
   }
 
-  estaAgotado(marcador: Marcador): boolean {
+  estaBloqueado(marcador: Marcador): boolean {
+    return this.esPropio(marcador) || this.esInactivo(marcador);
+  }
+
+  private esInactivo(marcador: Marcador): boolean {
     const hp = Number(marcador.hp_vida ?? marcador.vida ?? 0);
-    return hp === 0 || marcador.estado === 'agotado';
+    return hp === 0 || marcador.estado === 'agotado' || marcador.estado === 'caducado';
+  }
+
+  private mensajeBloqueoVoto(marcador: Marcador): string {
+    if (this.esPropio(marcador)) {
+      return 'No puedes votar tu propio reporte.';
+    }
+
+    if (marcador.estado === 'caducado') {
+      return 'Este reporte ha caducado por no recibir votos a tiempo.';
+    }
+
+    if (this.esInactivo(marcador)) {
+      return 'Este reporte ya esta agotado y no admite mas votos.';
+    }
+
+    return '';
   }
 
   private obtenerMensajeErrorVoto(err: any): string {
@@ -276,7 +286,7 @@ export class MapaComponent implements AfterViewInit {
     }
 
     if (err?.status === 409) {
-      return 'Ya has votado este reporte o ya está agotado.';
+      return 'Este reporte ya no admite mas votos.';
     }
 
     return 'No se pudo registrar el voto.';

@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Events\ReporteSinVida;
 use App\Models\Marcador;
 use App\Models\Voto;
+use App\Notifications\VotoReporteNotification;
+use App\Services\CaducidadMarcadorService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class VotacionController extends Controller
 {
-    public function votar(Request $request, $id)
+    public function votar(Request $request, $id, CaducidadMarcadorService $caducidadMarcadorService)
     {
+        $caducidadMarcadorService->ejecutar();
+
         $request->validate([
             'tipo' => 'nullable|string|in:positivo,negativo',
             'voto' => 'nullable|boolean',
@@ -42,6 +46,12 @@ class VotacionController extends Controller
             if ((int) $marcador->vida === 0 || $marcador->estado === 'agotado') {
                 return [
                     'error_code' => 'agotado',
+                ];
+            }
+
+            if ($marcador->estado === 'caducado') {
+                return [
+                    'error_code' => 'caducado',
                 ];
             }
 
@@ -94,6 +104,12 @@ class VotacionController extends Controller
             ], 409);
         }
 
+        if (($resultado['error_code'] ?? null) === 'caducado') {
+            return response()->json([
+                'mensaje' => 'Este reporte ha caducado y ya no admite mas votos',
+            ], 409);
+        }
+
         if (($resultado['error_code'] ?? null) === 'duplicate_vote') {
             return response()->json([
                 'mensaje' => 'Ya has votado en este marcador',
@@ -102,6 +118,12 @@ class VotacionController extends Controller
 
         if ($resultado['se_agoto']) {
             event(new ReporteSinVida($resultado['marcador'], $usuario, $resultado['voto']));
+        } else {
+            $resultado['marcador']->usuario?->notify(new VotoReporteNotification(
+                $resultado['marcador'],
+                $usuario,
+                $resultado['voto'],
+            ));
         }
 
         return response()->json([
