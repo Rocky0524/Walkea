@@ -30,7 +30,7 @@ export class ReportesVotosComponent implements OnInit {
         this.cargarReportes();
       },
       error: () => {
-        this.error = 'Tu sesión no es válida. Inicia sesión de nuevo.';
+        this.error = 'Tu sesion no es valida. Inicia sesion de nuevo.';
         this.cargando = false;
       }
     });
@@ -42,14 +42,7 @@ export class ReportesVotosComponent implements OnInit {
 
     this.marcadorService.obtenerTodos().subscribe({
       next: (data) => {
-        this.reportes = data.map((m) => ({
-          ...m,
-          descripcion: m.descripcion || 'Sin descripción',
-          latitud: Number(m.latitud),
-          longitud: Number(m.longitud),
-          estado: m.estado || 'desconocido',
-          hp_vida: m.hp_vida ?? m.vida
-        }));
+        this.reportes = this.marcadorService.normalizarLista(data);
         this.cargando = false;
       },
       error: () => {
@@ -85,6 +78,7 @@ export class ReportesVotosComponent implements OnInit {
       error: (err) => {
         this.error = this.obtenerMensajeErrorVoto(err);
         this.votoEnCursoId = null;
+        this.cargarReportes();
       }
     });
   }
@@ -102,12 +96,12 @@ export class ReportesVotosComponent implements OnInit {
     return !!this.currentUserId && autorId === this.currentUserId;
   }
 
-  estaAgotado(reporte: Marcador): boolean {
-    return this.vidaVisible(reporte) === 0 || reporte.estado === 'agotado';
+  private esInactivo(reporte: Marcador): boolean {
+    return this.vidaVisible(reporte) === 0 || reporte.estado === 'agotado' || reporte.estado === 'caducado';
   }
 
   puedeVotar(reporte: Marcador): boolean {
-    return !this.esPropio(reporte) && !this.estaAgotado(reporte);
+    return !this.esPropio(reporte) && !this.esInactivo(reporte);
   }
 
   mensajeBloqueoVoto(reporte: Marcador): string {
@@ -115,8 +109,12 @@ export class ReportesVotosComponent implements OnInit {
       return 'No puedes votar tu propio reporte.';
     }
 
-    if (this.estaAgotado(reporte)) {
-      return 'Este reporte ya está agotado y no admite más votos.';
+    if (reporte.estado === 'caducado') {
+      return 'Este reporte ha caducado por no recibir votos en 24 horas.';
+    }
+
+    if (this.esInactivo(reporte)) {
+      return 'Este reporte ya esta agotado y no admite mas votos.';
     }
 
     return '';
@@ -134,7 +132,7 @@ export class ReportesVotosComponent implements OnInit {
     }
 
     if (err?.status === 409) {
-      return 'Ya has votado este reporte o ya está agotado.';
+      return 'Este reporte ya no admite mas votos.';
     }
 
     return 'No se pudo registrar el voto.';

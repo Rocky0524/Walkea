@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Marcador;
+use App\Services\CaducidadMarcadorService;
 use Illuminate\Http\Request;
 
 class MarcadorController extends Controller
@@ -11,22 +12,31 @@ class MarcadorController extends Controller
      * Devuelve la lista de marcadores.
      * Si le pasamos lat y lng por GET, filtra los que esten cerca (5km).
      */
-    public function index(Request $request)
+    public function index(Request $request, CaducidadMarcadorService $caducidadMarcadorService)
     {
+        $caducidadMarcadorService->ejecutar();
+
         // Pillamos los parametros de la url (si existen)
         $lat = $request->query('lat');
         $lng = $request->query('lng');
         $radius = 5; // Ponemos 5 kilometros por defecto si no nos pasan radio
+        $soloActivos = $request->boolean('solo_activos');
 
         if ($lat && $lng) {
             // Formula Haversine manual, en mysql va muy bien para calculo de distancias
             // Calculamos la distancia con selectRaw y lo llamamos 'distancia'
-            $marcadores = Marcador::selectRaw(
-                "*, ( 6371 * acos( cos( radians(?) ) * cos( radians( latitud ) ) * cos( radians( longitud ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitud ) ) ) ) AS distancia",
+            $query = Marcador::selectRaw(
+                "marcador.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( latitud ) ) * cos( radians( longitud ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitud ) ) ) ) AS distancia",
                 [$lat, $lng, $lat]
             )
+                ->with(['tipoMarcador', 'usuario']);
+
+            if ($soloActivos) {
+                $query->where('estado', 'activo');
+            }
+
+            $marcadores = $query
                 ->having('distancia', '<', $radius)
-                ->with(['tipoMarcador', 'usuario']) // Cargamos relaciones para que el front no tenga que hacer 50 peticiones
                 ->orderBy('distancia')
                 ->get();
 
@@ -34,15 +44,23 @@ class MarcadorController extends Controller
         }
 
         // Si no han buscado por zona, devolvemos todos sin filtrar
-        $marcadores = Marcador::with(['tipoMarcador', 'usuario'])->get();
+        $query = Marcador::with(['tipoMarcador', 'usuario']);
+
+        if ($soloActivos) {
+            $query->where('estado', 'activo');
+        }
+
+        $marcadores = $query->get();
         return response()->json($marcadores, 200);
     }
 
     /**
      * Devuelve un solo marcador dado su id
      */
-    public function show($id)
+    public function show($id, CaducidadMarcadorService $caducidadMarcadorService)
     {
+        $caducidadMarcadorService->ejecutar();
+
         // Buscamos el marcador por id_marcador, si no lo encuentra salta un error 404 de laravel automatico
         $marcador = Marcador::with(['tipoMarcador', 'usuario', 'votos'])->findOrFail($id);
         return response()->json($marcador, 200);

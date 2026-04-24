@@ -44,13 +44,15 @@ export class MarcadorService {
   constructor(private http: HttpClient) { }
 
   // trae todos los marcadores sin filtrar
-  obtenerTodos(): Observable<Marcador[]> {
-    return this.http.get<Marcador[]>(`${this.apiUrl}/marcador`);
+  obtenerTodos(soloActivos = false): Observable<Marcador[]> {
+    const suffix = soloActivos ? '?solo_activos=1' : '';
+    return this.http.get<Marcador[]>(`${this.apiUrl}/marcador${suffix}`);
   }
 
   // trae los marcadores que esten cerca de unas coordenadas, el backend filtra a 5km
-  obtenerCercanos(lat: number, lng: number): Observable<Marcador[]> {
-    return this.http.get<Marcador[]>(`${this.apiUrl}/marcador?lat=${lat}&lng=${lng}`);
+  obtenerCercanos(lat: number, lng: number, soloActivos = false): Observable<Marcador[]> {
+    const soloActivosQuery = soloActivos ? '&solo_activos=1' : '';
+    return this.http.get<Marcador[]>(`${this.apiUrl}/marcador?lat=${lat}&lng=${lng}${soloActivosQuery}`);
   }
 
   // envia un nuevo marcador al backend
