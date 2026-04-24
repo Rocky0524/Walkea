@@ -4,6 +4,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { Subscription, interval } from 'rxjs';
 import { Notificacion, NotificacionService } from '../services/notificacion.service';
 import { PerfilService } from '../services/perfil.service';
+import { resolveAppRole } from '../utils/role.util';
 
 @Component({
   selector: 'app-layout',
@@ -102,8 +103,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
       next: ({ usuario, estadisticas }) => {
         this.nombreUsuario = usuario.nombre;
         this.rangoUsuario = this.formatearNivel(estadisticas.nivel);
-        this.rolUsuario = usuario.rol || 'usuario';
+        this.rolUsuario = resolveAppRole(usuario);
         this.inicialUsuario = usuario.nombre.trim().charAt(0).toUpperCase() || 'U';
+        localStorage.setItem('rol', this.rolUsuario);
+        localStorage.setItem('email', String(usuario.email ?? '').trim().toLowerCase());
       },
       error: () => {
         this.nombreUsuario = 'Usuario';

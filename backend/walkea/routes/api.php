@@ -5,8 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\TipoMarcadorController;
 use App\Http\Controllers\MarcadorController;
-use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\VotacionController;
+use App\Http\Controllers\UsuarioController;
 
 // Rutas publicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -35,7 +35,6 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/marcador/{id}', [MarcadorController::class, 'destroy']);
 
     Route::post('/marcador/{id}/votar', [VotacionController::class, 'votar']);
-    Route::get('/notificaciones', [NotificacionController::class, 'index']);
-    Route::post('/notificaciones/marcar-leidas', [NotificacionController::class, 'marcarTodasComoLeidas']);
-    Route::delete('/notificaciones', [NotificacionController::class, 'destroy']);
+
+    Route::get('/admin/usuarios', [UsuarioController::class, 'obtenerTodos']);
 });
