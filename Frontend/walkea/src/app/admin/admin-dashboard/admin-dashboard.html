@@ -1,1 +1,38 @@
-<p>admin-dashboard works!</p>
+<div class="admin-container">
+  <h2>👑 Panel de Gestión de Usuarios</h2>
+  
+  @if (cargando) {
+    <p class="loading-text">Cargando usuarios de la base de datos...</p>
+  } @else if (error) {
+    <p class="error-text">{{ error }}</p>
+  } @else {
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Reputación</th>
+            <th>Rango</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of usuarios; track user.id_usuario) {
+            <tr>
+              <td>#{{ user.id_usuario }}</td>
+              <td><strong>{{ user.nombre }}</strong></td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.reputacion }} pts</td>
+              <td>
+                <span class="badge" [class.badge-admin]="user.rol === 'admin'">
+                  {{ user.rol | uppercase }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth';
 import { ToastService } from '../services/toast.service';
+import { resolveAppRole } from '../utils/role.util';
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,10 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: (respuesta) => {
           localStorage.setItem('token', respuesta.token);
+          const usuario = respuesta?.usuario ?? null;
+          const email = String(usuario?.email ?? '').trim().toLowerCase();
+          localStorage.setItem('rol', resolveAppRole(usuario));
+          localStorage.setItem('email', email);
           this.toastService.success('Sesion iniciada correctamente.');
           this.router.navigate(['/app/dashboard']);
         },

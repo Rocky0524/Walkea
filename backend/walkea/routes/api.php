@@ -6,6 +6,7 @@ use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\TipoMarcadorController;
 use App\Http\Controllers\MarcadorController;
 use App\Http\Controllers\VotacionController;
+use App\Http\Controllers\UsuarioController;
 
 // Rutas publicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -34,4 +35,6 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/marcador/{id}', [MarcadorController::class, 'destroy']);
 
     Route::post('/marcador/{id}/votar', [VotacionController::class, 'votar']);
+
+    Route::get('/admin/usuarios', [UsuarioController::class, 'obtenerTodos']);
 });
