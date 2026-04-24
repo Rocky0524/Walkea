@@ -19,6 +19,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   notificacionesNoLeidas = 0;
   nombreUsuario = 'Usuario';
   rangoUsuario = 'Novato';
+  rolUsuario = 'usuario';
   inicialUsuario = 'U';
 
   private subscriptions = new Subscription();
@@ -101,6 +102,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       next: ({ usuario, estadisticas }) => {
         this.nombreUsuario = usuario.nombre;
         this.rangoUsuario = this.formatearNivel(estadisticas.nivel);
+        this.rolUsuario = usuario.rol || 'usuario';
         this.inicialUsuario = usuario.nombre.trim().charAt(0).toUpperCase() || 'U';
       },
       error: () => {
