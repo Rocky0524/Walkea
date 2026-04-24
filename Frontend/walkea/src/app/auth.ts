@@ -23,6 +23,10 @@ export class AuthService {
     return this.http.get(`${this.apiUrl}/me`);
   }
 
+  logoutRequest(): Observable<any> {
+    return this.http.post(`${this.apiUrl}/logout`, {});
+  }
+
   getToken(): string | null {
     return localStorage.getItem('token');
   }
@@ -33,5 +37,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('rol');
+    localStorage.removeItem('email');
   }
 }

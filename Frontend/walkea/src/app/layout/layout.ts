@@ -2,8 +2,10 @@ import { DatePipe } from '@angular/common';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Subscription, interval } from 'rxjs';
+import { AuthService } from '../auth';
 import { Notificacion, NotificacionService } from '../services/notificacion.service';
 import { PerfilService } from '../services/perfil.service';
+import { ToastService } from '../services/toast.service';
 import { resolveAppRole } from '../utils/role.util';
 
 @Component({
@@ -16,6 +18,7 @@ import { resolveAppRole } from '../utils/role.util';
 export class LayoutComponent implements OnInit, OnDestroy {
   menuAbierto = false;
   panelNotificacionesAbierto = false;
+  menuUsuarioAbierto = false;
   notificaciones: Notificacion[] = [];
   notificacionesNoLeidas = 0;
   nombreUsuario = 'Usuario';
@@ -26,9 +29,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
 
   constructor(
+    private authService: AuthService,
     private notificacionService: NotificacionService,
     private perfilService: PerfilService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -54,6 +59,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
         if (event instanceof NavigationEnd) {
           this.cerrarMenu();
           this.cerrarNotificaciones();
+          this.cerrarMenuUsuario();
         }
       })
     );
@@ -67,6 +73,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
   onEscape(): void {
     if (this.panelNotificacionesAbierto) {
       this.cerrarNotificaciones();
+    }
+
+    if (this.menuUsuarioAbierto) {
+      this.cerrarMenuUsuario();
     }
 
     if (this.menuAbierto) {
@@ -94,8 +104,32 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.panelNotificacionesAbierto = false;
   }
 
+  toggleMenuUsuario(): void {
+    this.menuUsuarioAbierto = !this.menuUsuarioAbierto;
+  }
+
+  cerrarMenuUsuario(): void {
+    this.menuUsuarioAbierto = false;
+  }
+
   vaciarNotificaciones(): void {
     this.notificacionService.vaciar();
+  }
+
+  irAPerfil(): void {
+    this.cerrarMenuUsuario();
+    this.router.navigate(['/app/perfil']);
+  }
+
+  cerrarSesion(): void {
+    this.authService.logoutRequest().subscribe({
+      next: () => {
+        this.finalizarCierreSesion();
+      },
+      error: () => {
+        this.finalizarCierreSesion();
+      }
+    });
   }
 
   private cargarPerfil(): void {
@@ -125,5 +159,16 @@ export class LayoutComponent implements OnInit, OnDestroy {
       default:
         return 'Novato';
     }
+  }
+
+  private finalizarCierreSesion(): void {
+    this.authService.logout();
+    this.menuAbierto = false;
+    this.panelNotificacionesAbierto = false;
+    this.menuUsuarioAbierto = false;
+    this.notificaciones = [];
+    this.notificacionesNoLeidas = 0;
+    this.toastService.success('Sesion cerrada correctamente.');
+    this.router.navigate(['/login']);
   }
 }

@@ -26,12 +26,21 @@
       }
     </nav>
 
-    <div class="sidebar-footer">
-      <div class="user-avatar">{{ inicialUsuario }}</div>
-      <div class="user-meta">
-        <span class="user-name">{{ nombreUsuario }}</span>
-        <span class="user-role">{{ rangoUsuario }}</span>
-      </div>
+    <div class="sidebar-footer-wrap">
+      @if (menuUsuarioAbierto) {
+        <div class="user-menu">
+          <button class="user-menu-btn" type="button" (click)="irAPerfil()">Ver perfil</button>
+          <button class="user-menu-btn user-menu-btn-danger" type="button" (click)="cerrarSesion()">Cerrar sesion</button>
+        </div>
+      }
+
+      <button class="sidebar-footer" type="button" aria-label="Abrir menu de usuario" (click)="toggleMenuUsuario()">
+        <div class="user-avatar">{{ inicialUsuario }}</div>
+        <div class="user-meta">
+          <span class="user-name">{{ nombreUsuario }}</span>
+          <span class="user-role">{{ rangoUsuario }}</span>
+        </div>
+      </button>
     </div>
   </aside>
 
