@@ -1,38 +1,127 @@
 <div class="admin-container">
-  <h2>Panel de gestion de usuarios</h2>
+  <h2>Panel admin</h2>
 
   @if (cargando) {
-    <p class="loading-text">Cargando usuarios de la base de datos...</p>
+    <p class="loading-text">Cargando datos...</p>
   } @else if (error) {
     <p class="error-text">{{ error }}</p>
   } @else {
-    <div class="table-responsive">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Reputacion</th>
-            <th>Rango</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (user of usuarios; track user.id_usuario) {
-            <tr>
-              <td>#{{ user.id_usuario }}</td>
-              <td><strong>{{ user.nombre }}</strong></td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.reputacion }} pts</td>
-              <td>
-                <span class="badge" [class.badge-admin]="user.rol === 'admin'">
-                  {{ user.rol | uppercase }}
-                </span>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <div class="tabs">
+      <button class="tab-btn" [class.tab-btn-active]="tabActual === 'usuarios'" (click)="cambiarTab('usuarios')">Usuarios</button>
+      <button class="tab-btn" [class.tab-btn-active]="tabActual === 'reportes'" (click)="cambiarTab('reportes')">Reportes</button>
+      <button class="tab-btn" [class.tab-btn-active]="tabActual === 'auditoria'" (click)="cambiarTab('auditoria')">Auditoria</button>
     </div>
+
+    @if (tabActual === 'usuarios') {
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Reputacion</th>
+              <th>Rol</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of usuarios; track user.id_usuario) {
+              <tr>
+                <td>#{{ user.id_usuario }}</td>
+                <td><strong>{{ user.nombre }}</strong></td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.reputacion }}</td>
+                <td>
+                  <span class="badge" [class.badge-admin]="user.rol === 'admin'">{{ user.rol | uppercase }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (tabActual === 'reportes') {
+      <div class="filters">
+        <input
+          class="input-filter"
+          type="text"
+          [(ngModel)]="busquedaReportes"
+          placeholder="Buscar por titulo, descripcion, email o tipo" />
+        <select class="select-filter" [(ngModel)]="filtroEstado">
+          <option value="todos">Todos</option>
+          <option value="activo">Activo</option>
+          <option value="agotado">Agotado</option>
+          <option value="caducado">Caducado</option>
+        </select>
+      </div>
+
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Titulo</th>
+              <th>Tipo</th>
+              <th>Autor</th>
+              <th>Estado</th>
+              <th>Vida</th>
+              <th>Accion</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reporte of reportesFiltrados; track reporte.id_marcador) {
+              <tr>
+                <td>#{{ reporte.id_marcador }}</td>
+                <td>
+                  <strong>{{ reporte.titulo || 'Sin titulo' }}</strong>
+                  <p class="subline">{{ reporte.descripcion || 'Sin descripcion' }}</p>
+                </td>
+                <td>{{ reporte.tipo_marcador?.nombre || '-' }}</td>
+                <td>{{ reporte.usuario?.email || '-' }}</td>
+                <td>{{ reporte.estado }}</td>
+                <td>{{ reporte.vida }}/10</td>
+                <td>
+                  <button
+                    class="btn-delete"
+                    type="button"
+                    [disabled]="eliminandoId === reporte.id_marcador"
+                    (click)="eliminarReporte(reporte)">
+                    {{ eliminandoId === reporte.id_marcador ? 'Eliminando...' : 'Eliminar' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    @if (tabActual === 'auditoria') {
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Admin</th>
+              <th>ID Reporte</th>
+              <th>Titulo</th>
+              <th>Autor original</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of auditoria; track item.id) {
+              <tr>
+                <td>{{ item.created_at | date:'short' }}</td>
+                <td>{{ item.admin_usuario?.email || '-' }}</td>
+                <td>#{{ item.id_marcador_original }}</td>
+                <td>{{ item.titulo || 'Sin titulo' }}</td>
+                <td>{{ item.email_usuario_reportero || '-' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   }
 </div>

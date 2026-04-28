@@ -33,6 +33,15 @@ class Usuario extends Authenticatable implements JWTSubject
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saving(function (Usuario $usuario) {
+            if ($usuario->esAdmin() && (int) ($usuario->reputacion ?? 0) < 100) {
+                $usuario->reputacion = 100;
+            }
+        });
+    }
+
     public function marcadores()
     {
         return $this->hasMany(Marcador::class, 'id_usuario', 'id_usuario');
@@ -54,6 +63,10 @@ class Usuario extends Authenticatable implements JWTSubject
 
     public function resolverPesoVoto(): int
     {
+        if ($this->esAdmin()) {
+            return 3;
+        }
+
         $dias = $this->resolverAntiguedadDias();
 
         if ($dias >= 90) {
@@ -69,11 +82,20 @@ class Usuario extends Authenticatable implements JWTSubject
 
     public function resolverNivel(): string
     {
+        if ($this->esAdmin()) {
+            return 'veterano';
+        }
+
         return match ($this->resolverPesoVoto()) {
             3 => 'veterano',
             2 => 'medio',
             default => 'novato',
         };
+    }
+
+    public function esAdmin(): bool
+    {
+        return strtolower((string) $this->rol) === 'admin';
     }
 
     // JWTSubject
