@@ -3,6 +3,7 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
 import { MapaComponent } from './mapa';
+import { AuthService } from '../auth';
 import { MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
 
@@ -15,6 +16,12 @@ describe('MapaComponent', () => {
       imports: [MapaComponent],
       providers: [
         provideRouter([]),
+        {
+          provide: AuthService,
+          useValue: {
+            me: () => of({ id_usuario: 1 }),
+          },
+        },
         {
           provide: MarcadorService,
           useValue: {

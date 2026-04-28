@@ -9,6 +9,7 @@ import { ReportesVotosComponent } from './reportes-votos/reportes-votos';
 import { PerfilPageComponent } from './perfil-page/perfil-page';
 import { AjustesPageComponent } from './ajustes-page/ajustes-page';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard';
+import { authGuard } from './auth.guard';
 import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
@@ -22,6 +23,7 @@ export const routes: Routes = [
   {
     path: 'app',
     component: LayoutComponent,
+    canActivate: [authGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },

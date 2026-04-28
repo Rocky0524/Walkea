@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
-
 /* Layout general para que el footer se quede siempre abajo */
 .welcome-layout {
   display: flex;
@@ -8,7 +6,7 @@
   background: linear-gradient(-45deg, #e0f2fe, #f0f9ff, #e0e7ff, #f8fafc);
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #0f172a;
 }
 
