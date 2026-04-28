@@ -14,9 +14,14 @@
     <nav class="sidebar-nav">
       <button class="nav-btn" routerLink="/app/dashboard" routerLinkActive="active" (click)="cerrarMenu()">Inicio</button>
       <button class="nav-btn" routerLink="/app/mapa" routerLinkActive="active" (click)="cerrarMenu()">Mapa completo</button>
-      <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active" (click)="cerrarMenu()">Mis reportes</button>
-      <button class="nav-btn" routerLink="/app/perfil" routerLinkActive="active" (click)="cerrarMenu()">Perfil</button>
-      <button class="nav-btn" routerLink="/app/ajustes" routerLinkActive="active" (click)="cerrarMenu()">Ajustes</button>
+      @if (esInvitado) {
+        <button class="nav-btn" routerLink="/registro" (click)="cerrarMenu()">Crear cuenta</button>
+      }
+      @if (!esInvitado) {
+        <button class="nav-btn" routerLink="/app/mis-reportes" routerLinkActive="active" (click)="cerrarMenu()">Mis reportes</button>
+        <button class="nav-btn" routerLink="/app/perfil" routerLinkActive="active" (click)="cerrarMenu()">Perfil</button>
+        <button class="nav-btn" routerLink="/app/ajustes" routerLinkActive="active" (click)="cerrarMenu()">Ajustes</button>
+      }
 
       @if (rolUsuario === 'admin') {
         <div class="admin-divider"></div>
@@ -29,12 +34,18 @@
     <div class="sidebar-footer-wrap">
       @if (menuUsuarioAbierto) {
         <div class="user-menu">
-          <button class="user-menu-btn" type="button" (click)="irAPerfil()">Ver perfil</button>
-          <button class="user-menu-btn user-menu-btn-danger" type="button" (click)="cerrarSesion()">Cerrar sesion</button>
+          @if (!esInvitado) {
+            <button class="user-menu-btn" type="button" (click)="irAPerfil()">Ver perfil</button>
+            <button class="user-menu-btn user-menu-btn-danger" type="button" (click)="cerrarSesion()">Cerrar sesion</button>
+          }
         </div>
       }
 
-      <button class="sidebar-footer" type="button" aria-label="Abrir menu de usuario" (click)="toggleMenuUsuario()">
+      <button
+        class="sidebar-footer"
+        type="button"
+        [attr.aria-label]="esInvitado ? 'Usuario invitado' : 'Abrir menu de usuario'"
+        (click)="!esInvitado && toggleMenuUsuario()">
         <div class="user-avatar">{{ inicialUsuario }}</div>
         <div class="user-meta">
           <span class="user-name">{{ nombreUsuario }}</span>
@@ -51,22 +62,26 @@
         <img src="logo-walkea.png" alt="Walkea Logo" class="mobile-brand-logo">
         <span>Walkea</span>
       </div>
-      <button class="notification-btn mobile-notification-btn" type="button" aria-label="Abrir notificaciones" (click)="toggleNotificaciones()">
+      @if (!esInvitado) {
+        <button class="notification-btn mobile-notification-btn" type="button" aria-label="Abrir notificaciones" (click)="toggleNotificaciones()">
+          <span>&#128276;</span>
+          @if (notificacionesNoLeidas > 0) {
+            <span class="notification-badge">{{ notificacionesNoLeidas }}</span>
+          }
+        </button>
+      }
+    </div>
+
+    @if (!esInvitado) {
+      <button class="notification-btn desktop-notification-btn" type="button" aria-label="Abrir notificaciones" (click)="toggleNotificaciones()">
         <span>&#128276;</span>
         @if (notificacionesNoLeidas > 0) {
           <span class="notification-badge">{{ notificacionesNoLeidas }}</span>
         }
       </button>
-    </div>
+    }
 
-    <button class="notification-btn desktop-notification-btn" type="button" aria-label="Abrir notificaciones" (click)="toggleNotificaciones()">
-      <span>&#128276;</span>
-      @if (notificacionesNoLeidas > 0) {
-        <span class="notification-badge">{{ notificacionesNoLeidas }}</span>
-      }
-    </button>
-
-    @if (panelNotificacionesAbierto) {
+    @if (!esInvitado && panelNotificacionesAbierto) {
       <button class="notification-backdrop" type="button" aria-label="Cerrar notificaciones" (click)="cerrarNotificaciones()"></button>
 
       <section class="notification-panel">

@@ -24,6 +24,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   nombreUsuario = 'Usuario';
   rangoUsuario = 'Novato';
   rolUsuario = 'usuario';
+  esInvitado = false;
   inicialUsuario = 'U';
 
   private subscriptions = new Subscription();
@@ -37,7 +38,17 @@ export class LayoutComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.cargarPerfil();
+    this.esInvitado = this.authService.isGuestMode();
+
+    if (this.esInvitado) {
+      this.nombreUsuario = 'Invitado';
+      this.rangoUsuario = 'Solo lectura';
+      this.rolUsuario = 'invitado';
+      this.inicialUsuario = 'I';
+    } else {
+      this.cargarPerfil();
+      this.notificacionService.actualizarDesdeBackend();
+    }
 
     this.subscriptions.add(
       this.notificacionService.notificaciones$.subscribe((items) => {
@@ -46,11 +57,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.notificacionService.actualizarDesdeBackend();
-
     this.subscriptions.add(
       interval(30000).subscribe(() => {
-        this.notificacionService.actualizarDesdeBackend();
+        if (!this.esInvitado) {
+          this.notificacionService.actualizarDesdeBackend();
+        }
       })
     );
 
@@ -118,10 +129,19 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   irAPerfil(): void {
     this.cerrarMenuUsuario();
+    if (this.esInvitado) {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.router.navigate(['/app/perfil']);
   }
 
   cerrarSesion(): void {
+    if (this.esInvitado) {
+      this.finalizarCierreSesion();
+      return;
+    }
+
     this.authService.logoutRequest().subscribe({
       next: () => {
         this.finalizarCierreSesion();

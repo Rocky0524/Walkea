@@ -29,6 +29,7 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: (respuesta) => {
           localStorage.setItem('token', respuesta.token);
+          localStorage.removeItem('modo');
           const usuario = respuesta?.usuario ?? null;
           const email = String(usuario?.email ?? '').trim().toLowerCase();
           localStorage.setItem('rol', resolveAppRole(usuario));

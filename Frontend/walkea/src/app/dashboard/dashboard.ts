@@ -6,6 +6,7 @@ import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte
 import { Marcador, MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
 import { ToastService } from '../services/toast.service';
+import { AuthService } from '../auth';
 
 @Component({
   selector: 'app-dashboard',
@@ -21,14 +22,17 @@ export class DashboardComponent implements OnInit {
   mostrarNuevoReporte = false;
   marcadores: Marcador[] = [];
   tiposMarcador: any[] = [];
+  esInvitado = false;
 
   constructor(
+    private authService: AuthService,
     private marcadorService: MarcadorService,
     private tipoMarcadorService: TipoMarcadorService,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
+    this.esInvitado = this.authService.isGuestMode();
     this.inicializarMapa();
     this.cargarTipos();
     this.pedirUbicacion();
@@ -151,6 +155,10 @@ export class DashboardComponent implements OnInit {
   }
 
   abrirModalReporte(): void {
+    if (this.esInvitado) {
+      this.toastService.error('Modo invitado: solo puedes visualizar el contenido.');
+      return;
+    }
     this.mostrarNuevoReporte = true;
   }
 
@@ -159,6 +167,11 @@ export class DashboardComponent implements OnInit {
   }
 
   guardarReporte(datos: any): void {
+    if (this.esInvitado) {
+      this.toastService.error('Modo invitado: no puedes crear reportes.');
+      return;
+    }
+
     this.marcadorService.crear(datos).subscribe({
       next: () => {
         this.toastService.success('Reporte guardado correctamente.');

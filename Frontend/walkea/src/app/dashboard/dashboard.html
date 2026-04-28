@@ -1,6 +1,11 @@
 <div class="dashboard-content">
   <div class="header-banner">
-    <strong>&iexcl;Bienvenido!</strong> Consulta los reportes cercanos o crea uno nuevo.
+    <strong>&iexcl;Bienvenido!</strong>
+    @if (esInvitado) {
+      Consulta los reportes cercanos en modo solo lectura.
+    } @else {
+      Consulta los reportes cercanos o crea uno nuevo.
+    }
   </div>
 
   <div class="content-body">
@@ -37,9 +42,11 @@
     </div>
   </div>
 
-  <button class="fab-add" title="A&ntilde;adir reporte" aria-label="A&ntilde;adir reporte" (click)="abrirModalReporte()"></button>
+  @if (!esInvitado) {
+    <button class="fab-add" title="A&ntilde;adir reporte" aria-label="A&ntilde;adir reporte" (click)="abrirModalReporte()"></button>
+  }
 
-  @if (mostrarNuevoReporte) {
+  @if (!esInvitado && mostrarNuevoReporte) {
     <app-nuevo-reporte
       (cerrar)="cerrarModalReporte()"
       (enviar)="guardarReporte($event)">
