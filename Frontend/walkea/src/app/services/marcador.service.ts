@@ -76,7 +76,7 @@ export class MarcadorService {
     return {
       id_marcador: idMarcador,
       id: Number(raw?.id ?? idMarcador),
-      id_usuario: Number(raw?.id_usuario ?? raw?.usuario?.id_usuario ?? 0) || undefined,
+      id_usuario: Number(raw?.id_usuario ?? raw?.usuario?.id_usuario ?? 0),
       id_tipo_marcador: Number(raw?.id_tipo_marcador ?? 0),
       titulo: String(raw?.titulo ?? 'Sin titulo'),
       descripcion: String(raw?.descripcion ?? 'Sin descripcion'),

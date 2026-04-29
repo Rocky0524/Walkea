@@ -21,7 +21,7 @@ export class ReportesVotosComponent implements OnInit {
   constructor(
     private marcadorService: MarcadorService,
     private authService: AuthService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.authService.me().subscribe({
@@ -93,7 +93,7 @@ export class ReportesVotosComponent implements OnInit {
 
   esPropio(reporte: Marcador): boolean {
     const autorId = Number(reporte.id_usuario ?? reporte.usuario?.id_usuario ?? 0);
-    return !!this.currentUserId && autorId === this.currentUserId;
+    return !!this.currentUserId && autorId > 0 && autorId === this.currentUserId;
   }
 
   private esInactivo(reporte: Marcador): boolean {
