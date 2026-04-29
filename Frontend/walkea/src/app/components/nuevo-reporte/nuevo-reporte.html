@@ -8,7 +8,7 @@
     <div class="modal-body">
       <div class="seccion">
         <label>1. &iquest;Qu&eacute; has visto?</label>
-        <div class="grid-tipos">
+        <div class="grid-tipos" [class.grid-tipos-error]="errorTipo">
           @for (tipo of tipos; track tipo.id) {
             <button
               class="btn-tipo"
@@ -29,6 +29,8 @@
             type="text"
             [(ngModel)]="titulo"
             maxlength="120"
+            [class.input-error]="errorTitulo"
+            (input)="errorTitulo = false"
             placeholder="Ej: Farola rota frente al instituto" />
         </div>
 

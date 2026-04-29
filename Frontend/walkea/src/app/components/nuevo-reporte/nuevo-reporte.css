@@ -156,3 +156,38 @@ input[type="text"] {
   color: #2b74c8;
   cursor: pointer;
 }
+
+/* Validation errors */
+.grid-tipos-error {
+  border: 2px solid #ef4444;
+  border-radius: 22px;
+  padding: 8px;
+  animation: shake 0.4s ease;
+}
+
+.input-error {
+  border: 2px solid #ef4444 !important;
+  background-color: #fef2f2 !important;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+@media (max-width: 560px) {
+  .modal-content {
+    width: 95vw;
+    padding: 16px 18px;
+    border-radius: 28px;
+  }
+
+  .seccion-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+}

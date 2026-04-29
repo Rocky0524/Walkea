@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../auth';
 import { Marcador, MarcadorService } from '../services/marcador.service';
+import { TiempoRelativoPipe } from '../utils/tiempo-relativo.pipe';
 
 @Component({
   selector: 'app-reportes-votos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TiempoRelativoPipe],
   templateUrl: './reportes-votos.html',
   styleUrl: './reportes-votos.css'
 })

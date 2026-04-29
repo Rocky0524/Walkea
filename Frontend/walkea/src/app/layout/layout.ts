@@ -24,7 +24,6 @@ export class LayoutComponent implements OnInit, OnDestroy {
   nombreUsuario = 'Usuario';
   rangoUsuario = 'Novato';
   rolUsuario = 'usuario';
-  esInvitado = false;
   inicialUsuario = 'U';
 
   private subscriptions = new Subscription();
@@ -38,17 +37,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.esInvitado = this.authService.isGuestMode();
-
-    if (this.esInvitado) {
-      this.nombreUsuario = 'Invitado';
-      this.rangoUsuario = 'Solo lectura';
-      this.rolUsuario = 'invitado';
-      this.inicialUsuario = 'I';
-    } else {
-      this.cargarPerfil();
-      this.notificacionService.actualizarDesdeBackend();
-    }
+    this.cargarPerfil();
+    this.aplicarModoOscuro();
 
     this.subscriptions.add(
       this.notificacionService.notificaciones$.subscribe((items) => {
@@ -57,11 +47,11 @@ export class LayoutComponent implements OnInit, OnDestroy {
       })
     );
 
+    this.notificacionService.actualizarDesdeBackend();
+
     this.subscriptions.add(
       interval(30000).subscribe(() => {
-        if (!this.esInvitado) {
-          this.notificacionService.actualizarDesdeBackend();
-        }
+        this.notificacionService.actualizarDesdeBackend();
       })
     );
 
@@ -129,19 +119,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   irAPerfil(): void {
     this.cerrarMenuUsuario();
-    if (this.esInvitado) {
-      this.router.navigate(['/login']);
-      return;
-    }
     this.router.navigate(['/app/perfil']);
   }
 
   cerrarSesion(): void {
-    if (this.esInvitado) {
-      this.finalizarCierreSesion();
-      return;
-    }
-
     this.authService.logoutRequest().subscribe({
       next: () => {
         this.finalizarCierreSesion();
@@ -190,5 +171,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.notificacionesNoLeidas = 0;
     this.toastService.success('Sesion cerrada correctamente.');
     this.router.navigate(['/login']);
+  }
+
+  private aplicarModoOscuro(): void {
+    const prefs = this.perfilService.obtenerPreferencias();
+    if (prefs.modoOscuro) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
   }
 }

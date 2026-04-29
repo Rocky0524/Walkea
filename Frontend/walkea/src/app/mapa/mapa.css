@@ -15,13 +15,13 @@
   padding: 1rem;
   position: relative;
   min-height: 0;
-  background-color: #f2f4f7;
+  background-color: var(--bg-base);
   overflow: hidden;
 }
 
 .header-banner {
-  background: linear-gradient(135deg, #d9ebfb 0%, #c7e1f7 100%);
-  color: #1a1a1a;
+  background: var(--bg-banner);
+  color: var(--text-primary);
   padding: 1.25rem 1.5rem;
   border-radius: 22px;
   border: 1px solid rgba(86, 139, 196, 0.18);
@@ -47,6 +47,56 @@
   max-width: 48rem;
   color: #52606d;
   font-size: 0.98rem;
+}
+
+/* Filter chips */
+.filter-chips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1.5px solid #d8e3ef;
+  background: white;
+  color: #3d5a7a;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-chip:hover {
+  background: #edf4fc;
+  border-color: #b5cfe6;
+}
+
+.filter-chip-active {
+  background: #2b74c8;
+  color: white;
+  border-color: #2b74c8;
+}
+
+.filter-chip-active:hover {
+  background: #245fa5;
+  border-color: #245fa5;
+}
+
+.filter-chip-active .filter-dot {
+  border: 2px solid white;
+}
+
+.filter-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .map-feedback {

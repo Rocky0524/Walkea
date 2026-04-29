@@ -11,6 +11,24 @@
     </div>
   </header>
 
+  <div class="filter-chips">
+    <button class="filter-chip" [class.filter-chip-active]="filtroActivo === null" (click)="filtrarPorTipo(null)">
+      Todos
+    </button>
+    <button class="filter-chip filter-chip-peligro" [class.filter-chip-active]="filtroActivo === 1" (click)="filtrarPorTipo(1)">
+      <span class="filter-dot" style="background:#ef4444"></span> Peligro
+    </button>
+    <button class="filter-chip filter-chip-obras" [class.filter-chip-active]="filtroActivo === 2" (click)="filtrarPorTipo(2)">
+      <span class="filter-dot" style="background:#f59e0b"></span> Obras
+    </button>
+    <button class="filter-chip filter-chip-segura" [class.filter-chip-active]="filtroActivo === 3" (click)="filtrarPorTipo(3)">
+      <span class="filter-dot" style="background:#22c55e"></span> Zona segura
+    </button>
+    <button class="filter-chip filter-chip-otros" [class.filter-chip-active]="filtroActivo === 4" (click)="filtrarPorTipo(4)">
+      <span class="filter-dot" style="background:#8b5cf6"></span> Otros
+    </button>
+  </div>
+
   @if (mensaje) {
     <div class="map-feedback map-feedback-success">{{ mensaje }}</div>
   }
