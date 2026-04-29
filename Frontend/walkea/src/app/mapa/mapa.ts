@@ -29,7 +29,7 @@ export class MapaComponent implements AfterViewInit {
     private authService: AuthService,
     private marcadorService: MarcadorService,
     private tipoMarcadorService: TipoMarcadorService
-  ) {}
+  ) { }
 
   ngAfterViewInit(): void {
     this.initMap();

@@ -9,58 +9,62 @@
       <p>Estos datos salen del backend actual y los votos se env&iacute;an a la API real.</p>
 
       @if (mensaje) {
-        <div class="feedback success">{{ mensaje }}</div>
+      <div class="feedback success">{{ mensaje }}</div>
       }
 
       @if (error) {
-        <div class="feedback error">{{ error }}</div>
+      <div class="feedback error">{{ error }}</div>
       }
 
       <div class="mobile-report-list">
         @if (cargando) {
-          <div class="empty-state">Cargando reportes...</div>
+        <div class="empty-state">Cargando reportes...</div>
         } @else {
-          @for (reporte of reportes; track reporte.id_marcador) {
-            <article class="mobile-report-card">
-              <div class="mobile-report-top">
-                <div>
-                  <h3>{{ reporte.descripcion }}</h3>
-                </div>
-                <span class="badge" [ngClass]="reporte.estado">
-                  {{ reporte.estado | titlecase }}
-                </span>
-              </div>
+        @for (reporte of reportes; track reporte.id_marcador) {
+        <article class="mobile-report-card">
+          <div class="mobile-report-top">
+            <div>
+              <h3>{{ reporte.descripcion }}</h3>
+            </div>
+            <span class="badge" [ngClass]="reporte.estado">
+              {{ reporte.estado | titlecase }}
+            </span>
+          </div>
 
-              <div class="mobile-report-meta">
-                <div class="meta-item">
-                  <span class="meta-label">Ubicaci&oacute;n</span>
-                  <strong>{{ textoUbicacion(reporte) }}</strong>
-                </div>
+          <div class="mobile-report-meta">
+            <div class="meta-item">
+              <span class="meta-label">Ubicaci&oacute;n</span>
+              <strong>{{ textoUbicacion(reporte) }}</strong>
+            </div>
 
-                <div class="meta-item">
-                  <span class="meta-label">Estado</span>
-                  <strong>{{ reporte.estado | titlecase }}</strong>
-                </div>
+            <div class="meta-item">
+              <span class="meta-label">Estado</span>
+              <strong>{{ reporte.estado | titlecase }}</strong>
+            </div>
 
-                <div class="meta-item">
-                  <span class="meta-label">Vida</span>
-                  <strong>{{ vidaVisible(reporte) }}/10 HP</strong>
-                </div>
-              </div>
+            <div class="meta-item">
+              <span class="meta-label">Vida</span>
+              <strong>{{ vidaVisible(reporte) }}/10 HP</strong>
+            </div>
+          </div>
 
-              <div class="mobile-report-bottom">
-                <div class="vote-actions">
-                  <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)" [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'positivo')">+</button>
-                  <button class="btn-vote btn-negative" [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)" [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'negativo')">-</button>
-                </div>
-                @if (!puedeVotar(reporte)) {
-                  <p class="vote-note">{{ mensajeBloqueoVoto(reporte) }}</p>
-                }
-              </div>
-            </article>
-          } @empty {
-            <div class="empty-state">No hay reportes disponibles.</div>
-          }
+          <div class="mobile-report-bottom">
+            <div class="vote-actions">
+              <button class="btn-vote btn-positive"
+                [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)"
+                [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'positivo')">+</button>
+              <button class="btn-vote btn-negative"
+                [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)"
+                [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'negativo')">-</button>
+            </div>
+            @if (!puedeVotar(reporte)) {
+            <p class="vote-note">{{ mensajeBloqueoVoto(reporte) }}</p>
+            }
+          </div>
+        </article>
+        } @empty {
+        <div class="empty-state">No hay reportes disponibles.</div>
+        }
         }
       </div>
 
@@ -77,36 +81,42 @@
         </thead>
         <tbody>
           @if (cargando) {
-            <tr>
-              <td colspan="6" class="empty-cell">Cargando reportes...</td>
-            </tr>
+          <tr>
+            <td colspan="6" class="empty-cell">Cargando reportes...</td>
+          </tr>
           } @else {
-            @for (reporte of reportes; track reporte.id_marcador || $index) {
-              <tr>
-                <td>{{ reporte.titulo || 'Sin título' }}</td>
-                <td>{{ reporte.descripcion || 'Sin descripción' }}</td>
-                <td>{{ textoUbicacion(reporte) }}</td>
-                <td>
-                  <span class="badge" [ngClass]="reporte.estado || 'activo'">
-                    {{ (reporte.estado || 'activo') | titlecase }}
-                  </span>
-                </td>
-                <td class="vida-cell">{{ vidaVisible(reporte) }}/10 HP</td>
-                <td>
-                  <div class="vote-actions">
-                    <button class="btn-vote btn-positive" [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)" [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'positivo')">Sigue ahí</button>
-                    <button class="btn-vote btn-negative" [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)" [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'negativo')">Ya no está</button>
-                  </div>
-                  @if (!puedeVotar(reporte)) {
-                    <p class="vote-note">{{ mensajeBloqueoVoto(reporte) }}</p>
-                  }
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="6" class="empty-cell">No hay reportes disponibles.</td>
-              </tr>
-            }
+          @for (reporte of reportes; track reporte.id_marcador || $index) {
+          <tr>
+            <td>{{ reporte.titulo || 'Sin título' }}</td>
+            <td>{{ reporte.descripcion || 'Sin descripción' }}</td>
+            <td>{{ textoUbicacion(reporte) }}</td>
+            <td>
+              <span class="badge" [ngClass]="reporte.estado || 'activo'">
+                {{ (reporte.estado || 'activo') | titlecase }}
+              </span>
+            </td>
+            <td class="vida-cell">{{ vidaVisible(reporte) }}/10 HP</td>
+            <td>
+              <div class="vote-actions">
+                <button class="btn-vote btn-positive"
+                  [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)"
+                  [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'positivo')">Sigue
+                  ahí</button>
+                <button class="btn-vote btn-negative"
+                  [disabled]="votoEnCursoId === reporte.id_marcador || !puedeVotar(reporte)"
+                  [attr.title]="mensajeBloqueoVoto(reporte) || null" (click)="votar(reporte, 'negativo')">Ya no
+                  está</button>
+              </div>
+              @if (!puedeVotar(reporte)) {
+              <p class="vote-note">{{ mensajeBloqueoVoto(reporte) }}</p>
+              }
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="6" class="empty-cell">No hay reportes disponibles.</td>
+          </tr>
+          }
           }
         </tbody>
       </table>
