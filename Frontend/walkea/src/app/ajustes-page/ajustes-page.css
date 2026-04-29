@@ -8,7 +8,7 @@
 .header-banner {
   padding: 1.5rem;
   border-radius: 24px;
-  background: linear-gradient(135deg, #d7eafb 0%, #c8dff4 100%);
+  background: var(--bg-banner);
 }
 
 .header-kicker {
@@ -39,7 +39,7 @@
 
 .panel-card,
 .state-card {
-  background-color: white;
+  background-color: var(--bg-surface);
   border-radius: 24px;
   padding: 1.8rem;
   box-shadow: 0 10px 30px rgba(29, 49, 80, 0.08);

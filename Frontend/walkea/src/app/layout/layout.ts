@@ -38,6 +38,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.cargarPerfil();
+    this.aplicarModoOscuro();
 
     this.subscriptions.add(
       this.notificacionService.notificaciones$.subscribe((items) => {
@@ -170,5 +171,14 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.notificacionesNoLeidas = 0;
     this.toastService.success('Sesion cerrada correctamente.');
     this.router.navigate(['/login']);
+  }
+
+  private aplicarModoOscuro(): void {
+    const prefs = this.perfilService.obtenerPreferencias();
+    if (prefs.modoOscuro) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
   }
 }

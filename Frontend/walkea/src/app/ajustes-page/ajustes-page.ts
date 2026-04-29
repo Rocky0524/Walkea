@@ -35,6 +35,7 @@ export class AjustesPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.preferencias = this.perfilService.obtenerPreferencias();
+    this.aplicarModoOscuro(this.preferencias.modoOscuro);
     this.cargarPerfil();
   }
 
@@ -141,8 +142,17 @@ export class AjustesPageComponent implements OnInit {
 
   guardarPreferencias(): void {
     this.perfilService.guardarPreferencias(this.preferencias);
+    this.aplicarModoOscuro(this.preferencias.modoOscuro);
     this.mensaje = 'Preferencias guardadas en este navegador.';
     this.error = '';
+  }
+
+  private aplicarModoOscuro(activar: boolean): void {
+    if (activar) {
+      document.body.classList.add('dark');
+    } else {
+      document.body.classList.remove('dark');
+    }
   }
 
   private obtenerMensajeError(err: any): string {

@@ -2,14 +2,54 @@
   box-sizing: border-box;
 }
 
+:root {
+  --bg-base: #f2f7fd;
+  --bg-surface: #ffffff;
+  --bg-surface-alt: #f8fbff;
+  --bg-banner: linear-gradient(135deg, #d9ebfb 0%, #c7e1f7 100%);
+  --bg-sidebar: #2c75c9;
+  --bg-input: #dbeffc;
+  --text-primary: #1a1a1a;
+  --text-secondary: #607487;
+  --text-muted: #8da2b5;
+  --border-light: #e1ebf4;
+  --border-input: #d8e3ef;
+  --shadow-card: rgba(29, 49, 80, 0.08);
+  --bg-badge-active: #d4edda;
+  --color-badge-active: #155724;
+  --bg-badge-agotado: #f8d7da;
+  --color-badge-agotado: #721c24;
+}
+
+body.dark {
+  --bg-base: #0f1724;
+  --bg-surface: #1a2332;
+  --bg-surface-alt: #1e2a3a;
+  --bg-banner: linear-gradient(135deg, #1a2e44 0%, #1e3550 100%);
+  --bg-sidebar: #152033;
+  --bg-input: #1e2d40;
+  --text-primary: #e8edf3;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border-light: #2a3a4e;
+  --border-input: #2e3e52;
+  --shadow-card: rgba(0, 0, 0, 0.3);
+  --bg-badge-active: #1a3a2a;
+  --color-badge-active: #6ee7b7;
+  --bg-badge-agotado: #3a1a1e;
+  --color-badge-agotado: #fca5a5;
+}
+
 html, body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f2f7fd;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 h1, h2, h3, h4, h5, h6 {

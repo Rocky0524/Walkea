@@ -92,12 +92,13 @@ export class MapaComponent implements AfterViewInit {
       : this.marcadores;
 
     marcadoresAMostrar.forEach((m) => {
+      const color = this.colorPorTipo(m.id_tipo_marcador);
       const marker = L.marker([m.latitud, m.longitud], {
         icon: L.divIcon({
           className: 'emoji-marker-wrapper',
-          html: `<div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:50%;background:rgba(255,255,255,0.92);box-shadow:0 6px 14px rgba(25,42,68,0.2);">${this.iconoPorTipo(m.id_tipo_marcador)}</div>`,
-          iconSize: [34, 34],
-          iconAnchor: [17, 17]
+          html: `<div style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:20px;border-radius:50%;background:${color};color:white;box-shadow:0 6px 14px rgba(25,42,68,0.25);border:2.5px solid white;">${this.iconoPorTipo(m.id_tipo_marcador)}</div>`,
+          iconSize: [38, 38],
+          iconAnchor: [19, 19]
         })
       });
 
@@ -109,15 +110,30 @@ export class MapaComponent implements AfterViewInit {
   private iconoPorTipo(idTipo: number): string {
     switch (idTipo) {
       case 1:
-        return '\uD83D\uDC4A';
+        return '⚠️';
       case 2:
-        return '\uD83D\uDEE0\uFE0F';
+        return '🔧';
       case 3:
-        return '\uD83D\uDEE1\uFE0F';
+        return '✅';
       case 4:
-        return '\u203C\uFE0F';
+        return '❗';
       default:
-        return '\uD83D\uDCCD';
+        return '📍';
+    }
+  }
+
+  private colorPorTipo(idTipo: number): string {
+    switch (idTipo) {
+      case 1:
+        return '#ef4444';
+      case 2:
+        return '#f59e0b';
+      case 3:
+        return '#22c55e';
+      case 4:
+        return '#8b5cf6';
+      default:
+        return '#2b74c8';
     }
   }
 

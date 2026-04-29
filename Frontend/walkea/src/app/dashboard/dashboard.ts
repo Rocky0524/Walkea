@@ -6,11 +6,12 @@ import { NuevoReporteComponent } from '../components/nuevo-reporte/nuevo-reporte
 import { Marcador, MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
 import { ToastService } from '../services/toast.service';
+import { TiempoRelativoPipe } from '../utils/tiempo-relativo.pipe';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, NuevoReporteComponent, SlicePipe],
+  imports: [CommonModule, RouterLink, NuevoReporteComponent, SlicePipe, TiempoRelativoPipe],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -110,10 +111,11 @@ export class DashboardComponent implements OnInit {
     this.marcadoresEnMapa = [];
 
     this.marcadores.forEach((m) => {
+      const color = this.colorPorTipo(m.id_tipo_marcador);
       const marker = L.marker([m.latitud, m.longitud], {
         icon: L.divIcon({
           className: 'emoji-marker-wrapper',
-          html: `<div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:20px;border-radius:50%;background:rgba(255,255,255,0.92);box-shadow:0 4px 12px rgba(19,41,66,0.2);">${this.iconoPorTipo(m.id_tipo_marcador)}</div>`,
+          html: `<div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:18px;border-radius:50%;background:${color};color:white;box-shadow:0 4px 12px rgba(19,41,66,0.2);border:2px solid white;">${this.iconoPorTipo(m.id_tipo_marcador)}</div>`,
           iconSize: [32, 32],
           iconAnchor: [16, 16]
         })
@@ -138,15 +140,30 @@ export class DashboardComponent implements OnInit {
   iconoPorTipo(idTipo: number): string {
     switch (idTipo) {
       case 1:
-        return '\uD83D\uDC4A';
+        return '⚠️';
       case 2:
-        return '\uD83D\uDEE0\uFE0F';
+        return '🔧';
       case 3:
-        return '\uD83D\uDEE1\uFE0F';
+        return '✅';
       case 4:
-        return '\u203C\uFE0F';
+        return '❗';
       default:
-        return '\uD83D\uDCCD';
+        return '📍';
+    }
+  }
+
+  private colorPorTipo(idTipo: number): string {
+    switch (idTipo) {
+      case 1:
+        return '#ef4444';
+      case 2:
+        return '#f59e0b';
+      case 3:
+        return '#22c55e';
+      case 4:
+        return '#8b5cf6';
+      default:
+        return '#2b74c8';
     }
   }
 

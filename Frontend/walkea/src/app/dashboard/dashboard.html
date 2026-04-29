@@ -9,7 +9,12 @@
 
       <div class="reportes-list">
         @if (marcadores.length === 0) {
-          <p style="color: #666;">No hay reportes recientes para mostrar.</p>
+          <div class="empty-state">
+            <span class="empty-state-icon">🗺️</span>
+            <p class="empty-state-title">Tu zona está tranquila</p>
+            <p class="empty-state-text">No hay reportes recientes. ¡Sé el primero en reportar algo!</p>
+            <button class="btn-more-reports" routerLink="/app/mapa">Ir al mapa</button>
+          </div>
         }
 
         @for (m of marcadores | slice:0:3; track m.id_marcador || $index) {
@@ -20,6 +25,7 @@
             <div class="report-info">
               <span class="report-title">{{ m.titulo || 'Reporte' }}</span>
               <span class="report-subtitle">{{ m.descripcion || 'Sin descripci&oacute;n' }}</span>
+              <span class="report-time">{{ m.created_at | tiempoRelativo }}</span>
               <span class="report-score">{{ m.hp_vida ?? m.vida }}/10 HP</span>
             </div>
           </div>

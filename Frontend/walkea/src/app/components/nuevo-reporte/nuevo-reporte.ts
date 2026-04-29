@@ -22,6 +22,8 @@ export class NuevoReporteComponent implements AfterViewInit {
   tipoSeleccionado: number | null = null;
   titulo = '';
   descripcion = '';
+  errorTipo = false;
+  errorTitulo = false;
 
   tipos = [
     { id: 1, nombre: 'Peligro', icono: '\uD83D\uDC4A' },
@@ -34,6 +36,7 @@ export class NuevoReporteComponent implements AfterViewInit {
 
   seleccionarTipo(id: number): void {
     this.tipoSeleccionado = id;
+    this.errorTipo = false;
   }
 
   ngAfterViewInit(): void {
@@ -85,12 +88,15 @@ export class NuevoReporteComponent implements AfterViewInit {
   }
 
   enviarReporte(): void {
-    if (!this.tipoSeleccionado) {
+    this.errorTipo = !this.tipoSeleccionado;
+    this.errorTitulo = !this.titulo.trim();
+
+    if (this.errorTipo) {
       this.toastService.error('Selecciona un tipo de reporte antes de enviarlo.');
       return;
     }
 
-    if (!this.titulo.trim()) {
+    if (this.errorTitulo) {
       this.toastService.error('Escribe un titulo para el reporte.');
       return;
     }

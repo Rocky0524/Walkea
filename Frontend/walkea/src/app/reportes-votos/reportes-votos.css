@@ -8,8 +8,8 @@
 }
 
 .header-banner {
-  background-color: #cde5f7;
-  color: #1a1a1a;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
   padding: 1.5rem 2rem;
   font-size: 1.2rem;
 }
@@ -21,7 +21,7 @@
 }
 
 .table-container {
-  background: white;
+  background: var(--bg-surface);
   padding: 2rem;
   border-radius: 20px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -63,13 +63,13 @@
 }
 
 .badge.activo {
-  background-color: #d4edda;
-  color: #155724;
+  background-color: var(--bg-badge-active);
+  color: var(--color-badge-active);
 }
 
 .badge.agotado {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: var(--bg-badge-agotado);
+  color: var(--color-badge-agotado);
 }
 
 .vida-cell {
@@ -135,6 +135,42 @@
 .empty-cell {
   text-align: center;
   padding: 2rem;
+}
+
+.time-cell {
+  color: #8da2b5;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  background: #f8fbff;
+  border-radius: 20px;
+  border: 1.5px dashed #c5d8ea;
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.empty-state-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1d3553;
+}
+
+.empty-state-text {
+  margin: 0.35rem 0 0;
+  color: #607487;
+  font-size: 0.95rem;
 }
 
 @media (max-width: 960px) {
