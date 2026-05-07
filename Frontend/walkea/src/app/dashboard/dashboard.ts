@@ -7,6 +7,7 @@ import { Marcador, MarcadorService } from '../services/marcador.service';
 import { TipoMarcadorService } from '../services/tipo-marcador.service';
 import { ToastService } from '../services/toast.service';
 import { TiempoRelativoPipe } from '../utils/tiempo-relativo.pipe';
+import { AuthService } from '../auth';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,16 +21,19 @@ export class DashboardComponent implements OnInit {
   private marcadoresEnMapa: L.Marker[] = [];
 
   mostrarNuevoReporte = false;
+  esInvitado = false;
   marcadores: Marcador[] = [];
   tiposMarcador: any[] = [];
 
   constructor(
     private marcadorService: MarcadorService,
     private tipoMarcadorService: TipoMarcadorService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.esInvitado = this.authService.isGuestMode();
     this.inicializarMapa();
     this.cargarTipos();
     this.pedirUbicacion();

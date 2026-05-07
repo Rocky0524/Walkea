@@ -25,6 +25,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   rangoUsuario = 'Novato';
   rolUsuario = 'usuario';
   inicialUsuario = 'U';
+  esInvitado = false;
 
   private subscriptions = new Subscription();
 
@@ -34,9 +35,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
     private perfilService: PerfilService,
     private router: Router,
     private toastService: ToastService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.esInvitado = this.authService.isGuestMode();
     this.cargarPerfil();
     this.aplicarModoOscuro();
 

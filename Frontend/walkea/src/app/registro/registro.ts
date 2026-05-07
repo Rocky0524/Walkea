@@ -48,7 +48,18 @@ export class RegistroComponent {
         },
         error: (err) => {
           console.error('Error en registro:', err);
-          const mensaje = err?.error?.mensaje || 'No se pudo registrar el usuario.';
+          let mensaje = 'No se pudo registrar el usuario.';
+          
+          if (err?.error?.errors) {
+            // Laravel manda los errores de validación en "errors"
+            const firstErrorKey = Object.keys(err.error.errors)[0];
+            mensaje = err.error.errors[firstErrorKey][0];
+          } else if (err?.error?.mensaje) {
+            mensaje = err.error.mensaje;
+          } else if (err?.error?.message) {
+            mensaje = err.error.message;
+          }
+          
           this.toastService.error(mensaje);
         }
       });
