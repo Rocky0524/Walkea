@@ -22,6 +22,7 @@ export class MapaComponent implements AfterViewInit {
   tiposMarcador: any[] = [];
   filtroActivo: number | null = null;
   currentUserId: number | null = null;
+  esInvitado = false;
   mensaje = '';
   error = '';
 
@@ -32,8 +33,16 @@ export class MapaComponent implements AfterViewInit {
   ) { }
 
   ngAfterViewInit(): void {
+    this.esInvitado = this.authService.isGuestMode();
     this.initMap();
     setTimeout(() => this.map.invalidateSize(), 0);
+    if (this.esInvitado) {
+      this.currentUserId = null;
+      this.cargarTipos();
+      this.obtenerUbicacionReal();
+      return;
+    }
+
     this.cargarUsuarioActual();
   }
 
@@ -142,8 +151,10 @@ export class MapaComponent implements AfterViewInit {
     const descripcion = this.escapeHtml(marcador.descripcion || 'Sin descripcion');
     const estado = this.escapeHtml(marcador.estado || 'activo');
     const hp = marcador.hp_vida ?? marcador.vida;
-    const bloqueado = this.estaBloqueado(marcador);
-    const mensajeBloqueo = this.mensajeBloqueoVoto(marcador);
+    const bloqueado = this.esInvitado || this.estaBloqueado(marcador);
+    const mensajeBloqueo = this.esInvitado
+      ? 'Modo invitado: solo lectura, sin votos.'
+      : this.mensajeBloqueoVoto(marcador);
 
     const contenedor = document.createElement('div');
     contenedor.className = 'popup-voto';
@@ -184,6 +195,12 @@ export class MapaComponent implements AfterViewInit {
   }
 
   private votarDesdeMapa(marcador: Marcador, tipo: 'positivo' | 'negativo'): void {
+    if (this.esInvitado) {
+      this.error = 'Modo invitado: no puedes votar reportes.';
+      this.mensaje = '';
+      return;
+    }
+
     if (this.estaBloqueado(marcador)) {
       this.error = this.mensajeBloqueoVoto(marcador);
       this.mensaje = '';
@@ -237,6 +254,11 @@ export class MapaComponent implements AfterViewInit {
   }
 
   abrirModalReporte(): void {
+    if (this.esInvitado) {
+      this.error = 'Modo invitado: no puedes crear reportes.';
+      this.mensaje = '';
+      return;
+    }
     this.mostrarNuevoReporte = true;
   }
 
@@ -245,6 +267,12 @@ export class MapaComponent implements AfterViewInit {
   }
 
   guardarReporte(datos: any): void {
+    if (this.esInvitado) {
+      this.error = 'Modo invitado: no puedes crear reportes.';
+      this.mensaje = '';
+      return;
+    }
+
     this.marcadorService.crear(datos).subscribe({
       next: () => {
         this.mensaje = 'Reporte guardado correctamente.';

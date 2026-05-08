@@ -3,7 +3,11 @@
     <div>
       <p class="header-kicker">Explora la zona</p>
       <h1>Mapa completo</h1>
-      <p class="header-subtitle">Consulta los reportes activos y explora el mapa completo de tu zona.</p>
+      @if (esInvitado) {
+        <p class="header-subtitle">Modo invitado: puedes explorar reportes, pero no crear ni votar.</p>
+      } @else {
+        <p class="header-subtitle">Consulta los reportes activos y explora el mapa completo de tu zona.</p>
+      }
     </div>
   </header>
 
@@ -37,9 +41,11 @@
     <div id="map"></div>
   </div>
 
-  <button class="fab-add" title="A&ntilde;adir reporte" aria-label="A&ntilde;adir reporte" (click)="abrirModalReporte()"></button>
+  @if (!esInvitado) {
+    <button class="fab-add" title="A&ntilde;adir reporte" aria-label="A&ntilde;adir reporte" (click)="abrirModalReporte()"></button>
+  }
 
-  @if (mostrarNuevoReporte) {
+  @if (!esInvitado && mostrarNuevoReporte) {
     <app-nuevo-reporte
       (cerrar)="cerrarModalReporte()"
       (enviar)="guardarReporte($event)">

@@ -1,20 +1,54 @@
 .admin-container {
   padding: 2rem;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .admin-container h2 {
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 1.5rem;
+  margin: 0 0 1rem;
+  color: #0f172a;
+}
+
+.tabs {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tab-btn {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+}
+
+.tab-btn-active {
+  background: #0f172a;
+  color: #fff;
+  border-color: #0f172a;
+}
+
+.filters {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.input-filter,
+.select-filter {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+}
+
+.input-filter {
+  min-width: 360px;
+  flex: 1;
 }
 
 .table-responsive {
-  background: white;
+  background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   overflow-x: auto;
@@ -23,44 +57,66 @@
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
 }
 
 .admin-table th {
-  background-color: #f8fafc;
-  color: #64748b;
-  font-weight: 600;
-  padding: 1rem;
-  border-bottom: 2px solid #e2e8f0;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 700;
+  padding: 0.8rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
 }
 
 .admin-table td {
-  padding: 1rem;
+  padding: 0.8rem;
   border-bottom: 1px solid #e2e8f0;
   color: #334155;
-  font-size: 0.95rem;
+  vertical-align: top;
 }
 
-/* Efecto al pasar el ratón por encima de un usuario */
 .admin-table tbody tr:hover {
-  background-color: #f1f5f9;
-  transition: background-color 0.2s ease;
+  background: #f8fafc;
 }
 
-/* Estilo para las etiquetas (Píldoras) de Rango */
+.subline {
+  margin: 0.25rem 0 0;
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
 .badge {
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  background-color: #e2e8f0;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #e2e8f0;
   color: #475569;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .badge-admin {
-  background-color: #fef08a; /* Un amarillo dorado para el admin */
+  background: #fef08a;
   color: #854d0e;
+}
+
+.btn-delete {
+  border: 1px solid #ef4444;
+  color: #b91c1c;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+}
+
+.btn-delete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.loading-text {
+  color: #334155;
+}
+
+.error-text {
+  color: #b91c1c;
 }

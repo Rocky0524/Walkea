@@ -141,8 +141,10 @@ class MarcadorController extends Controller
         $marcador = Marcador::findOrFail($id);
         $usuario = auth()->user();
 
-        // Misma seguridad que en el update
-        if ($marcador->id_usuario !== $usuario->id_usuario) {
+        // El admin puede borrar cualquier reporte. Usuario normal: solo los suyos.
+        $esAdmin = strtolower((string) ($usuario->rol ?? '')) === 'admin';
+
+        if (!$esAdmin && $marcador->id_usuario !== $usuario->id_usuario) {
             return response()->json(['mensaje' => 'No puedes borrar un marcador que no has creado tu'], 403);
         }
 

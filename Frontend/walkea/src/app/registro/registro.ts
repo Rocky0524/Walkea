@@ -43,6 +43,7 @@ export class RegistroComponent {
       this.authService.registro(payload).subscribe({
         next: (respuesta) => {
           localStorage.setItem('token', respuesta.token);
+          localStorage.removeItem('modo');
           this.toastService.success('Cuenta creada correctamente.');
           this.router.navigate(['/app/dashboard']);
         },
