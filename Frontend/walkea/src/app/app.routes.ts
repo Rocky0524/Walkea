@@ -6,6 +6,7 @@ import { LayoutComponent } from './layout/layout';
 import { DashboardComponent } from './dashboard/dashboard';
 import { MapaComponent } from './mapa/mapa';
 import { ReportesVotosComponent } from './reportes-votos/reportes-votos';
+import { MisReportes } from './components/mis-reportes/mis-reportes';
 import { PerfilPageComponent } from './perfil-page/perfil-page';
 import { AjustesPageComponent } from './ajustes-page/ajustes-page';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard';
@@ -28,7 +29,8 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'mapa', component: MapaComponent },
-      { path: 'mis-reportes', component: ReportesVotosComponent },
+      { path: 'reportes', component: ReportesVotosComponent },
+      { path: 'mis-reportes', component: MisReportes },
       { path: 'perfil', component: PerfilPageComponent },
       { path: 'ajustes', component: AjustesPageComponent },
       { 
@@ -37,5 +39,6 @@ export const routes: Routes = [
         canActivate: [adminGuard] 
       }
     ]
-  }
+  },
+  { path: '**', redirectTo: '/bienvenida' }
 ];

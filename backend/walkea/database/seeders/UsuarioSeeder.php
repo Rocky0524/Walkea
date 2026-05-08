@@ -22,5 +22,17 @@ class UsuarioSeeder extends Seeder
                 'created_at' => Carbon::now(),
             ]
         );
+
+        DB::table('usuarios')->updateOrInsert(
+            ['email' => 'user@walkea.com'],
+            [
+                'nombre' => 'Usuario Demo',
+                'password' => Hash::make('123456'),
+                'reputacion' => 10,
+                'rol' => 'usuario',
+                'updated_at' => Carbon::now(),
+                'created_at' => Carbon::now(),
+            ]
+        );
     }
 }

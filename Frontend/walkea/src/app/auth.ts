@@ -35,9 +35,21 @@ export class AuthService {
     return !!this.getToken();
   }
 
+  isGuestMode(): boolean {
+    return localStorage.getItem('modo') === 'invitado';
+  }
+
+  startGuestMode(): void {
+    localStorage.removeItem('token');
+    localStorage.setItem('modo', 'invitado');
+    localStorage.setItem('rol', 'invitado');
+    localStorage.removeItem('email');
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('rol');
     localStorage.removeItem('email');
+    localStorage.removeItem('modo');
   }
 }

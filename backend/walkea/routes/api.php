@@ -7,6 +7,7 @@ use App\Http\Controllers\TipoMarcadorController;
 use App\Http\Controllers\MarcadorController;
 use App\Http\Controllers\VotacionController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\NotificacionController;
 
 // Rutas publicas
 Route::post('/register', [AuthController::class, 'register']);
@@ -26,6 +27,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/perfil', [PerfilController::class, 'resumen']);
     Route::put('/ajustes', [PerfilController::class, 'actualizarAjustes']);
 
+    Route::get('/notificaciones', [NotificacionController::class, 'index']);
+    Route::post('/notificaciones/marcar-leidas', [NotificacionController::class, 'marcarTodasComoLeidas']);
+    Route::delete('/notificaciones', [NotificacionController::class, 'destroy']);
+
     Route::post('/tipo-marcador', [TipoMarcadorController::class, 'store']);
     Route::put('/tipo-marcador/{id}', [TipoMarcadorController::class, 'update']);
     Route::delete('/tipo-marcador/{id}', [TipoMarcadorController::class, 'destroy']);
@@ -37,4 +42,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/marcador/{id}/votar', [VotacionController::class, 'votar']);
 
     Route::get('/admin/usuarios', [UsuarioController::class, 'obtenerTodos']);
+    Route::get('/admin/reportes', [UsuarioController::class, 'obtenerReportes']);
+    Route::delete('/admin/reportes/{id}', [UsuarioController::class, 'eliminarReporte']);
+    Route::get('/admin/reportes-auditoria', [UsuarioController::class, 'obtenerAuditoriaReportes']);
 });
