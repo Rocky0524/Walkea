@@ -8,24 +8,9 @@ use App\Models\Usuario;
 
 class UsuarioController extends Controller
 {
-    private function verificarAdmin()
-    {
-        $usuario = auth()->user();
-
-        if (!$usuario || strtolower((string) ($usuario->rol ?? '')) !== 'admin') {
-            return response()->json(['mensaje' => 'Acceso denegado. No eres administrador.'], 403);
-        }
-
-        return $usuario;
-    }
-
     public function obtenerTodos()
     {
-        $admin = $this->verificarAdmin();
-        if (!($admin instanceof Usuario)) {
-            return $admin;
-        }
-
+        // El middleware 'admin' ya garantiza que solo admins llegan aqui
         $usuarios = Usuario::orderBy('created_at', 'desc')->get();
 
         return response()->json($usuarios);
@@ -33,11 +18,6 @@ class UsuarioController extends Controller
 
     public function obtenerReportes()
     {
-        $admin = $this->verificarAdmin();
-        if (!($admin instanceof Usuario)) {
-            return $admin;
-        }
-
         $reportes = Marcador::with(['usuario', 'tipoMarcador'])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -47,11 +27,7 @@ class UsuarioController extends Controller
 
     public function eliminarReporte($id)
     {
-        $admin = $this->verificarAdmin();
-        if (!($admin instanceof Usuario)) {
-            return $admin;
-        }
-
+        $admin = auth()->user();
         $marcador = Marcador::with('usuario')->findOrFail($id);
 
         AdminReporteEliminado::create([
@@ -74,11 +50,6 @@ class UsuarioController extends Controller
 
     public function obtenerAuditoriaReportes()
     {
-        $admin = $this->verificarAdmin();
-        if (!($admin instanceof Usuario)) {
-            return $admin;
-        }
-
         $auditoria = AdminReporteEliminado::with('adminUsuario')
             ->orderBy('created_at', 'desc')
             ->get();

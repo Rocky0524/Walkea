@@ -24,6 +24,7 @@
             <th>Ubicaci&oacute;n (Lat, Lng)</th>
             <th>Estado</th>
             <th>Vida</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -38,11 +39,20 @@
                 </span>
               </td>
               <td class="vida-cell">{{ vidaVisible(reporte) }}/10 HP</td>
+              <td>
+                <button
+                  class="btn-delete"
+                  type="button"
+                  [disabled]="eliminandoId === reporte.id_marcador"
+                  (click)="eliminarReporte(reporte)">
+                  {{ eliminandoId === reporte.id_marcador ? 'Eliminando...' : 'Eliminar' }}
+                </button>
+              </td>
             </tr>
           } @empty {
             @if (!cargando) {
               <tr>
-                <td colspan="5" style="text-align: center; padding: 2rem;">No has enviado ning&uacute;n reporte todav&iacute;a.</td>
+                <td colspan="6" style="text-align: center; padding: 2rem;">No has enviado ning&uacute;n reporte todav&iacute;a.</td>
               </tr>
             }
           }

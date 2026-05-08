@@ -14,6 +14,7 @@ export class MisReportes implements OnInit {
   misReportes: Marcador[] = [];
   cargando = true;
   error = '';
+  eliminandoId: number | null = null;
 
   constructor(
     private marcadorService: MarcadorService,
@@ -70,5 +71,26 @@ export class MisReportes implements OnInit {
 
   vidaVisible(reporte: Marcador): number {
     return Number(reporte.hp_vida ?? reporte.vida ?? 0);
+  }
+
+  eliminarReporte(reporte: Marcador): void {
+    const confirmado = confirm(`¿Seguro que quieres eliminar "${reporte.titulo || 'Sin título'}"? Esta acción no se puede deshacer.`);
+    if (!confirmado) {
+      return;
+    }
+
+    this.eliminandoId = reporte.id_marcador;
+    this.error = '';
+
+    this.marcadorService.eliminar(reporte.id_marcador).subscribe({
+      next: () => {
+        this.misReportes = this.misReportes.filter((r) => r.id_marcador !== reporte.id_marcador);
+        this.eliminandoId = null;
+      },
+      error: () => {
+        this.error = 'No se pudo eliminar el reporte.';
+        this.eliminandoId = null;
+      }
+    });
   }
 }

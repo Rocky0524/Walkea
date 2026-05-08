@@ -41,8 +41,11 @@ Route::middleware('auth:api')->group(function () {
 
     Route::post('/marcador/{id}/votar', [VotacionController::class, 'votar']);
 
-    Route::get('/admin/usuarios', [UsuarioController::class, 'obtenerTodos']);
-    Route::get('/admin/reportes', [UsuarioController::class, 'obtenerReportes']);
-    Route::delete('/admin/reportes/{id}', [UsuarioController::class, 'eliminarReporte']);
-    Route::get('/admin/reportes-auditoria', [UsuarioController::class, 'obtenerAuditoriaReportes']);
+    // Rutas de administracion - protegidas con middleware admin
+    Route::middleware('admin')->group(function () {
+        Route::get('/admin/usuarios', [UsuarioController::class, 'obtenerTodos']);
+        Route::get('/admin/reportes', [UsuarioController::class, 'obtenerReportes']);
+        Route::delete('/admin/reportes/{id}', [UsuarioController::class, 'eliminarReporte']);
+        Route::get('/admin/reportes-auditoria', [UsuarioController::class, 'obtenerAuditoriaReportes']);
+    });
 });

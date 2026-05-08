@@ -67,10 +67,10 @@ class MarcadorSeeder extends Seeder
                     'created_at' => Carbon::now()->subHours(8),
                     'updated_at' => Carbon::now(),
                 ],
-                // Zona segura / Positivo (ID 3) - Amigable para el peaton
+                // Zona segura / Punto de refugio (ID 3)
                 [
-                    'titulo' => 'Nueva zona peatonal',
-                    'descripcion' => 'Han puesto bancos y arboles, es muy agradable pasear por aqui.',
+                    'titulo' => 'Comisaria de Policia',
+                    'descripcion' => 'Punto de seguridad 24h. Hay vigilancia constante en la zona.',
                     'latitud' => 41.6130,
                     'longitud' => 0.6240,
                     'vida' => 10,
@@ -81,8 +81,8 @@ class MarcadorSeeder extends Seeder
                     'updated_at' => Carbon::now(),
                 ],
                 [
-                    'titulo' => 'Paso cebra bien iluminado',
-                    'descripcion' => 'Han instalado focos nuevos y se ve perfecto al cruzar de noche.',
+                    'titulo' => 'Farmacia 24 Horas',
+                    'descripcion' => 'Establecimiento abierto dia y noche, zona bien iluminada y segura.',
                     'latitud' => 41.6160,
                     'longitud' => 0.6250,
                     'vida' => 10,
@@ -90,6 +90,18 @@ class MarcadorSeeder extends Seeder
                     'id_usuario' => $usuario->id_usuario,
                     'id_tipo_marcador' => 3,
                     'created_at' => Carbon::now()->subHours(12),
+                    'updated_at' => Carbon::now(),
+                ],
+                [
+                    'titulo' => 'Supermercado 24/7',
+                    'descripcion' => 'Tienda abierta siempre. Buen refugio si te sientes inseguro caminando de noche.',
+                    'latitud' => 41.6210,
+                    'longitud' => 0.6280,
+                    'vida' => 10,
+                    'estado' => 'activo',
+                    'id_usuario' => $usuario->id_usuario,
+                    'id_tipo_marcador' => 3,
+                    'created_at' => Carbon::now()->subHours(5),
                     'updated_at' => Carbon::now(),
                 ],
                 // Otros (ID 4)
