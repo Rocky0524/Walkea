@@ -7,7 +7,6 @@ export interface UsuarioPerfil {
   id_usuario: number;
   nombre: string;
   email: string;
-  reputacion: number;
   rol: string;
 }
 

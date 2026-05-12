@@ -15,8 +15,23 @@
     <p class="estado-texto estado-error">{{ error }}</p>
   }
 
+  @if (!cargando && misReportes.length > 0) {
+    <div class="toolbar">
+      <p class="toolbar-summary">{{ misReportes.length }} reporte(s)</p>
+      <label class="toolbar-order">
+        <span>Ordenar</span>
+        <select [(ngModel)]="ordenActual">
+          <option value="recientes">Mas recientes</option>
+          <option value="antiguos">Mas antiguos</option>
+          <option value="vida_desc">Mas vida</option>
+          <option value="estado">Por estado</option>
+        </select>
+      </label>
+    </div>
+  }
+
   <div class="cards-grid">
-    @for (reporte of misReportes; track reporte.id_marcador || $index) {
+    @for (reporte of misReportesOrdenados; track reporte.id_marcador || $index) {
       <article class="reporte-card">
         <div class="reporte-card-top">
           <strong class="reporte-titulo">{{ reporte.titulo || 'Sin título' }}</strong>
@@ -35,7 +50,12 @@
         </div>
 
         <div class="reporte-footer">
-          <span class="reporte-ubicacion">{{ textoUbicacion(reporte) }}</span>
+          <div class="reporte-meta">
+            <span class="reporte-ubicacion">{{ textoUbicacion(reporte) }}</span>
+            @if (reporte.created_at) {
+              <span class="reporte-fecha">{{ reporte.created_at | date:'short' }}</span>
+            }
+          </div>
           <button
             class="btn-eliminar"
             type="button"

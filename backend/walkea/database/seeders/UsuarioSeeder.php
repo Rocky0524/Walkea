@@ -18,6 +18,7 @@ class UsuarioSeeder extends Seeder
                 'password' => Hash::make('123456'),
                 'reputacion' => 100,
                 'rol' => 'admin',
+                'activo' => true,
                 'updated_at' => Carbon::now(),
                 'created_at' => Carbon::now(),
             ]
@@ -30,6 +31,7 @@ class UsuarioSeeder extends Seeder
                 'password' => Hash::make('123456'),
                 'reputacion' => 10,
                 'rol' => 'usuario',
+                'activo' => true,
                 'updated_at' => Carbon::now(),
                 'created_at' => Carbon::now(),
             ]

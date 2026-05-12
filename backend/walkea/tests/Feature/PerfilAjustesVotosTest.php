@@ -130,6 +130,115 @@ class PerfilAjustesVotosTest extends TestCase
         $this->assertTrue(Hash::check('secret456', $usuario->password));
     }
 
+    public function test_un_usuario_inhabilitado_no_puede_iniciar_sesion(): void
+    {
+        Usuario::create([
+            'nombre' => 'Bloqueado',
+            'email' => 'bloqueado@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 0,
+            'activo' => false,
+        ]);
+
+        $response = $this->postJson('/api/login', [
+            'email' => 'bloqueado@walkea.test',
+            'password' => 'secret123',
+        ]);
+
+        $response
+            ->assertForbidden()
+            ->assertJsonPath('mensaje', 'Tu cuenta esta inhabilitada. Contacta con un administrador.');
+    }
+
+    public function test_un_usuario_inhabilitado_no_puede_acceder_a_rutas_protegidas(): void
+    {
+        $usuario = Usuario::create([
+            'nombre' => 'Bloqueado',
+            'email' => 'bloqueado.token@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 0,
+            'activo' => false,
+        ]);
+
+        $response = $this->getJson('/api/perfil', $this->authHeaders($usuario));
+
+        $response
+            ->assertForbidden()
+            ->assertJsonPath('mensaje', 'Tu cuenta esta inhabilitada. Contacta con un administrador.');
+    }
+
+    public function test_un_admin_puede_inhabilitar_usuarios_y_borrar_sus_reportes(): void
+    {
+        $admin = Usuario::create([
+            'nombre' => 'Admin',
+            'email' => 'admin.moderacion@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 100,
+            'rol' => 'admin',
+        ]);
+
+        $usuario = Usuario::create([
+            'nombre' => 'Autor',
+            'email' => 'autor.reportes@walkea.test',
+            'password' => 'secret123',
+            'reputacion' => 0,
+        ]);
+
+        $tipo = TipoMarcador::create([
+            'nombre' => 'Obras',
+            'icono' => 'obras',
+        ]);
+
+        Marcador::create([
+            'latitud' => 41.6167000,
+            'longitud' => 0.6222000,
+            'titulo' => 'Reporte uno',
+            'descripcion' => 'Primer reporte',
+            'vida' => 2,
+            'estado' => 'activo',
+            'id_usuario' => $usuario->id_usuario,
+            'id_tipo_marcador' => $tipo->id_tipo_marcador,
+        ]);
+
+        Marcador::create([
+            'latitud' => 41.6177000,
+            'longitud' => 0.6232000,
+            'titulo' => 'Reporte dos',
+            'descripcion' => 'Segundo reporte',
+            'vida' => 1,
+            'estado' => 'activo',
+            'id_usuario' => $usuario->id_usuario,
+            'id_tipo_marcador' => $tipo->id_tipo_marcador,
+        ]);
+
+        $inhabilitarResponse = $this->patchJson(
+            "/api/admin/usuarios/{$usuario->id_usuario}/estado",
+            ['activo' => false],
+            $this->authHeaders($admin)
+        );
+
+        $inhabilitarResponse
+            ->assertOk()
+            ->assertJsonPath('usuario.activo', false);
+
+        $borrarReportesResponse = $this->deleteJson(
+            "/api/admin/usuarios/{$usuario->id_usuario}/reportes",
+            [],
+            $this->authHeaders($admin)
+        );
+
+        $borrarReportesResponse
+            ->assertOk()
+            ->assertJsonPath('total_eliminados', 2);
+
+        $this->assertDatabaseHas('usuarios', [
+            'id_usuario' => $usuario->id_usuario,
+            'activo' => false,
+        ]);
+        $this->assertDatabaseCount('marcador', 0);
+        $this->assertDatabaseCount('admin_reportes_eliminados', 2);
+    }
+
     public function test_la_vida_inicial_del_reporte_sale_del_rango_del_usuario(): void
     {
         $tipo = TipoMarcador::create([

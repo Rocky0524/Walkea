@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'usuario.activo' => \App\Http\Middleware\EnsureUsuarioActivo::class,
         ]);
 
         $middleware->redirectGuestsTo(function ($request) {

@@ -20,7 +20,7 @@ Route::get('/marcador', [MarcadorController::class, 'index']);
 Route::get('/marcador/{id}', [MarcadorController::class, 'show']);
 
 // Rutas protegidas con JWT
-Route::middleware('auth:api')->group(function () {
+Route::middleware(['auth:api', 'usuario.activo'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
@@ -44,6 +44,8 @@ Route::middleware('auth:api')->group(function () {
     // Rutas de administracion - protegidas con middleware admin
     Route::middleware('admin')->group(function () {
         Route::get('/admin/usuarios', [UsuarioController::class, 'obtenerTodos']);
+        Route::patch('/admin/usuarios/{id}/estado', [UsuarioController::class, 'actualizarEstadoUsuario']);
+        Route::delete('/admin/usuarios/{id}/reportes', [UsuarioController::class, 'eliminarReportesUsuario']);
         Route::get('/admin/reportes', [UsuarioController::class, 'obtenerReportes']);
         Route::delete('/admin/reportes/{id}', [UsuarioController::class, 'eliminarReporte']);
         Route::get('/admin/reportes-auditoria', [UsuarioController::class, 'obtenerAuditoriaReportes']);

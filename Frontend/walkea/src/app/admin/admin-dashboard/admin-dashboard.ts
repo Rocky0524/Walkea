@@ -8,8 +8,9 @@ interface AdminUsuario {
   id_usuario: number;
   nombre: string;
   email: string;
-  reputacion: number;
   rol: string;
+  activo: boolean;
+  marcadores_count?: number;
 }
 
 interface AdminReporte {
@@ -23,6 +24,7 @@ interface AdminReporte {
     id_usuario: number;
     nombre: string;
     email: string;
+    activo?: boolean;
   };
   tipo_marcador?: {
     id_tipo_marcador: number;
@@ -66,6 +68,8 @@ export class AdminDashboardComponent implements OnInit {
   busquedaReportes = '';
   filtroEstado: 'todos' | 'activo' | 'agotado' | 'caducado' = 'todos';
   eliminandoId: number | null = null;
+  actualizandoUsuarioId: number | null = null;
+  eliminandoReportesUsuarioId: number | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -161,5 +165,85 @@ export class AdminDashboardComponent implements OnInit {
         this.error = 'No se pudo eliminar el reporte.';
       }
     });
+  }
+
+  alternarEstadoUsuario(usuario: AdminUsuario): void {
+    const activar = !usuario.activo;
+    const accion = activar ? 'habilitar' : 'inhabilitar';
+    const confirmado = confirm(`Vas a ${accion} a ${usuario.email}.`);
+
+    if (!confirmado) {
+      return;
+    }
+
+    this.actualizandoUsuarioId = usuario.id_usuario;
+    this.error = '';
+
+    this.http.patch<{ usuario: AdminUsuario }>(
+      `${environment.apiUrl}/admin/usuarios/${usuario.id_usuario}/estado`,
+      { activo: activar }
+    ).subscribe({
+      next: (respuesta) => {
+        this.actualizandoUsuarioId = null;
+        this.actualizarUsuarioLocal(respuesta.usuario);
+      },
+      error: (error) => {
+        this.actualizandoUsuarioId = null;
+        this.error = error?.error?.mensaje || 'No se pudo actualizar el estado del usuario.';
+      }
+    });
+  }
+
+  eliminarReportesUsuario(usuario: AdminUsuario): void {
+    const total = Number(usuario.marcadores_count ?? 0);
+    const confirmado = confirm(
+      total > 0
+        ? `Vas a borrar ${total} reporte(s) de ${usuario.email}. Esta accion no se puede deshacer.`
+        : `${usuario.email} no tiene reportes ahora mismo.`
+    );
+
+    if (!confirmado || total === 0) {
+      return;
+    }
+
+    this.eliminandoReportesUsuarioId = usuario.id_usuario;
+    this.error = '';
+
+    this.http.delete<{ total_eliminados: number }>(
+      `${environment.apiUrl}/admin/usuarios/${usuario.id_usuario}/reportes`
+    ).subscribe({
+      next: () => {
+        this.eliminandoReportesUsuarioId = null;
+        this.reportes = this.reportes.filter((reporte) => reporte.usuario?.id_usuario !== usuario.id_usuario);
+        this.usuarios = this.usuarios.map((item) =>
+          item.id_usuario === usuario.id_usuario
+            ? { ...item, marcadores_count: 0 }
+            : item
+        );
+        this.cargarAuditoria();
+      },
+      error: (error) => {
+        this.eliminandoReportesUsuarioId = null;
+        this.error = error?.error?.mensaje || 'No se pudieron borrar los reportes del usuario.';
+      }
+    });
+  }
+
+  private actualizarUsuarioLocal(usuarioActualizado: AdminUsuario): void {
+    this.usuarios = this.usuarios.map((usuario) =>
+      usuario.id_usuario === usuarioActualizado.id_usuario ? usuarioActualizado : usuario
+    );
+
+    this.reportes = this.reportes.map((reporte) =>
+      reporte.usuario?.id_usuario === usuarioActualizado.id_usuario
+        ? {
+            ...reporte,
+            usuario: {
+              ...reporte.usuario,
+              activo: usuarioActualizado.activo,
+            },
+          }
+        : reporte
+    );
   }
 }

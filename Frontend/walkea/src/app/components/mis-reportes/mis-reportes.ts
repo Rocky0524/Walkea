@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../auth';
 import { Marcador, MarcadorService } from '../../services/marcador.service';
+
+type OrdenMisReportes = 'recientes' | 'antiguos' | 'vida_desc' | 'estado';
 
 @Component({
   selector: 'app-mis-reportes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './mis-reportes.html',
   styleUrl: './mis-reportes.css',
 })
@@ -15,6 +18,7 @@ export class MisReportes implements OnInit {
   cargando = true;
   error = '';
   eliminandoId: number | null = null;
+  ordenActual: OrdenMisReportes = 'recientes';
 
   constructor(
     private marcadorService: MarcadorService,
@@ -42,8 +46,7 @@ export class MisReportes implements OnInit {
           next: (marcadoresRaw) => {
             const marcadores = this.marcadorService.normalizarLista(marcadoresRaw);
             this.misReportes = marcadores
-              .filter((m) => Number(m.id_usuario ?? m.usuario?.id_usuario ?? 0) === idUsuario)
-              .sort((a, b) => b.id_marcador - a.id_marcador);
+              .filter((m) => Number(m.id_usuario ?? m.usuario?.id_usuario ?? 0) === idUsuario);
             this.cargando = false;
           },
           error: () => {
@@ -73,6 +76,27 @@ export class MisReportes implements OnInit {
     return Number(reporte.hp_vida ?? reporte.vida ?? 0);
   }
 
+  get misReportesOrdenados(): Marcador[] {
+    const lista = [...this.misReportes];
+
+    switch (this.ordenActual) {
+      case 'antiguos':
+        return lista.sort((a, b) => this.valorFecha(a) - this.valorFecha(b));
+      case 'vida_desc':
+        return lista.sort((a, b) => {
+          const diferenciaVida = this.vidaVisible(b) - this.vidaVisible(a);
+          return diferenciaVida !== 0 ? diferenciaVida : this.valorFecha(b) - this.valorFecha(a);
+        });
+      case 'estado':
+        return lista.sort((a, b) => {
+          const diferenciaEstado = this.prioridadEstado(a.estado) - this.prioridadEstado(b.estado);
+          return diferenciaEstado !== 0 ? diferenciaEstado : this.valorFecha(b) - this.valorFecha(a);
+        });
+      default:
+        return lista.sort((a, b) => this.valorFecha(b) - this.valorFecha(a));
+    }
+  }
+
   eliminarReporte(reporte: Marcador): void {
     const confirmado = confirm(`¿Seguro que quieres eliminar "${reporte.titulo || 'Sin título'}"? Esta acción no se puede deshacer.`);
     if (!confirmado) {
@@ -92,5 +116,23 @@ export class MisReportes implements OnInit {
         this.eliminandoId = null;
       }
     });
+  }
+
+  private valorFecha(reporte: Marcador): number {
+    const fecha = reporte.created_at ? new Date(reporte.created_at).getTime() : NaN;
+    return Number.isFinite(fecha) ? fecha : reporte.id_marcador;
+  }
+
+  private prioridadEstado(estado: string | null | undefined): number {
+    switch (String(estado ?? '').toLowerCase()) {
+      case 'activo':
+        return 0;
+      case 'agotado':
+        return 1;
+      case 'caducado':
+        return 2;
+      default:
+        return 3;
+    }
   }
 }

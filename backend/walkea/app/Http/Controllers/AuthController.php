@@ -46,6 +46,14 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
+        $usuario = Usuario::where('email', $request->email)->first();
+
+        if ($usuario && !$usuario->estaActivo()) {
+            return response()->json([
+                'mensaje' => 'Tu cuenta esta inhabilitada. Contacta con un administrador.',
+            ], 403);
+        }
+
         $credentials = $request->only('email', 'password');
 
         if (!$token = auth()->attempt($credentials)) {
@@ -82,4 +90,3 @@ class AuthController extends Controller
         ]);
     }
 }
-

@@ -20,6 +20,7 @@ class Usuario extends Authenticatable implements JWTSubject
         'password',
         'reputacion',
         'rol',
+        'activo',
     ];
 
     protected $hidden = [
@@ -30,6 +31,7 @@ class Usuario extends Authenticatable implements JWTSubject
     {
         return [
             'password' => 'hashed',
+            'activo' => 'boolean',
         ];
     }
 
@@ -96,6 +98,11 @@ class Usuario extends Authenticatable implements JWTSubject
     public function esAdmin(): bool
     {
         return strtolower((string) $this->rol) === 'admin';
+    }
+
+    public function estaActivo(): bool
+    {
+        return (bool) ($this->activo ?? true);
     }
 
     // JWTSubject

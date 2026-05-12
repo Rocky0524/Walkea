@@ -20,8 +20,10 @@
               <th>ID</th>
               <th>Nombre</th>
               <th>Email</th>
-              <th>Reputacion</th>
+              <th>Reportes</th>
               <th>Rol</th>
+              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -30,9 +32,38 @@
                 <td>#{{ user.id_usuario }}</td>
                 <td><strong>{{ user.nombre }}</strong></td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.reputacion }}</td>
+                <td>{{ user.marcadores_count ?? 0 }}</td>
                 <td>
                   <span class="badge" [class.badge-admin]="user.rol === 'admin'">{{ user.rol | uppercase }}</span>
+                </td>
+                <td>
+                  <span class="badge" [class.badge-active]="user.activo" [class.badge-disabled]="!user.activo">
+                    {{ user.activo ? 'Activo' : 'Inhabilitado' }}
+                  </span>
+                </td>
+                <td class="cell-actions">
+                  <button
+                    class="btn-outline"
+                    type="button"
+                    [disabled]="actualizandoUsuarioId === user.id_usuario"
+                    (click)="alternarEstadoUsuario(user)">
+                    {{
+                      actualizandoUsuarioId === user.id_usuario
+                        ? 'Guardando...'
+                        : (user.activo ? 'Inhabilitar' : 'Habilitar')
+                    }}
+                  </button>
+                  <button
+                    class="btn-delete"
+                    type="button"
+                    [disabled]="eliminandoReportesUsuarioId === user.id_usuario || (user.marcadores_count ?? 0) === 0"
+                    (click)="eliminarReportesUsuario(user)">
+                    {{
+                      eliminandoReportesUsuarioId === user.id_usuario
+                        ? 'Borrando...'
+                        : 'Borrar reportes'
+                    }}
+                  </button>
                 </td>
               </tr>
             }

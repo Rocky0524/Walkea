@@ -46,7 +46,35 @@
   color: #c0392b;
 }
 
-/* Cards grid */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.toolbar-summary {
+  margin: 0;
+  color: #607487;
+  font-weight: 600;
+}
+
+.toolbar-order {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #607487;
+  font-size: 0.9rem;
+}
+
+.toolbar-order select {
+  border: 1px solid #c5d8ea;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  background: #fff;
+  color: #1d3553;
+}
+
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -139,9 +167,20 @@
   margin-top: 0.25rem;
 }
 
+.reporte-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .reporte-ubicacion {
   font-size: 0.8rem;
   color: #aab8c5;
+}
+
+.reporte-fecha {
+  font-size: 0.78rem;
+  color: #8da2b5;
 }
 
 .btn-eliminar {
@@ -190,6 +229,11 @@
 }
 
 @media (max-width: 600px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .cards-grid {
     grid-template-columns: 1fr;
   }

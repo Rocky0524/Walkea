@@ -49,4 +49,32 @@ describe('MisReportes', () => {
 
     expect(texto).toBe('No disponible');
   });
+
+  it('should order reports by highest hp when selected', () => {
+    component.misReportes = [
+      {
+        id_marcador: 1,
+        id_tipo_marcador: 1,
+        titulo: 'Uno',
+        descripcion: 'x',
+        latitud: 1,
+        longitud: 1,
+        estado: 'activo',
+        vida: 2
+      },
+      {
+        id_marcador: 2,
+        id_tipo_marcador: 1,
+        titulo: 'Dos',
+        descripcion: 'x',
+        latitud: 1,
+        longitud: 1,
+        estado: 'activo',
+        vida: 8
+      }
+    ];
+    component.ordenActual = 'vida_desc';
+
+    expect(component.misReportesOrdenados.map((reporte) => reporte.id_marcador)).toEqual([2, 1]);
+  });
 });

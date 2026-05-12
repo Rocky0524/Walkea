@@ -10,6 +10,20 @@ describe('AdminDashboard', () => {
   let fixture: ComponentFixture<AdminDashboardComponent>;
   let httpTesting: HttpTestingController;
 
+  function flushInitialRequests(): void {
+    const usuariosRequest = httpTesting.expectOne(`${environment.apiUrl}/admin/usuarios`);
+    expect(usuariosRequest.request.method).toBe('GET');
+    usuariosRequest.flush([]);
+
+    const reportesRequest = httpTesting.expectOne(`${environment.apiUrl}/admin/reportes`);
+    expect(reportesRequest.request.method).toBe('GET');
+    reportesRequest.flush([]);
+
+    const auditoriaRequest = httpTesting.expectOne(`${environment.apiUrl}/admin/reportes-auditoria`);
+    expect(auditoriaRequest.request.method).toBe('GET');
+    auditoriaRequest.flush([]);
+  }
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AdminDashboardComponent],
@@ -21,10 +35,7 @@ describe('AdminDashboard', () => {
     fixture = TestBed.createComponent(AdminDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-
-    const request = httpTesting.expectOne(`${environment.apiUrl}/admin/usuarios`);
-    expect(request.request.method).toBe('GET');
-    request.flush([]);
+    flushInitialRequests();
   });
 
   afterEach(() => {
