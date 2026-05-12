@@ -8,6 +8,23 @@
     }
   </div>
 
+  @if (!esInvitado) {
+    <div class="stat-cards">
+      <div class="stat-card stat-card--blue">
+        <span class="stat-label">Reportes creados</span>
+        <strong class="stat-value">{{ totalReportes }}</strong>
+      </div>
+      <div class="stat-card stat-card--amber">
+        <span class="stat-label">Votos realizados</span>
+        <strong class="stat-value">{{ totalVotos }}</strong>
+      </div>
+      <div class="stat-card stat-card--green">
+        <span class="stat-label">Tu nivel</span>
+        <strong class="stat-value">{{ nivel || 'Nuevo' }}</strong>
+      </div>
+    </div>
+  }
+
   <div class="content-body">
     <div class="reportes-section">
       <h3>&Uacute;ltimos reportes</h3>

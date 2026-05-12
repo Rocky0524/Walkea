@@ -1,63 +1,57 @@
 <div class="mis-reportes-content">
   <header class="header-banner">
-    Gesti&oacute;n de tus incidencias reportadas.
+    <div>
+      <p class="header-kicker">Tu actividad</p>
+      <h1>Mis Reportes</h1>
+      <p class="header-subtitle">Gestiona los avisos que has creado en el mapa.</p>
+    </div>
   </header>
 
-  <div class="content-body-list">
-    <div class="table-container">
-      <h2>Mis Reportes Enviados</h2>
-      <p>Revisa el estado y la vida de los avisos que has creado en el mapa.</p>
+  @if (cargando) {
+    <p class="estado-texto">Cargando reportes...</p>
+  }
 
-      @if (cargando) {
-        <p style="text-align: center; padding: 1rem;">Cargando reportes reales...</p>
+  @if (error) {
+    <p class="estado-texto estado-error">{{ error }}</p>
+  }
+
+  <div class="cards-grid">
+    @for (reporte of misReportes; track reporte.id_marcador || $index) {
+      <article class="reporte-card">
+        <div class="reporte-card-top">
+          <strong class="reporte-titulo">{{ reporte.titulo || 'Sin título' }}</strong>
+          <span class="badge" [ngClass]="reporte.estado || 'activo'">
+            {{ (reporte.estado || 'activo') | titlecase }}
+          </span>
+        </div>
+
+        <p class="reporte-desc">{{ reporte.descripcion || 'Sin descripción' }}</p>
+
+        <div class="reporte-hp">
+          <span class="hp-label">HP {{ vidaVisible(reporte) }}/10</span>
+          <div class="hp-bar">
+            <div class="hp-fill" [style.width.%]="vidaVisible(reporte) * 10"></div>
+          </div>
+        </div>
+
+        <div class="reporte-footer">
+          <span class="reporte-ubicacion">{{ textoUbicacion(reporte) }}</span>
+          <button
+            class="btn-eliminar"
+            type="button"
+            [disabled]="eliminandoId === reporte.id_marcador"
+            (click)="eliminarReporte(reporte)">
+            {{ eliminandoId === reporte.id_marcador ? 'Eliminando...' : 'Eliminar' }}
+          </button>
+        </div>
+      </article>
+    } @empty {
+      @if (!cargando) {
+        <div class="empty-state">
+          <p class="empty-title">No has creado ningún reporte todavía</p>
+          <p class="empty-sub">Ve al mapa y añade tu primera incidencia.</p>
+        </div>
       }
-
-      @if (error) {
-        <p style="text-align: center; padding: 1rem; color: #c0392b;">{{ error }}</p>
-      }
-
-      <table class="report-table">
-        <thead>
-          <tr>
-            <th>T&iacute;tulo</th>
-            <th>Descripci&oacute;n</th>
-            <th>Ubicaci&oacute;n (Lat, Lng)</th>
-            <th>Estado</th>
-            <th>Vida</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (reporte of misReportes; track reporte.id_marcador || $index) {
-            <tr>
-              <td>{{ reporte.titulo || 'Sin título' }}</td>
-              <td>{{ reporte.descripcion || 'Sin descripción' }}</td>
-              <td>{{ textoUbicacion(reporte) }}</td>
-              <td>
-                <span class="badge" [ngClass]="reporte.estado || 'activo'">
-                  {{ (reporte.estado || 'activo') | titlecase }}
-                </span>
-              </td>
-              <td class="vida-cell">{{ vidaVisible(reporte) }}/10 HP</td>
-              <td>
-                <button
-                  class="btn-delete"
-                  type="button"
-                  [disabled]="eliminandoId === reporte.id_marcador"
-                  (click)="eliminarReporte(reporte)">
-                  {{ eliminandoId === reporte.id_marcador ? 'Eliminando...' : 'Eliminar' }}
-                </button>
-              </td>
-            </tr>
-          } @empty {
-            @if (!cargando) {
-              <tr>
-                <td colspan="6" style="text-align: center; padding: 2rem;">No has enviado ning&uacute;n reporte todav&iacute;a.</td>
-              </tr>
-            }
-          }
-        </tbody>
-      </table>
-    </div>
+    }
   </div>
 </div>

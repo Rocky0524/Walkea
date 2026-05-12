@@ -8,6 +8,7 @@ import { TipoMarcadorService } from '../services/tipo-marcador.service';
 import { ToastService } from '../services/toast.service';
 import { TiempoRelativoPipe } from '../utils/tiempo-relativo.pipe';
 import { AuthService } from '../auth';
+import { PerfilService } from '../services/perfil.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,12 +25,16 @@ export class DashboardComponent implements OnInit {
   esInvitado = false;
   marcadores: Marcador[] = [];
   tiposMarcador: any[] = [];
+  totalReportes = 0;
+  totalVotos = 0;
+  nivel = '';
 
   constructor(
     private marcadorService: MarcadorService,
     private tipoMarcadorService: TipoMarcadorService,
     private toastService: ToastService,
-    private authService: AuthService
+    private authService: AuthService,
+    private perfilService: PerfilService
   ) {}
 
   ngOnInit(): void {
@@ -37,6 +42,9 @@ export class DashboardComponent implements OnInit {
     this.inicializarMapa();
     this.cargarTipos();
     this.pedirUbicacion();
+    if (!this.esInvitado) {
+      this.cargarEstadisticas();
+    }
   }
 
   private inicializarMapa(): void {
@@ -101,6 +109,17 @@ export class DashboardComponent implements OnInit {
         this.tiposMarcador = data;
       },
       error: (err) => console.error('Error:', err)
+    });
+  }
+
+  private cargarEstadisticas(): void {
+    this.perfilService.obtenerPerfil().subscribe({
+      next: (perfil) => {
+        this.totalReportes = perfil.estadisticas.total_reportes;
+        this.totalVotos = perfil.estadisticas.total_votos;
+        this.nivel = perfil.estadisticas.nivel;
+      },
+      error: () => {}
     });
   }
 
