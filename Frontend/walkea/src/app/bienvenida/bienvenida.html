@@ -1,30 +1,149 @@
 <div class="welcome-layout">
-  <header class="main-header">
-    <div class="logo-container">
-      <img src="/logo-walkea.png" alt="Logo Walkea" class="logo">
-      <span class="brand-name">Walkea</span>
-    </div>
-    <nav class="nav-links">
-      <a routerLink="/login" class="link-login">Iniciar sesión</a>
-      <a routerLink="/registro" class="btn-register">Registrarse</a>
-    </nav>
-  </header>
+  <section class="welcome-shell">
+    <header class="main-header">
+      <a routerLink="/bienvenida" class="logo-link" aria-label="Walkea inicio">
+        <img src="/logo-walkea.png" alt="Walkea" class="logo-full">
+      </a>
 
-  <main class="hero-section">
-    <h1>Tu ciudad, más segura con <span class="gradient-text">inteligencia colectiva</span></h1>
-    <p class="hero-subtitle">Únete a la comunidad de Walkeadores. Reporta incidencias, valida alertas en tiempo real y muévete con tranquilidad.</p>
-    
-    <div class="action-buttons">
-      <button routerLink="/registro" class="btn-main-action">Empezar ahora</button>
-      <button class="btn-secondary-action" (click)="entrarComoInvitado()">Entrar como invitado</button>
-    </div>
-  </main>
+      <nav class="nav-links" aria-label="Navegación principal">
+        <a routerLink="/login" class="link-login">Iniciar sesión</a>
+        <a routerLink="/registro" class="btn-register">Registrarse</a>
+      </nav>
+    </header>
 
-  <footer class="main-footer">
-    <p>&copy; 2026 Walkea. Todos los derechos reservados.</p>
-    <div class="footer-links">
-      <a href="#">Términos y condiciones</a>
-      <a href="#">Privacidad</a>
-    </div>
-  </footer>
+    <main class="hero-grid">
+      <div class="hero-copy">
+        <div class="hero-badge">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 3l7 3v5c0 4.6-2.9 8.8-7 10-4.1-1.2-7-5.4-7-10V6l7-3z"></path>
+            <path d="M9.5 12.2l1.8 1.8 3.8-4.1"></path>
+          </svg>
+          <span>Seguridad ciudadana en tiempo real</span>
+        </div>
+
+        <h1>
+          <span>Tu ciudad, más</span>
+          <span>segura con</span>
+          <span class="gradient-text">inteligencia</span>
+          <span class="gradient-text">colectiva</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Únete a la comunidad de Walkeadores. Reporta incidencias, valida alertas en tiempo real y muévete con
+          tranquilidad.
+        </p>
+
+        <div class="action-buttons">
+          <button type="button" class="btn-main-action" (click)="irARegistro()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 12.5l15-7-4.5 13-3.2-4.1L4 12.5z"></path>
+              <path d="M11.3 14.4l2.5 4.1"></path>
+            </svg>
+            <span>Empezar ahora</span>
+          </button>
+
+          <button type="button" class="btn-secondary-action" (click)="entrarComoInvitado()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 3l7 3v5c0 4.6-2.9 8.8-7 10-4.1-1.2-7-5.4-7-10V6l7-3z"></path>
+              <path d="M9.5 12.2l1.8 1.8 3.8-4.1"></path>
+            </svg>
+            <span>Entrar como invitado</span>
+          </button>
+        </div>
+
+        <p class="hero-helper">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="6" y="11" width="12" height="9" rx="2"></rect>
+            <path d="M8.5 11V8.5a3.5 3.5 0 0 1 7 0V11"></path>
+          </svg>
+          <span>Explora el mapa sin registrarte y crea tu cuenta cuando quieras.</span>
+        </p>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="visual-ring visual-ring-two"></div>
+        <div class="visual-ring visual-ring-one"></div>
+        <div class="visual-glow"></div>
+
+        <span class="visual-pin visual-pin-one">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 21s6-4.9 6-10a6 6 0 1 0-12 0c0 5.1 6 10 6 10z"></path>
+            <circle cx="12" cy="11" r="2.5"></circle>
+          </svg>
+        </span>
+
+        <span class="visual-pin visual-pin-two">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 21s6-4.9 6-10a6 6 0 1 0-12 0c0 5.1 6 10 6 10z"></path>
+            <circle cx="12" cy="11" r="2.5"></circle>
+          </svg>
+        </span>
+
+        <span class="visual-pin visual-pin-three">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3l7 3v5c0 4.6-2.9 8.8-7 10-4.1-1.2-7-5.4-7-10V6l7-3z"></path>
+            <path d="M9.5 12.2l1.8 1.8 3.8-4.1"></path>
+          </svg>
+        </span>
+
+        <span class="visual-pin visual-pin-four">
+          <svg viewBox="0 0 24 24">
+            <rect x="6" y="11" width="12" height="9" rx="2"></rect>
+            <path d="M8.5 11V8.5a3.5 3.5 0 0 1 7 0V11"></path>
+          </svg>
+        </span>
+
+        <img src="/logo-walkea.png" alt="" class="hero-logo-large">
+      </div>
+    </main>
+
+    <section class="feature-strip" aria-label="Beneficios principales">
+      <article class="feature-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M13 2L5 14h5l-1 8 8-12h-5l1-8z"></path>
+        </svg>
+        <div>
+          <span>Reportes en tiempo real</span>
+          <small>Información al instante desde tu comunidad.</small>
+        </div>
+      </article>
+
+      <article class="feature-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3l7 3v5c0 4.6-2.9 8.8-7 10-4.1-1.2-7-5.4-7-10V6l7-3z"></path>
+          <path d="M9.5 12.2l1.8 1.8 3.8-4.1"></path>
+        </svg>
+        <div>
+          <span>Alertas verificadas</span>
+          <small>Validación comunitaria para mayor confianza.</small>
+        </div>
+      </article>
+
+      <article class="feature-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="9" cy="10" r="3"></circle>
+          <circle cx="16" cy="11" r="2.5"></circle>
+          <path d="M3 19a6 6 0 0 1 12 0"></path>
+          <path d="M14 19a5 5 0 0 1 7 0"></path>
+        </svg>
+        <div>
+          <span>Comunidad activa</span>
+          <small>Walkeadores cuidando nuestras ciudades.</small>
+        </div>
+      </article>
+
+      <article class="feature-item">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="6" y="11" width="12" height="9" rx="2"></rect>
+          <path d="M8.5 11V8.5a3.5 3.5 0 0 1 7 0V11"></path>
+        </svg>
+        <div>
+          <span>Privacidad protegida</span>
+          <small>Tus datos y tu ubicación siempre seguros.</small>
+        </div>
+      </article>
+    </section>
+
+    <p class="trust-line">Con la confianza de comunidades más seguras</p>
+  </section>
 </div>

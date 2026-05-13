@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth';
+
 @Component({
   selector: 'app-bienvenida',
   standalone: true,
@@ -12,7 +13,11 @@ export class BienvenidaComponent {
   constructor(
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
+
+  irARegistro(): void {
+    this.router.navigate(['/registro']);
+  }
 
   entrarComoInvitado(): void {
     this.authService.startGuestMode();
