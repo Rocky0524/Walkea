@@ -29,6 +29,10 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   private subscriptions = new Subscription();
 
+  get puedeUsarZonaPrivada(): boolean {
+    return !this.esInvitado;
+  }
+
   constructor(
     private authService: AuthService,
     private notificacionService: NotificacionService,
@@ -39,23 +43,34 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.esInvitado = this.authService.isGuestMode();
-    this.cargarPerfil();
+
+    if (this.esInvitado) {
+      this.nombreUsuario = 'Invitado';
+      this.rangoUsuario = 'Solo lectura';
+      this.rolUsuario = 'invitado';
+      this.inicialUsuario = 'I';
+    } else {
+      this.cargarPerfil();
+    }
+
     this.aplicarModoOscuro();
 
-    this.subscriptions.add(
-      this.notificacionService.notificaciones$.subscribe((items) => {
-        this.notificaciones = items;
-        this.notificacionesNoLeidas = items.filter((item) => !item.leida).length;
-      })
-    );
+    if (!this.esInvitado) {
+      this.subscriptions.add(
+        this.notificacionService.notificaciones$.subscribe((items) => {
+          this.notificaciones = items;
+          this.notificacionesNoLeidas = items.filter((item) => !item.leida).length;
+        })
+      );
 
-    this.notificacionService.actualizarDesdeBackend();
+      this.notificacionService.actualizarDesdeBackend();
 
-    this.subscriptions.add(
-      interval(30000).subscribe(() => {
-        this.notificacionService.actualizarDesdeBackend();
-      })
-    );
+      this.subscriptions.add(
+        interval(30000).subscribe(() => {
+          this.notificacionService.actualizarDesdeBackend();
+        })
+      );
+    }
 
     this.subscriptions.add(
       this.router.events.subscribe((event) => {
@@ -120,11 +135,22 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   irAPerfil(): void {
+    if (this.esInvitado) {
+      this.cerrarMenuUsuario();
+      this.router.navigate(['/app/dashboard']);
+      return;
+    }
+
     this.cerrarMenuUsuario();
     this.router.navigate(['/app/perfil']);
   }
 
   cerrarSesion(): void {
+    if (this.esInvitado) {
+      this.finalizarCierreSesion();
+      return;
+    }
+
     this.authService.logoutRequest().subscribe({
       next: () => {
         this.finalizarCierreSesion();
@@ -171,8 +197,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.menuUsuarioAbierto = false;
     this.notificaciones = [];
     this.notificacionesNoLeidas = 0;
-    this.toastService.success('Sesion cerrada correctamente.');
-    this.router.navigate(['/login']);
+    this.toastService.success(this.esInvitado ? 'Has salido del modo invitado.' : 'Sesion cerrada correctamente.');
+    this.router.navigate([this.esInvitado ? '/bienvenida' : '/login']);
   }
 
   private aplicarModoOscuro(): void {

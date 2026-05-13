@@ -12,6 +12,7 @@ import { AjustesPageComponent } from './ajustes-page/ajustes-page';
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard';
 import { authGuard } from './auth.guard';
 import { adminGuard } from './guards/admin-guard';
+import { registeredUserGuard } from './guards/registered-user.guard';
 
 export const routes: Routes = [
   // Rutas publicas (sin sidebar)
@@ -30,9 +31,9 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'mapa', component: MapaComponent },
       { path: 'reportes', component: ReportesVotosComponent },
-      { path: 'mis-reportes', component: MisReportes },
-      { path: 'perfil', component: PerfilPageComponent },
-      { path: 'ajustes', component: AjustesPageComponent },
+      { path: 'mis-reportes', component: MisReportes, canActivate: [registeredUserGuard] },
+      { path: 'perfil', component: PerfilPageComponent, canActivate: [registeredUserGuard] },
+      { path: 'ajustes', component: AjustesPageComponent, canActivate: [registeredUserGuard] },
       { 
         path: 'admin', 
         component: AdminDashboardComponent,
