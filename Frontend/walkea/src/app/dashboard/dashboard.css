@@ -273,6 +273,37 @@
   transform: scale(1.05);
 }
 
+:host-context(body.dark) .header-banner {
+  color: #f0f5fb;
+}
+
+:host-context(body.dark) .stat-label,
+:host-context(body.dark) .empty-state-text,
+:host-context(body.dark) .report-subtitle {
+  color: #c2d0df;
+}
+
+:host-context(body.dark) .report-time {
+  color: #a8bbcf;
+}
+
+:host-context(body.dark) .reportes-section h3,
+:host-context(body.dark) .map-section h3,
+:host-context(body.dark) .empty-state-title,
+:host-context(body.dark) .report-title {
+  color: #f3f7fd;
+}
+
+:host-context(body.dark) .empty-state {
+  background: #132031;
+  border-color: rgba(147, 197, 253, 0.26);
+}
+
+:host-context(body.dark) .btn-more-reports {
+  background-color: #24364c;
+  color: #e1efff;
+}
+
 @media (max-width: 1100px) {
   .content-body {
     grid-template-columns: minmax(0, 1fr) 240px;

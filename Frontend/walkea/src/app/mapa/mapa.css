@@ -259,6 +259,47 @@
   background: #d9534f;
 }
 
+:host-context(body.dark) .header-kicker {
+  color: #8ecbff;
+}
+
+:host-context(body.dark) .header-banner h1,
+:host-context(body.dark) .popup-voto-title {
+  color: #f4f8fd;
+}
+
+:host-context(body.dark) .header-subtitle,
+:host-context(body.dark) .popup-voto-description,
+:host-context(body.dark) .popup-voto-hint {
+  color: #c2d0df;
+}
+
+:host-context(body.dark) .filter-chip {
+  border-color: rgba(148, 163, 184, 0.26);
+  background: #132031;
+  color: #e6eef8;
+}
+
+:host-context(body.dark) .filter-chip:hover {
+  background: #1a2a40;
+  border-color: rgba(147, 197, 253, 0.34);
+}
+
+:host-context(body.dark) .full-map-container {
+  border-color: rgba(148, 163, 184, 0.14);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24);
+}
+
+:host-context(body.dark) .emoji-marker {
+  background: rgba(17, 27, 42, 0.94);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.34);
+}
+
+:host-context(body.dark) .popup-meta-chip {
+  background: #1b2b40;
+  color: #d9ebff;
+}
+
 @media (max-width: 900px) {
   .mapa-content {
     padding: 0.75rem;
