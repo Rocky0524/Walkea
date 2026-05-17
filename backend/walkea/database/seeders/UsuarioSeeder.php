@@ -11,30 +11,60 @@ class UsuarioSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('usuarios')->updateOrInsert(
-            ['email' => 'admin@walkea.com'],
+        $ahora = Carbon::now();
+
+        DB::table('usuarios')
+            ->where('email', 'user@walkea.com')
+            ->delete();
+
+        $usuariosDemo = [
             [
-                'nombre' => 'Profe User',
+                'email' => 'admin@walkea.com',
+                'nombre' => 'Admin Demo',
                 'password' => Hash::make('123456'),
                 'reputacion' => 100,
                 'rol' => 'admin',
                 'activo' => true,
-                'updated_at' => Carbon::now(),
-                'created_at' => Carbon::now(),
-            ]
-        );
-
-        DB::table('usuarios')->updateOrInsert(
-            ['email' => 'user@walkea.com'],
+                'created_at' => $ahora->copy(),
+                'updated_at' => $ahora->copy(),
+            ],
             [
-                'nombre' => 'Usuario Demo',
+                'email' => 'novato@walkea.com',
+                'nombre' => 'Usuario Novato',
                 'password' => Hash::make('123456'),
                 'reputacion' => 10,
                 'rol' => 'usuario',
                 'activo' => true,
-                'updated_at' => Carbon::now(),
-                'created_at' => Carbon::now(),
-            ]
-        );
+                'created_at' => $ahora->copy(),
+                'updated_at' => $ahora->copy(),
+            ],
+            [
+                'email' => 'medio@walkea.com',
+                'nombre' => 'Usuario Medio',
+                'password' => Hash::make('123456'),
+                'reputacion' => 25,
+                'rol' => 'usuario',
+                'activo' => true,
+                'created_at' => $ahora->copy()->subDays(30),
+                'updated_at' => $ahora->copy(),
+            ],
+            [
+                'email' => 'veterano@walkea.com',
+                'nombre' => 'Usuario Veterano',
+                'password' => Hash::make('123456'),
+                'reputacion' => 50,
+                'rol' => 'usuario',
+                'activo' => true,
+                'created_at' => $ahora->copy()->subDays(90),
+                'updated_at' => $ahora->copy(),
+            ],
+        ];
+
+        foreach ($usuariosDemo as $usuario) {
+            DB::table('usuarios')->updateOrInsert(
+                ['email' => $usuario['email']],
+                $usuario
+            );
+        }
     }
 }
