@@ -45,6 +45,11 @@ class TipoMarcadorSeeder extends Seeder
             ],
         ];
 
-        DB::table('tipo_marcador')->insertOrIgnore($tipos);
+        foreach ($tipos as $tipo) {
+            DB::table('tipo_marcador')->updateOrInsert(
+                ['nombre' => $tipo['nombre']],
+                $tipo
+            );
+        }
     }
 }

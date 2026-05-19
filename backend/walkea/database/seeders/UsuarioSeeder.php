@@ -13,10 +13,6 @@ class UsuarioSeeder extends Seeder
     {
         $ahora = Carbon::now();
 
-        DB::table('usuarios')
-            ->where('email', 'user@walkea.com')
-            ->delete();
-
         $usuariosDemo = [
             [
                 'email' => 'admin@walkea.com',
@@ -24,6 +20,16 @@ class UsuarioSeeder extends Seeder
                 'password' => Hash::make('123456'),
                 'reputacion' => 100,
                 'rol' => 'admin',
+                'activo' => true,
+                'created_at' => $ahora->copy(),
+                'updated_at' => $ahora->copy(),
+            ],
+            [
+                'email' => 'user@walkea.com',
+                'nombre' => 'Usuario Demo',
+                'password' => Hash::make('123456'),
+                'reputacion' => 10,
+                'rol' => 'usuario',
                 'activo' => true,
                 'created_at' => $ahora->copy(),
                 'updated_at' => $ahora->copy(),

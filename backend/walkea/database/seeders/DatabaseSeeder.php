@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
             UsuarioSeeder::class,
             TipoMarcadorSeeder::class,
             MarcadorSeeder::class,
+            DemoSeeder::class,
         ]);
     }
 }

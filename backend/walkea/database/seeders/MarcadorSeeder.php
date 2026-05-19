@@ -119,7 +119,15 @@ class MarcadorSeeder extends Seeder
                 ]
             ];
 
-            DB::table('marcador')->insert($marcadores);
+            foreach ($marcadores as $marcador) {
+                DB::table('marcador')->updateOrInsert(
+                    [
+                        'titulo' => $marcador['titulo'],
+                        'id_usuario' => $marcador['id_usuario'],
+                    ],
+                    $marcador
+                );
+            }
         }
     }
 }
