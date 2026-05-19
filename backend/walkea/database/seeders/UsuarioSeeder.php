@@ -34,36 +34,6 @@ class UsuarioSeeder extends Seeder
                 'created_at' => $ahora->copy(),
                 'updated_at' => $ahora->copy(),
             ],
-            [
-                'email' => 'novato@walkea.com',
-                'nombre' => 'Usuario Novato',
-                'password' => Hash::make('123456'),
-                'reputacion' => 10,
-                'rol' => 'usuario',
-                'activo' => true,
-                'created_at' => $ahora->copy(),
-                'updated_at' => $ahora->copy(),
-            ],
-            [
-                'email' => 'medio@walkea.com',
-                'nombre' => 'Usuario Medio',
-                'password' => Hash::make('123456'),
-                'reputacion' => 25,
-                'rol' => 'usuario',
-                'activo' => true,
-                'created_at' => $ahora->copy()->subDays(30),
-                'updated_at' => $ahora->copy(),
-            ],
-            [
-                'email' => 'veterano@walkea.com',
-                'nombre' => 'Usuario Veterano',
-                'password' => Hash::make('123456'),
-                'reputacion' => 50,
-                'rol' => 'usuario',
-                'activo' => true,
-                'created_at' => $ahora->copy()->subDays(90),
-                'updated_at' => $ahora->copy(),
-            ],
         ];
 
         foreach ($usuariosDemo as $usuario) {
