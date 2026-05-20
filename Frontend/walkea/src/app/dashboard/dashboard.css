@@ -305,15 +305,19 @@
 }
 
 /* ========================================= */
-/* RESPONSIVE DESIGN (Diseño para Móviles)   */
-/* Aquí empieza la adaptación móvil (estilos encapsulados de Angular). */
-/* Pasamos de un diseño horizontal (Grid/Flex) a una columna vertical para que encaje en el teléfono. */
+/* RESPONSIVE DESIGN: PORTÁTILES Y TABLETS GRANDES (max 1100px) */
+/* Pasamos de un diseño horizontal a estrechar las columnas. */
 /* ========================================= */
 @media (max-width: 1100px) {
   .content-body {
     grid-template-columns: minmax(0, 1fr) 240px;
   }
 }
+
+/* ========================================= */
+/* RESPONSIVE DESIGN: TABLETS (max 900px)    */
+/* Pasamos todo a una sola columna vertical. */
+/* ========================================= */
 
 @media (max-width: 900px) {
   .dashboard-content {
@@ -392,6 +396,10 @@
   }
 }
 
+/* ========================================= */
+/* RESPONSIVE DESIGN: TELÉFONOS (max 560px)  */
+/* Reducimos el tamaño de las fuentes, iconos y márgenes para móviles. */
+/* ========================================= */
 @media (max-width: 560px) {
   .dashboard-content {
     padding: 0.6rem;

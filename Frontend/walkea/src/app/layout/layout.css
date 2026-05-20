@@ -347,9 +347,8 @@
 }
 
 /* ========================================= */
-/* RESPONSIVE DESIGN (Diseño para Móviles)   */
-/* A partir de aquí, Angular carga estos estilos solo cuando la pantalla es pequeña. */
-/* Usamos max-width para adaptar la barra lateral y los botones al móvil. */
+/* RESPONSIVE DESIGN: TABLETS (max 900px)    */
+/* Ocultamos la barra lateral y activamos el menú de "hamburguesa" superior. */
 /* ========================================= */
 @media (max-width: 900px) {
   .layout-wrapper {
@@ -517,6 +516,10 @@
   }
 }
 
+/* ========================================= */
+/* RESPONSIVE DESIGN: TELÉFONOS (max 560px)  */
+/* Reducimos la barra superior y los botones para pantallas muy pequeñas. */
+/* ========================================= */
 @media (max-width: 560px) {
   .mobile-topbar {
     padding: 0.85rem 1rem;

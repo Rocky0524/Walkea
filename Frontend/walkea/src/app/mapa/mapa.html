@@ -42,6 +42,8 @@
   </div>
 
   @if (!esInvitado) {
+    <!-- ACCESIBILIDAD (A11Y): El botón de "+ Añadir reporte" es solo un icono de un más. Usamos 'aria-label' 
+         para decirle al lector de pantalla qué hace este botón ciego. -->
     <button class="fab-add" title="A&ntilde;adir reporte" aria-label="A&ntilde;adir reporte" (click)="abrirModalReporte()"></button>
   }
 

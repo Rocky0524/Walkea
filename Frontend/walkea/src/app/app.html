@@ -1,5 +1,7 @@
 <router-outlet></router-outlet>
 
+<!-- ACCESIBILIDAD (A11Y): Las notificaciones tienen 'aria-live="polite"' para que el lector de pantalla 
+     avise a la persona invidente de que ha aparecido una notificación, sin cortarle la navegación. -->
 <div class="toast-stack" aria-live="polite" aria-atomic="true">
   @for (toast of toasts; track toast.id) {
     <button

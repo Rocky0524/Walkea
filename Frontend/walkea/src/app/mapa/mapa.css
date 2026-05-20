@@ -301,8 +301,8 @@
 }
 
 /* ========================================= */
-/* RESPONSIVE DESIGN (Diseño para Móviles)   */
-/* Estilos específicos para que el mapa y los popups no se salgan de la pantalla en móviles. */
+/* RESPONSIVE DESIGN: TABLETS (max 900px)    */
+/* Adaptamos el mapa para pantallas medianas tipo iPad. */
 /* ========================================= */
 @media (max-width: 900px) {
   .mapa-content {
@@ -332,6 +332,10 @@
   }
 }
 
+/* ========================================= */
+/* RESPONSIVE DESIGN: TELÉFONOS (max 560px)  */
+/* En pantallas muy pequeñas, encogemos el botón de añadir y ajustamos la altura del mapa. */
+/* ========================================= */
 @media (max-width: 560px) {
   .mapa-content {
     padding: 0.6rem;

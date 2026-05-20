@@ -413,6 +413,11 @@
   }
 }
 
+/* ========================================= */
+/* ACCESIBILIDAD (A11Y): Reducción de Movimiento */
+/* Si el usuario tiene mareos o sensibilidad al movimiento y lo configura en su SO, */
+/* anulamos todas las animaciones visuales giratorias para evitar problemas. */
+/* ========================================= */
 @media (prefers-reduced-motion: reduce) {
   .visual-ring,
   .visual-glow,

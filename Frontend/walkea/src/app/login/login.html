@@ -10,6 +10,8 @@
       <input type="email" formControlName="email" placeholder="Correo electrónico" class="input-field"
              aria-label="Correo electrónico" aria-describedby="login-email-error">
       @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched){
+        <!-- ACCESIBILIDAD (A11Y): 'aria-live="polite"' avisa a los lectores de pantalla (personas invidentes)
+             de que ha aparecido un error en rojo sin interrumpir lo que estaban haciendo. -->
         <span id="login-email-error" class="error-text" aria-live="polite">Introduce un email valido</span>
       }
 
