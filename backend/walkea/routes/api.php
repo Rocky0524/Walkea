@@ -9,7 +9,7 @@ use App\Http\Controllers\VotacionController;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\NotificacionController;
 
-// Rutas publicas
+// RUTAS PÚBLICAS: Cualquiera puede entrar sin estar logueado (Login, Registro y ver el mapa)
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -19,7 +19,7 @@ Route::get('/tipo-marcador/{id}', [TipoMarcadorController::class, 'show']);
 Route::get('/marcador', [MarcadorController::class, 'index']);
 Route::get('/marcador/{id}', [MarcadorController::class, 'show']);
 
-// Rutas protegidas con JWT
+// RUTAS PROTEGIDAS: Solo puedes entrar si tienes un token JWT válido y tu cuenta está activa
 Route::middleware(['auth:api', 'usuario.activo'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
@@ -41,7 +41,7 @@ Route::middleware(['auth:api', 'usuario.activo'])->group(function () {
 
     Route::post('/marcador/{id}/votar', [VotacionController::class, 'votar']);
 
-    // Rutas de administracion - protegidas con middleware admin
+    // ZONA DE ADMINISTRACIÓN: Comprueba que tu rol sea 'admin'
     Route::middleware('admin')->group(function () {
         Route::get('/admin/usuarios', [UsuarioController::class, 'obtenerTodos']);
         Route::patch('/admin/usuarios/{id}/estado', [UsuarioController::class, 'actualizarEstadoUsuario']);

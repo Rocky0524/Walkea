@@ -9,7 +9,10 @@ import { ToastService } from './services/toast.service';
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
   const toastService = inject(ToastService);
+  // Leemos el token JWT guardado en LocalStorage
   const token = localStorage.getItem('token');
+  
+  // Si hay token, lo inyectamos clonando la petición HTTP original y añadiendo la cabecera Authorization
   const ejecutarPeticion = token
     ? next(req.clone({
         setHeaders: {
@@ -22,6 +25,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error) => {
       const mensaje = String(error?.error?.mensaje ?? '').toLowerCase();
 
+      // Si el servidor nos devuelve un 403 y dice "inhabilitada", echamos al usuario y borramos su sesión
       if (error?.status === 403 && mensaje.includes('inhabilitada')) {
         localStorage.removeItem('token');
         localStorage.removeItem('rol');

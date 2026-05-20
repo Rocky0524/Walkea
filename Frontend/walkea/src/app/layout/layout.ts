@@ -65,6 +65,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
 
       this.notificacionService.actualizarDesdeBackend();
 
+      // TIEMPO REAL (Consultas automáticas periódicas): Hacemos una petición silenciosa al servidor cada 30 segundos
+      // para ver si el usuario tiene nuevas notificaciones sin necesidad de recargar la página.
       this.subscriptions.add(
         interval(30000).subscribe(() => {
           this.notificacionService.actualizarDesdeBackend();
@@ -201,6 +203,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
     this.router.navigate([this.esInvitado ? '/bienvenida' : '/login']);
   }
 
+  // MODO OSCURO: Leemos las preferencias de LocalStorage y le ponemos la clase 'dark' al body entero.
+  // Esto hace que todas las variables CSS (--bg-primary, --text-color) cambien de golpe en todo el proyecto.
   private aplicarModoOscuro(): void {
     const prefs = this.perfilService.obtenerPreferencias();
     if (prefs.modoOscuro) {

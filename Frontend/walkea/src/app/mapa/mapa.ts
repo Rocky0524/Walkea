@@ -156,6 +156,8 @@ export class MapaComponent implements AfterViewInit {
       ? 'Modo invitado: solo lectura, sin votos.'
       : this.mensajeBloqueoVoto(marcador);
 
+    // INTEGRACIÓN AVANZADA DOM: Leaflet no procesa el ciclo de vida de Angular (directivas como click).
+    // Para solucionarlo de forma nativa, construimos el elemento DOM manualmente en lugar de usar un string.
     const contenedor = document.createElement('div');
     contenedor.className = 'popup-voto';
     contenedor.innerHTML = `
@@ -172,10 +174,12 @@ export class MapaComponent implements AfterViewInit {
       </div>
     `;
 
+    // Recuperamos los botones físicos del DOM generado
     const btnPos = contenedor.querySelector('.vote-positive') as HTMLButtonElement | null;
     const btnNeg = contenedor.querySelector('.vote-negative') as HTMLButtonElement | null;
 
     if (btnPos) {
+      // Enlazamos un evento JavaScript nativo manual que llama a nuestro método de Angular
       btnPos.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -191,6 +195,7 @@ export class MapaComponent implements AfterViewInit {
       });
     }
 
+    // Devolvemos el HTMLElement físico ya "cableado", no un string.
     return contenedor;
   }
 
@@ -237,14 +242,17 @@ export class MapaComponent implements AfterViewInit {
   }
 
   private obtenerUbicacionReal(): void {
+    // Comprobamos si el navegador soporta la API de Geolocalización HTML5
     if (!navigator.geolocation) {
       return;
     }
 
+    // Pedimos al navegador las coordenadas GPS reales del dispositivo
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
+        // Colocamos un marcador nativo en el mapa para indicar la posición del usuario
         L.marker([lat, lon]).addTo(this.map).bindPopup('<b>Estas aqui</b>');
       },
       (error) => {

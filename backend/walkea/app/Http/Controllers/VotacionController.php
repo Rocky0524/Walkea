@@ -34,7 +34,11 @@ class VotacionController extends Controller
             ], 422);
         }
 
+        // Usamos una Transacción de Base de Datos para asegurar la Atomicidad (todo o nada).
+        // Evita que un error intermedio deje votos "huérfanos" o HP desincronizados.
         $resultado = DB::transaction(function () use ($id, $tipoVoto, $usuario) {
+            // CONCURRENCIA (Race Conditions): lockForUpdate() bloquea esta fila de la BD temporalmente.
+            // Si dos usuarios votan en el mismo milisegundo, el motor de la base de datos pondrá al segundo en espera.
             $marcador = Marcador::with('usuario')->lockForUpdate()->findOrFail($id);
 
             if ((int) $marcador->id_usuario === (int) $usuario->id_usuario) {

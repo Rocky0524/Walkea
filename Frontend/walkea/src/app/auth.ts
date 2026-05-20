@@ -11,10 +11,12 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
+  // Envía los datos al backend (Laravel) para crear el usuario.
   registro(datosUsuario: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, datosUsuario);
   }
 
+  // Petición de login. Si es correcto, devolverá un JSON con el token JWT.
   login(credenciales: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credenciales);
   }
@@ -46,6 +48,7 @@ export class AuthService {
     localStorage.removeItem('email');
   }
 
+  // Borra el token y los datos de sesión almacenados en LocalStorage
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('rol');

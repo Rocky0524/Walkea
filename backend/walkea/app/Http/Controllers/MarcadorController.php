@@ -23,8 +23,9 @@ class MarcadorController extends Controller
         $soloActivos = $request->boolean('solo_activos');
 
         if ($lat && $lng) {
-            // Formula Haversine manual, en mysql va muy bien para calculo de distancias
-            // Calculamos la distancia con selectRaw y lo llamamos 'distancia'
+            // OPTIMIZACIÓN: Fórmula de Haversine manual integrada en MySQL.
+            // Calcula la distancia esférica (Tierra) entre el usuario y los marcadores en una sola consulta.
+            // Es infinitamente más rápido que traer miles de registros a PHP y calcular la distancia en memoria.
             $query = Marcador::selectRaw(
                 "marcador.*, ( 6371 * acos( cos( radians(?) ) * cos( radians( latitud ) ) * cos( radians( longitud ) - radians(?) ) + sin( radians(?) ) * sin( radians( latitud ) ) ) ) AS distancia",
                 [$lat, $lng, $lat]
@@ -44,6 +45,9 @@ class MarcadorController extends Controller
         }
 
         // Si no han buscado por zona, devolvemos todos sin filtrar
+        // OPTIMIZACIÓN: Al usar "with()", le decimos a Laravel que traiga también a los usuarios en la misma búsqueda.
+        // Si no lo pusiéramos y tuviéramos 50 marcadores, Laravel haría 50 consultas extras a la BD buscando a cada usuario.
+        // Poniendo with() lo hace todo de golpe y la web va rapidísima (esto se llama Eager Loading).
         $query = Marcador::with(['tipoMarcador', 'usuario']);
 
         if ($soloActivos) {

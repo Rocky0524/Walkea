@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-    // Registrar nuevo usuario
+    // Registrar nuevo usuario y hacer auto-login devolviendo el token
     public function register(Request $request)
     {
         $request->validate([
@@ -38,7 +38,7 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // Login - devuelve token JWT
+    // Login - valida credenciales y devuelve el token JWT para usar en el frontend
     public function login(Request $request)
     {
         $request->validate([
@@ -56,6 +56,7 @@ class AuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
+        // El attempt() comprueba si el email y hash de password coinciden. Si es correcto, genera el JWT.
         if (!$token = auth()->attempt($credentials)) {
             return response()->json([
                 'mensaje' => 'Email o contraseña incorrectos'

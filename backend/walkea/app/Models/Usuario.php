@@ -54,6 +54,7 @@ class Usuario extends Authenticatable implements JWTSubject
         return $this->hasMany(Voto::class, 'id_usuario', 'id_usuario');
     }
 
+    // Calcula los días que han pasado desde que el usuario se registró en la plataforma
     public function resolverAntiguedadDias(): int
     {
         if (!$this->created_at) {
@@ -63,8 +64,10 @@ class Usuario extends Authenticatable implements JWTSubject
         return (int) $this->created_at->diffInDays(now());
     }
 
+    // Calcula el poder de voto del usuario en base a su antigüedad y rol
     public function resolverPesoVoto(): int
     {
+        // Administradores y usuarios con más de 90 días tienen peso 3
         if ($this->esAdmin()) {
             return 3;
         }
