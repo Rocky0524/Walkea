@@ -2,6 +2,8 @@
   box-sizing: border-box;
 }
 
+/* ARQUITECTURA CSS: Definimos todas las variables de color globales (CSS Custom Properties). */
+/* Por defecto cargan estos colores claros. */
 :root {
   --bg-base: #f2f7fd;
   --bg-surface: #ffffff;
@@ -21,6 +23,8 @@
   --color-badge-agotado: #721c24;
 }
 
+/* MODO OSCURO: Cuando se inyecta la clase 'dark' al body, sobrescribimos las variables de arriba. */
+/* El navegador repintará toda la web instantáneamente de color oscuro usando estas nuevas variables. */
 body.dark {
   --bg-base: #0f1724;
   --bg-surface: #1a2332;

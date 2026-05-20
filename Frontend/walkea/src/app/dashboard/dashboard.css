@@ -304,6 +304,11 @@
   color: #e1efff;
 }
 
+/* ========================================= */
+/* RESPONSIVE DESIGN (Diseño para Móviles)   */
+/* Aquí empieza la adaptación móvil (estilos encapsulados de Angular). */
+/* Pasamos de un diseño horizontal (Grid/Flex) a una columna vertical para que encaje en el teléfono. */
+/* ========================================= */
 @media (max-width: 1100px) {
   .content-body {
     grid-template-columns: minmax(0, 1fr) 240px;

@@ -346,6 +346,11 @@
   color: #bfd0e3;
 }
 
+/* ========================================= */
+/* RESPONSIVE DESIGN (Diseño para Móviles)   */
+/* A partir de aquí, Angular carga estos estilos solo cuando la pantalla es pequeña. */
+/* Usamos max-width para adaptar la barra lateral y los botones al móvil. */
+/* ========================================= */
 @media (max-width: 900px) {
   .layout-wrapper {
     height: 100dvh;

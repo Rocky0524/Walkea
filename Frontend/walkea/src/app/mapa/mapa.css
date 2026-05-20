@@ -300,6 +300,10 @@
   color: #d9ebff;
 }
 
+/* ========================================= */
+/* RESPONSIVE DESIGN (Diseño para Móviles)   */
+/* Estilos específicos para que el mapa y los popups no se salgan de la pantalla en móviles. */
+/* ========================================= */
 @media (max-width: 900px) {
   .mapa-content {
     padding: 0.75rem;
